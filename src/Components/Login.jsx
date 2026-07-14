@@ -4,6 +4,7 @@ import axios from '../api/axios';
 const LOGIN_URL = '/asanpasa.php';
 
 export default function Login() {
+  const { setAuth } = useContext(AuthContext);
 
   const userRef = useRef();
   const errRef = useRef();
@@ -24,6 +25,7 @@ export default function Login() {
   const handleSubmit= async (e) =>
   {
     e.preventDefault();
+    console.log(JSON.stringify({ user, pwd }));
     try{
         const response = await axios.post(LOGIN_URL,
         JSON.stringify({ user, pwd }),
@@ -32,16 +34,19 @@ export default function Login() {
             withCredentials: true
         }
         );
-        console.log(JSON.stringify(response?.data?.success));
+        //console.log(JSON.stringify(response?.data?.accessToken));
         const accessToken = response?.data?.accessToken;
-        const roles = response?.data?.roles;
-        ///setAuth({ user, pwd, roles, accessToken });
-        //setUser('');
-        //setPwd('');
+       //const roles = response?.data?.roles;
+        setAuth({ user, pwd, accessToken });
+        setUser('');
+        setPwd('');
+        
         //setSuccess(true);
-        //console.log("congratulations! You are in!")
+        console.log("congratulations! You are in!")
     }catch (err){
- if (!err?.response) {
+        console.log(err)
+
+      if (!err?.response) {
                 setErrMsg('No Server Response');
             } else if (err.response?.status === 400) {
                 setErrMsg('Missing Username or Password');
@@ -76,7 +81,7 @@ export default function Login() {
         
         <form id="loginForm" onSubmit={handleSubmit}>
             <div className="form-group">
-                <label htmlfor="email">Email Address</label>
+                <label htmlFor="email">Email Address</label>
                 <div className="input-with-icon">
                     <i className="fas fa-envelope"></i>
                     <input type="username" 
@@ -91,7 +96,7 @@ export default function Login() {
             </div>
             
             <div className="form-group">
-                <label htmlfor="password">Password</label>
+                <label htmlFor="password">Password</label>
                 <div className="input-with-icon">
                     <i className="fas fa-lock"></i>
                     <input 
@@ -106,7 +111,7 @@ export default function Login() {
             
             <div className="checkbox-group">
                 <input type="checkbox" id="remember" />
-                <label htmlfor="remember">Remember me for 30 days</label>
+                <label htmlFor="remember">Remember me for 30 days</label>
                 <a href="#">Forgot password?</a>
             </div>
             
