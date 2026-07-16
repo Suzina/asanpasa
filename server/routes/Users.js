@@ -47,7 +47,6 @@ router.post("/login", async (req, res) =>
       "importantsecret"
     );
     res.json(accessToken);
-  //return res.json("YOU LOGGED IN!!!");
 });
 
 module.exports = router;

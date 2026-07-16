@@ -1,10 +1,13 @@
 import { useRef, useState, useEffect, useContext } from 'react';
 import AuthContext from "../context/AuthProvider";
 import axios from '../api/axios';
+import { useNavigate } from 'react-router-dom';
+
 const LOGIN_URL = '/auth/login';
 
 export default function Login() 
 {
+  const navigate = useNavigate();
   const { setAuth } = useContext(AuthContext);
 
   const userRef = useRef();
@@ -38,10 +41,14 @@ export default function Login()
 
         if (response.data.error) 
         {
-            alert(response.data.error);
-        } else {
+            setErrMsg(response.data.error);
+        } 
+        else 
+        {
             sessionStorage.setItem("accessToken", response.data);
-            //history.push("/");
+            const accessToken = response.data;
+            setAuth({ username, accessToken });
+            navigate('/dashboard');
         }
         console.log(JSON.stringify(response?.data));
         /*const accessToken = response?.data?.accessToken;

@@ -10,7 +10,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background-color: #0f0f1e;
+            background-color: #fff;
             padding: 20px;
             overflow-x: hidden;
         }
@@ -61,7 +61,11 @@
             background-size: 400% 400%;
             animation: gradient 18s ease infinite;
         }
-
+.errmsg
+{
+    color: red !important;
+    padding: 15px;
+}
         .logo {
             text-align: center;
             margin-bottom: 36px;
