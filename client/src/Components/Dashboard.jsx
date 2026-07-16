@@ -1,15 +1,15 @@
-import React from 'react'
 import useDashboardUI from '../hooks/useDashboardUI';
 import Sidebar from './Sidebar';
 import Header from './Header';
+import Footer from './Footer';
 
 function Dashboard() {
   useDashboardUI(); 
   return (
   <>
     <Sidebar/>
-    <Header/>
         <div className="ec-page-wrapper">
+           <Header/>
           <div className="ec-content-wrapper">
             <div className="content">
                   <div className="row">
@@ -86,6 +86,7 @@ function Dashboard() {
                 </div>
           </div>
         </div>
+        <Footer />
         </div>
 	</> 
   )
