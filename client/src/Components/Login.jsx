@@ -3,14 +3,15 @@ import AuthContext from "../context/AuthProvider";
 import axios from '../api/axios';
 const LOGIN_URL = '/auth/login';
 
-export default function Login() {
+export default function Login() 
+{
   const { setAuth } = useContext(AuthContext);
 
   const userRef = useRef();
   const errRef = useRef();
 
-  const [user, setUser] = useState('');
-  const [pwd, setPwd] = useState('');
+  const [username, setUser] = useState('');
+  const [password, setPwd] = useState('');
   const [errMsg, setErrMsg] = useState('');
   const [success, setSuccess] = useState(false);
 
@@ -20,12 +21,12 @@ export default function Login() {
 
     useEffect(() => {
         setErrMsg('');
-    }, [user, pwd])
+    }, [username, password])
 
   const handleSubmit= async (e) =>
   {
     e.preventDefault();
-    console.log(JSON.stringify({ user, pwd }));
+    console.log(JSON.stringify({ username, password }));
     try{
         const response = await axios.post(LOGIN_URL,
         JSON.stringify({ username, password }),
@@ -34,15 +35,23 @@ export default function Login() {
             withCredentials: true
         }
         );
-        //console.log(JSON.stringify(response?.data?.accessToken));
-        const accessToken = response?.data?.accessToken;
-       //const roles = response?.data?.roles;
-        setAuth({ user, pwd, accessToken });
+
+        if (response.data.error) 
+        {
+            alert(response.data.error);
+        } else {
+            sessionStorage.setItem("accessToken", response.data);
+            //history.push("/");
+        }
+        console.log(JSON.stringify(response?.data));
+        /*const accessToken = response?.data?.accessToken;
+        const roles = response?.data?.roles;
+        setAuth({ username, password, accessToken });
         setUser('');
         setPwd('');
         
         //setSuccess(true);
-        console.log("congratulations! You are in!")
+        console.log("congratulations! You are in!")*/
     }
     catch (err)
     {
@@ -92,7 +101,7 @@ export default function Login() {
                     ref={userRef}
                     autoComplete="off"
                     onChange={(e) => setUser(e.target.value)}
-                    value={user}
+                    value={username}
                     placeholder="Enter your email" required />
                 </div>
             </div>
@@ -105,7 +114,7 @@ export default function Login() {
                     type="password" 
                     id="password" 
                     onChange={(e) => setPwd(e.target.value)}
-                    value={pwd}
+                    value={password}
                     className="form-control" 
                     placeholder="Enter your password" required />
                 </div>
