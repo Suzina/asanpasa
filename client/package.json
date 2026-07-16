@@ -10,10 +10,19 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@tanstack/react-table": "^8.21.3",
     "axios": "^1.18.1",
+    "chart.js": "^4.5.1",
+    "or": "^0.2.0",
     "react": "^19.2.7",
+    "react-chartjs-2": "^5.3.1",
+    "react-data-table-component": "^8.6.2",
+    "react-date-range": "^2.0.1",
     "react-dom": "^19.2.7",
-    "react-router-dom": "^7.18.1"
+    "react-router-dom": "^7.18.1",
+    "react-slick": "^0.31.0",
+    "simplebar-react": "^3.3.2",
+    "slick-carousel": "^1.8.1"
   },
   "devDependencies": {
     "@babel/core": "^7.29.7",

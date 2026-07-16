@@ -21223,6 +21223,7 @@ div.copied {
   max-width: 130px;
   text-overflow: ellipsis;
   white-space: nowrap;
+  color:#000;
 }
 .sidebar .sidenav-item-link .badge {
   padding: 0.4em 0.6em;
