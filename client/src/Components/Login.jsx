@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect, useContext } from 'react';
 import AuthContext from "../context/AuthProvider";
 import axios from '../api/axios';
-const LOGIN_URL = '/asanpasa.php';
+const LOGIN_URL = '/auth/login';
 
 export default function Login() {
   const { setAuth } = useContext(AuthContext);
@@ -28,7 +28,7 @@ export default function Login() {
     console.log(JSON.stringify({ user, pwd }));
     try{
         const response = await axios.post(LOGIN_URL,
-        JSON.stringify({ user, pwd }),
+        JSON.stringify({ username, password }),
         {
             headers: { 'Content-Type': 'application/json' },
             withCredentials: true
@@ -43,7 +43,9 @@ export default function Login() {
         
         //setSuccess(true);
         console.log("congratulations! You are in!")
-    }catch (err){
+    }
+    catch (err)
+    {
         console.log(err)
 
       if (!err?.response) {
