@@ -46,7 +46,10 @@ export default function Login()
         else 
         {
             sessionStorage.setItem("accessToken", response.data);
+            sessionStorage.setItem("username", username);
             const accessToken = response.data;
+
+            //console.log("Setting auth with:", { username, accessToken }); // add this
             setAuth({ username, accessToken });
             navigate('/dashboard');
         }

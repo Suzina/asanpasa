@@ -6,7 +6,6 @@ const { sign } = require("jsonwebtoken");
 
 router.get("/", async (req, res) => {
   const listOfUsers = await Users.findAll();
-  //console.log("listOfUsers");
   res.json(listOfUsers);
 });
 

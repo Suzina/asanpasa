@@ -3,10 +3,10 @@ import React from 'react'
 function Footer() {
   return (
     <div>
-      <footer class="footer mt-auto">
-				<div class="copyright bg-white">
+      <footer className="footer mt-auto">
+				<div className="copyright bg-white">
 					<p>
-						Copyright &copy; <span id="ec-year"></span><a class="text-primary"
+						Copyright &copy; <span id="ec-year"></span><a className="text-primary"
 						href="https://sujina-maharjan.com.np/" target="_blank"> AsanPasa</a>. All Rights Reserved.
 					  </p>
 				</div>
