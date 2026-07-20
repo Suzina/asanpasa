@@ -18,6 +18,9 @@ app.use("/auth", userRoutes);
 const dashboardRoutes = require("./routes/Dashboard");
 app.use("/dashboard", dashboardRoutes);
 
+const productsRoutes = require("./routes/Products");
+app.use("/products", productsRoutes);
+
 db.sequelize.sync().then(() => {
   app.listen(3001, () => {
     console.log("Server running on port 3001");
