@@ -6,7 +6,6 @@ const { sign } = require("jsonwebtoken");
 
 router.get("/", async (req, res) => {
   const listOfUsers = await Users.findAll();
-  //console.log("listOfUsers");
   res.json(listOfUsers);
 });
 
@@ -44,7 +43,8 @@ router.post("/login", async (req, res) =>
   }
   const accessToken = sign(
       { username: user.username, id: user.id },
-      "importantsecret"
+      "importantsecret",
+      { expiresIn: "1h" }
     );
     res.json(accessToken);
 });
