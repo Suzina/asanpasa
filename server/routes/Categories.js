@@ -1,10 +1,12 @@
 const express = require("express");
 const router = express.Router();
+const { Categories } = require("../models");
 const { validateToken } = require("../middlewares/AuthMiddleware");
 
 
 router.get("/", validateToken,async (req, res) => {
-  res.send("Welcome to Categories");
+   const categories = await Categories.findAll();
+  res.json(categories);
 });
 
 
