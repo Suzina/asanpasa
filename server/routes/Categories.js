@@ -9,5 +9,11 @@ router.get("/", validateToken,async (req, res) => {
   res.json(categories);
 });
 
-
+router.post("/", validateToken,async (req, res) => {
+  const { name } = req.body;
+  Categories.create({
+      name: name
+    });
+    res.json("Category added successful");
+});
 module.exports = router;
