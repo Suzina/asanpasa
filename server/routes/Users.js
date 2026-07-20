@@ -43,7 +43,8 @@ router.post("/login", async (req, res) =>
   }
   const accessToken = sign(
       { username: user.username, id: user.id },
-      "importantsecret"
+      "importantsecret",
+      { expiresIn: "1h" }
     );
     res.json(accessToken);
 });

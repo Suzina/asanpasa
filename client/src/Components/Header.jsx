@@ -1,9 +1,19 @@
-import { useContext } from 'react';
-import AuthContext from '../context/AuthProvider';
 
-function Header() {
+import { useNavigate } from 'react-router-dom';
+
+function Header() 
+{
 	const username = sessionStorage.getItem("username");
+	const navigate = useNavigate();
 
+	function handleLogout(e) 
+	{
+		e.preventDefault();
+		alert("clicked");
+  		sessionStorage.removeItem("accessToken"); // or whatever key you stored it under
+  		sessionStorage.removeItem("username");
+  		navigate("/");
+	}
 
   return (
     <div>
@@ -41,7 +51,7 @@ function Header() {
 									</li>
 									
 									<li className="dropdown-footer">
-										<a href="index.html"> <i className="mdi mdi-logout"></i> Log Out </a>
+										<a href="#" onClick={handleLogout}> <i className="mdi mdi-logout"></i> Log Out </a>
 									</li>
 								</ul>
 							</li>

@@ -16,7 +16,7 @@ export default function Login()
   const [username, setUser] = useState('');
   const [password, setPwd] = useState('');
   const [errMsg, setErrMsg] = useState('');
-  const [success, setSuccess] = useState(false);
+  const [success] = useState(false);
 
   useEffect(() => {
         userRef.current.focus();
@@ -49,7 +49,6 @@ export default function Login()
             sessionStorage.setItem("username", username);
             const accessToken = response.data;
 
-            //console.log("Setting auth with:", { username, accessToken }); // add this
             setAuth({ username, accessToken });
             navigate('/dashboard');
         }

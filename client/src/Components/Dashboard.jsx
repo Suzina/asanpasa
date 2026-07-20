@@ -105,7 +105,7 @@ function Dashboard()
 										</div>
 									</div>
 								</div>
-								<div className="card-body py-0 compact-units" data-simplebar style={{height: '534px;'}}>
+								<div className="card-body py-0 compact-units" data-simplebar >
 									<table className="table ">
 										<tbody>
                         {users.map((user) => (
