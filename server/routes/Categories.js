@@ -16,4 +16,36 @@ router.post("/", validateToken,async (req, res) => {
     });
     res.json("Category added successful");
 });
+
+router.get("/:id", validateToken, async (req, res) => {
+  const id = req.params.id;
+  try {
+    const category = await Categories.findByPk(id);
+
+    if (!category) {
+      return res.status(404).json({ error: "Category not found" });
+    }
+
+    res.json(category);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.delete("/:id", validateToken, async (req, res) => {
+  const id = req.params.id;
+  try 
+  {
+    const category = await Categories.findByPk(id);
+
+    if (!category) {
+      return res.status(404).json({ error: "Category not found" });
+    }
+
+    await category.destroy();
+    res.json({ message: "Category deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 module.exports = router;
