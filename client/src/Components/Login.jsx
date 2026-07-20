@@ -16,7 +16,7 @@ export default function Login()
   const [username, setUser] = useState('');
   const [password, setPwd] = useState('');
   const [errMsg, setErrMsg] = useState('');
-  const [success, setSuccess] = useState(false);
+  const [success] = useState(false);
 
   useEffect(() => {
         userRef.current.focus();
@@ -46,7 +46,9 @@ export default function Login()
         else 
         {
             sessionStorage.setItem("accessToken", response.data);
+            sessionStorage.setItem("username", username);
             const accessToken = response.data;
+
             setAuth({ username, accessToken });
             navigate('/dashboard');
         }
