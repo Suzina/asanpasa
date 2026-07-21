@@ -1,9 +1,9 @@
 import React from 'react'
 import { useRef, useState, useEffect, useContext } from 'react';
-import Sidebar from './Sidebar';
-import Header from './Header';
-import { axiosPrivate } from '../api/axios';
-import Footer from './Footer';
+import Sidebar from '../Sidebar';
+import Header from '../Header';
+import { axiosPrivate } from '../../api/axios';
+import Footer from '../Footer';
 const URL = '/categories';
 
 function Categories() {
@@ -20,8 +20,9 @@ function Categories() {
     
     const getCats = async (signal) => 
     {
-        try {
-            const response = await axiosPrivate.get('/categories', { signal });
+        try 
+        {
+            const response = await axiosPrivate.get(URL, { signal });
             setCat(response.data);
         } catch (err) {
             console.log(err);
@@ -48,7 +49,7 @@ function Categories() {
             else 
             {
                 setSuccessMsg("New Category Added!");
-                setName('');       // clear the input
+                setName('');       
                 setCat(prev => [ response.data,...prev]); 
 
             }
@@ -169,6 +170,8 @@ function Categories() {
                 </div>
             </div> 
         </div> 
+                <Footer />
+
         </div>
     </>
   )
