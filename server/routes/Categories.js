@@ -15,12 +15,24 @@ router.get("/", validateToken,async (req, res) => {
   res.json(categories);
 });
 
-router.post("/", validateToken,async (req, res) => {
-  const { name } = req.body;
-  Categories.create({
-      name: name
-    });
-    res.json("Category added successful");
+router.post("/", validateToken,async (req, res) => 
+{
+  try 
+  {
+    const { name } = req.body;
+
+    if (!name || !name.trim()) {
+      return res.status(400).json({ message: "Name is required" });
+    }
+
+    const category = await Categories.create({ name });
+
+    res.status(201).json(category); // return the created object
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Failed to add category" });
+  }
+  
 });
 
 router.get("/:id", validateToken, async (req, res) => {

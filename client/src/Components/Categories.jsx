@@ -3,8 +3,6 @@ import { useRef, useState, useEffect, useContext } from 'react';
 import Sidebar from './Sidebar';
 import Header from './Header';
 import { axiosPrivate } from '../api/axios';
-
-
 import Footer from './Footer';
 const URL = '/categories';
 
@@ -16,8 +14,9 @@ function Categories() {
     const [name, setName] = useState('');
     const [errMsg, setErrMsg] = useState('');
     const [successMsg,setSuccessMsg] = useState(false);
-
     const [categories, setCat] = useState([]);
+    const [loading, setLoading] = useState(false);
+
     
     const getCats = async (signal) => 
     {
@@ -48,9 +47,9 @@ function Categories() {
             } 
             else 
             {
-                setSuccessMsg(response?.data);
+                setSuccessMsg("New Category Added!");
                 setName('');       // clear the input
-                await getCats(); 
+                setCat(prev => [ response.data,...prev]); 
 
             }
             console.log(JSON.stringify(response?.data));
