@@ -49,7 +49,30 @@ router.get("/:id", validateToken, async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+router.put("/:id", validateToken, async (req, res) => {
+  const id = req.params.id;
+  const { name } = req.body;
 
+  if (!name || !name.trim()) {
+    return res.status(400).json({ message: "Name is required" });
+  }
+
+  try {
+    const category = await Categories.findByPk(id);
+
+    if (!category) {
+      return res.status(404).json({ error: "Category not found" });
+    }
+
+    category.name = name;
+    await category.save();
+
+    res.json(category); // return the updated object
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to update category" });
+  }
+});
 router.delete("/:id", validateToken, async (req, res) => {
   const id = req.params.id;
   try 
