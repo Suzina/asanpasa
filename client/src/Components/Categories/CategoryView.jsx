@@ -10,7 +10,7 @@ function CategoryView()
     const [category, setCat] = useState([]);
     const { id } = useParams(); 
     const URL = `/categories/${id}`;
-    const baseUrl = window.location.origin
+    const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
     const getCat = async (signal) => 
     {

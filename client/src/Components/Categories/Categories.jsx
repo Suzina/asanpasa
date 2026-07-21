@@ -1,5 +1,5 @@
-import React from 'react'
 import { useRef, useState, useEffect, useContext } from 'react';
+import { Toaster, toast } from "react-hot-toast";
 import Sidebar from '../Sidebar';
 import Header from '../Header';
 import { axiosPrivate } from '../../api/axios';
@@ -10,50 +10,82 @@ function Categories() {
 
     const userRef = useRef();
     const errRef = useRef();
-    const successRef = useRef();
     const [name, setName] = useState('');
-    const [errMsg, setErrMsg] = useState('');
-    const [successMsg,setSuccessMsg] = useState(false);
     const [categories, setCat] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [editingId, setEditingId] = useState(null);
+    const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
-    
     const getCats = async (signal) => 
     {
         try 
         {
             const response = await axiosPrivate.get(URL, { signal });
             setCat(response.data);
-        } catch (err) {
+        } 
+        catch (err) 
+        {
             console.log(err);
         }
+    }
+    const resetForm = () => 
+    {
+        setName('');
+        setEditingId(null);
     }
     const handleSubmit= async (e) =>
     {
         e.preventDefault();
-        console.log(JSON.stringify({ name }));
         try
         {
-            const response = await axiosPrivate.post(URL,
-            JSON.stringify({ name }),
+            let response;
+            if (editingId !== null) 
             {
-                headers: { 'Content-Type': 'application/json' },
-                withCredentials: true
-            }
-            );
-    
-            if (response.data.error) 
-            {
-                setErrMsg(response.data.error);
-            } 
-            else 
-            {
-                setSuccessMsg("New Category Added!");
-                setName('');       
-                setCat(prev => [ response.data,...prev]); 
+                response = await axiosPrivate.put(`${URL}/${editingId}`,
+                    JSON.stringify({ name }),
+                    {
+                        headers: { 'Content-Type': 'application/json' },
+                        withCredentials: true
+                    }
+                );
+ 
+                if (response.data.error) 
+                {
+                    toast.success(response.data.error)
+                } else {
+                    toast.success("Category Updated!");
+                    setCat(prev =>
+                        prev.map(cat =>
+                            cat.id === editingId ? { ...cat, ...response.data } : cat
+                        )
+                    );
+                    resetForm();
+                }
 
             }
-            console.log(JSON.stringify(response?.data));
+            else
+            {
+                response = await axiosPrivate.post(URL,
+                JSON.stringify({ name }),
+                {
+                    headers: { 'Content-Type': 'application/json' },
+                    withCredentials: true
+                }
+                );
+                
+                if (response.data.error) 
+                {
+                    toast.error(response.data.error);
+                } 
+                else 
+                {
+                    
+                    toast.success("New Category Added!");
+                    setCat(prev => [ response.data,...prev]); 
+                    resetForm();
+                }
+            }
+            
             
         }
         catch (err)
@@ -62,22 +94,43 @@ function Categories() {
     
             if (!err?.response) 
             {
-                setErrMsg('No Server Response');
+                toast.error('No Server Response');
             } else if (err.response?.status === 400) {
-                setErrMsg('Missing Name');
+                toast.error('Missing Name');
             } else if (err.response?.status === 401) {
-                setErrMsg('Unauthorized');
+                toast.error('Unauthorized');
             } else {
-                setErrMsg('Login Failed');
+                toast.error('Login Failed');
             }
             errRef.current.focus();
+        }
+    }
+
+    const handleEditClick = (category) => {
+        setName(category.name);
+        setEditingId(category.id);
+        userRef.current?.focus();
+    }
+
+    const handleDeleteClick = async (id) => {
+        try 
+        {
+            await axiosPrivate.delete(`${URL}/${id}`, { withCredentials: true });
+            setCat(prev => prev.filter(cat => cat.id !== id));
+            if (editingId === id) resetForm();
+            toast.success("Category deleted successfully")
+        } 
+        catch (err) {
+            console.log(err);
+            setErrMsg('Could not delete category');
+            toast.success("Failed to delete category")
         }
     }
 
     useEffect(() => 
     {
         const controller = new AbortController();
-        getCats(controller.signal);
+        getCats();
         return () => controller.abort();
     }, [])
   return (
@@ -89,17 +142,20 @@ function Categories() {
             <div className="content">
                 <div className="breadcrumb-wrapper breadcrumb-wrapper-2 breadcrumb-contacts">
                     <h1>Categories</h1>
-                    <p className="breadcrumbs"><span><a href="index.html">Home</a></span>
-                    <span><i className="mdi mdi-chevron-right"></i></span>Main Categories</p>
+                    <Toaster
+                    position="top-right"
+                    reverseOrder={false}
+                    />
+                    <p className="breadcrumbs"><span><a href={`${baseUrl}/dashboard`}>Home</a></span>
+                    <span><i className="mdi mdi-chevron-right"></i></span>Categories</p>
                 </div>
                 <div className="row">
                     <div className="col-xl-4 col-lg-12">
                         <div className="ec-cat-list card card-default mb-24px">
                             <div className="card-body">
                                 <div className="ec-cat-form">
-                                    <h4>Add New Category</h4>
-                                        <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
-                                        <p ref={successRef} className={successMsg ? "successMsg" : "offscreen"} aria-live="assertive">{successMsg}</p>
+                                        <h4>{editingId !== null ? "Edit Category" : "Add New Category"}</h4>
+                                        
                                         <form id="catForm" onSubmit={handleSubmit}>
                                             <div className="form-group row">
                                                 <label htmlFor="text" className="col-12 col-form-label">Name</label> 
@@ -116,7 +172,14 @@ function Categories() {
                                             </div>
                                             <div className="row">
                                                 <div className="col-12">
-                                                    <button name="submit" type="submit" className="btn btn-primary">Submit</button>
+                                                    <button name="submit" type="submit" className="btn btn-primary">
+                                                        {editingId !== null ? "Update" : "Submit"}
+                                                    </button>
+                                                    {editingId !== null && (
+                                                        <button type="button" className="btn btn-secondary ms-2" onClick={resetForm}>
+                                                            Cancel
+                                                        </button>
+                                                    )}
                                                 </div>
                                             </div>
                                         </form>
@@ -154,9 +217,9 @@ function Categories() {
 															</button>
 
 															<div className="dropdown-menu">
-																<a className="dropdown-item" href="#">Edit</a>
-																<a className="dropdown-item" href="#">Delete</a>
-															</div>
+                                                                <a className="dropdown-item" href={`${baseUrl}/admin/category/${category.id}`}>View</a>
+																<a className="dropdown-item" href="#" onClick={(e) => { e.preventDefault(); handleEditClick(category); }}>Edit</a>
+                                                                <a className="dropdown-item" href="#" onClick={(e) => { e.preventDefault(); handleDeleteClick(category.id); }}>Delete</a>															</div>
 														</div>
 													</td>
                                                     </tr>
