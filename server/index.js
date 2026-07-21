@@ -6,6 +6,7 @@ app.use(express.json());
 app.use(cors({
   origin: "http://localhost:5173",
   credentials: true,
+  allowedHeaders: ["Content-Type", "accessToken"]
 }));
 
 const db = require("./models");
@@ -17,6 +18,9 @@ app.use("/auth", userRoutes);
 
 const dashboardRoutes = require("./routes/Dashboard");
 app.use("/dashboard", dashboardRoutes);
+
+const categoriesRoutes = require("./routes/Categories");
+app.use("/categories", categoriesRoutes);
 
 db.sequelize.sync().then(() => {
   app.listen(3001, () => {
