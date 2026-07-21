@@ -5,7 +5,13 @@ const { validateToken } = require("../middlewares/AuthMiddleware");
 
 
 router.get("/", validateToken,async (req, res) => {
-   const categories = await Categories.findAll();
+   const categories = await Categories.findAll(
+    {
+       order: [
+        ['createdAt', 'DESC'] // Sorts by createdAt column in descending order
+      ]
+    }
+   );
   res.json(categories);
 });
 

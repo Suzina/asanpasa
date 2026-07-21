@@ -13,7 +13,6 @@ export const axiosPrivate = axios.create({
 axiosPrivate.interceptors.request.use((config) => {
   try {
     const token = sessionStorage.getItem("accessToken");
-    console.log("sddddddddddd"+token);
 
     if (token) config.headers.accessToken = token;
   } catch (err) {

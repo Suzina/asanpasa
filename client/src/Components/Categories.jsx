@@ -13,12 +13,21 @@ function Categories() {
     const userRef = useRef();
     const errRef = useRef();
     const successRef = useRef();
-
-
     const [name, setName] = useState('');
     const [errMsg, setErrMsg] = useState('');
     const [successMsg,setSuccessMsg] = useState(false);
 
+    const [categories, setCat] = useState([]);
+    
+    const getCats = async (signal) => 
+    {
+        try {
+            const response = await axiosPrivate.get('/categories', { signal });
+            setCat(response.data);
+        } catch (err) {
+            console.log(err);
+        }
+    }
     const handleSubmit= async (e) =>
     {
         e.preventDefault();
@@ -40,6 +49,9 @@ function Categories() {
             else 
             {
                 setSuccessMsg(response?.data);
+                setName('');       // clear the input
+                await getCats(); 
+
             }
             console.log(JSON.stringify(response?.data));
             
@@ -48,18 +60,26 @@ function Categories() {
         {
             console.log(err)
     
-            if (!err?.response) {
-                    setErrMsg('No Server Response');
-                } else if (err.response?.status === 400) {
-                    setErrMsg('Missing Name');
-                } else if (err.response?.status === 401) {
-                    setErrMsg('Unauthorized');
-                } else {
-                    setErrMsg('Login Failed');
-                }
-                errRef.current.focus();
+            if (!err?.response) 
+            {
+                setErrMsg('No Server Response');
+            } else if (err.response?.status === 400) {
+                setErrMsg('Missing Name');
+            } else if (err.response?.status === 401) {
+                setErrMsg('Unauthorized');
+            } else {
+                setErrMsg('Login Failed');
             }
+            errRef.current.focus();
         }
+    }
+
+    useEffect(() => 
+    {
+        const controller = new AbortController();
+        getCats(controller.signal);
+        return () => controller.abort();
+    }, [])
   return (
     <>
     <Sidebar/>
@@ -82,7 +102,7 @@ function Categories() {
                                         <p ref={successRef} className={successMsg ? "successMsg" : "offscreen"} aria-live="assertive">{successMsg}</p>
                                         <form id="catForm" onSubmit={handleSubmit}>
                                             <div className="form-group row">
-                                                <label for="text" className="col-12 col-form-label">Name</label> 
+                                                <label htmlFor="text" className="col-12 col-form-label">Name</label> 
                                                 <div className="col-12">
                                                     <input name="name" className="form-control here slug-title" type="text" 
                                                     id="name"
@@ -118,10 +138,29 @@ function Categories() {
                                             </thead>
 
                                             <tbody>
-                                                <tr>
-                                                    <td><img className="cat-thumb" src="assets/img/category/clothes.png" alt="Product Image" /></td>
-                                                    <td>Clothes</td>
-                                                </tr>
+                                                {categories.map((category) => (
+                                                    <tr key={category.id}>
+                                                        <td><img className="cat-thumb" src="https://community.softr.io/uploads/db9110/original/2X/7/74e6e7e382d0ff5d7773ca9a87e6f6f8817a68a6.jpeg" alt="{category.name}" /></td>
+                                                        <td>{category.name}</td>
+                                                        <td>
+														<div className="btn-group">
+															<button type="button"
+																className="btn btn-outline-success">View</button>
+															<button type="button"
+																className="btn btn-outline-success dropdown-toggle dropdown-toggle-split"
+																data-bs-toggle="dropdown" aria-haspopup="true"
+																aria-expanded="false" data-display="static">
+																<span className="sr-only">Info</span>
+															</button>
+
+															<div className="dropdown-menu">
+																<a className="dropdown-item" href="#">Edit</a>
+																<a className="dropdown-item" href="#">Delete</a>
+															</div>
+														</div>
+													</td>
+                                                    </tr>
+                                                ))}
                                             </tbody>
                                         </table>
                                     </div>
