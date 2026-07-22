@@ -19,6 +19,7 @@
     "react-data-table-component": "^8.6.2",
     "react-date-range": "^2.0.1",
     "react-dom": "^19.2.7",
+    "react-hot-toast": "^2.6.0",
     "react-router-dom": "^7.18.1",
     "react-slick": "^0.31.0",
     "simplebar-react": "^3.3.2",

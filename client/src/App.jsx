@@ -2,6 +2,8 @@ import './assets/css/custom.css'
 
 import Login from './Components/Login';
 import Dashboard from './Components/Dashboard';
+import Categories from './Components/Categories/Categories';
+import CategoryView from './Components/Categories/CategoryView';
 import { AuthProvider } from './context/AuthProvider';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import NotFound from './Components/NotFound';
@@ -18,6 +20,12 @@ function App() {
           </Route>
           <Route element={<RequireAuth />}>
             <Route path="/dashboard" element={<Dashboard />} />
+          </Route>
+          <Route element={<RequireAuth />}>
+            <Route path="/admin/categories" element={<Categories />} />
+          </Route>
+          <Route element={<RequireAuth />}>
+            <Route path="/admin/category/:id" element={<CategoryView />} />
           </Route>
          <Route path="*" element={<NotFound />} />
         </Routes>

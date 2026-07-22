@@ -4,7 +4,7 @@ import Sidebar from './Sidebar';
 import Header from './Header';
 import Footer from './Footer';
 import { useEffect, useState } from "react";
-import axiosPrivate from '../api/axios';
+import { axiosPrivate } from '../api/axios';
 
 function Dashboard() 
 {
