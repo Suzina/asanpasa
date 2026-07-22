@@ -4,6 +4,11 @@ import Login from './Components/Login';
 import Dashboard from './Components/Dashboard';
 import Categories from './Components/Categories/Categories';
 import CategoryView from './Components/Categories/CategoryView';
+
+import Products from './Components/Products/Products';
+import ProductView from './Components/Products/ProductView';
+
+
 import { AuthProvider } from './context/AuthProvider';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import NotFound from './Components/NotFound';
@@ -27,7 +32,13 @@ function App() {
           <Route element={<RequireAuth />}>
             <Route path="/admin/category/:id" element={<CategoryView />} />
           </Route>
-         <Route path="*" element={<NotFound />} />
+          <Route element={<RequireAuth />}>
+            <Route path="/admin/products" element={<Products />} />
+          </Route>
+          <Route element={<RequireAuth />}>
+            <Route path="/admin/product/:id" element={<ProductView />} />
+          </Route>
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>

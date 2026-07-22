@@ -26,6 +26,7 @@ function Sidebar()
                   <span className="nav-text">Category</span>
                 </a>
               </li>
+              
               <li>
                 <a className="sidenav-item-link" href={`${baseUrl}/admin/products`}>
                   <i className="mdi mdi-format-list-bulleted"></i>
