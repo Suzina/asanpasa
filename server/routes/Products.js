@@ -6,7 +6,10 @@ const ProductController = require("../controllers/ProductController");
 router.use(validateToken);
 
 router.get("/", ProductController.getAll);
-
+router.post("/", ProductController.create);
+router.get("/:id", ProductController.getOne);
+router.put("/:id", ProductController.update);
+router.delete("/:id", ProductController.remove);
    
 
     /*router.post("/",validateToken, async (req, res) => {
