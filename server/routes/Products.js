@@ -1,10 +1,13 @@
 const express = require("express");
 const router = express.Router();
 const { validateToken } = require("../middlewares/AuthMiddleware");
-const { Products } = require("../models");
+const ProductController = require("../controllers/ProductController");
 
+router.use(validateToken);
 
-    router.get("/", validateToken,async (req, res) => 
+router.get("/", ProductController.getAll);
+
+    /*router.get("/", validateToken,async (req, res) => 
     {
         const products = await Products.findAll();
         res.json(products);
@@ -20,6 +23,6 @@ const { Products } = require("../models");
         });
         res.json("SUCCESS");
     });
-
+*/
 
 module.exports = router;

@@ -13,7 +13,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
     },
-   
+   category_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
     slug: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -30,7 +33,13 @@ module.exports = (sequelize, DataTypes) => {
     paranoid: true,        // enables soft-delete using deleted_at automatically!
   });
 
-  
+  Products.associate = (models) => {
+    Products.belongsTo(models.Categories, {
+      foreignKey: "category_id",
+      as: "category",
+    });
+  };
+
 
   return Products;
 };

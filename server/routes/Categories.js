@@ -1,10 +1,17 @@
 const express = require("express");
 const router = express.Router();
-const { Categories } = require("../models");
 const { validateToken } = require("../middlewares/AuthMiddleware");
+const CategoriesController = require("../controllers/CategoriesController");
 
 
-router.get("/", validateToken,async (req, res) => {
+router.use(validateToken);
+router.get("/", CategoriesController.getAll);
+router.post("/", CategoriesController.create);
+router.get("/:id", CategoriesController.getOne);
+router.put("/:id", CategoriesController.update);
+router.delete("/:id", CategoriesController.remove);
+
+/*router.get("/", validateToken,async (req, res) => {
    const categories = await Categories.findAll(
     {
        order: [
@@ -88,5 +95,5 @@ router.delete("/:id", validateToken, async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
-});
+});*/
 module.exports = router;
