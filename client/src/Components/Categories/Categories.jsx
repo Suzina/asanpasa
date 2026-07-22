@@ -100,13 +100,15 @@ function Categories() {
             } else if (err.response?.status === 401) {
                 toast.error('Unauthorized');
             } else {
-                toast.error('Login Failed');
+                toast.error(err.response?.data?.error || err.response?.data?.message || 'Something went wrong');
+
             }
             errRef.current.focus();
         }
     }
 
-    const handleEditClick = (category) => {
+    const handleEditClick = (category) => 
+    {
         setName(category.name);
         setEditingId(category.id);
         userRef.current?.focus();
@@ -120,10 +122,19 @@ function Categories() {
             if (editingId === id) resetForm();
             toast.success("Category deleted successfully")
         } 
-        catch (err) {
-            console.log(err);
-            setErrMsg('Could not delete category');
-            toast.success("Failed to delete category")
+        catch (err) 
+        {
+            console.log(err)
+    
+            if (!err?.response) 
+            {
+                toast.error('No Server Response');
+            }
+           else 
+            {
+                toast.error(err.response?.data?.error || err.response?.data?.message || 'Something went wrong');
+            }
+            errRef.current.focus();
         }
     }
 

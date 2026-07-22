@@ -7,13 +7,9 @@ router.use(validateToken);
 
 router.get("/", ProductController.getAll);
 
-    /*router.get("/", validateToken,async (req, res) => 
-    {
-        const products = await Products.findAll();
-        res.json(products);
-    });
+   
 
-    router.post("/",validateToken, async (req, res) => {
+    /*router.post("/",validateToken, async (req, res) => {
         const { name,image,price,category} = req.body;
         Products.create({
           name: name,

@@ -1,15 +1,14 @@
 const { Products } = require("../models");
+const asyncHandler = require("../middlewares/asyncHandler");
 
-const getAll = async (req, res) => {
-  try {
-    const categories = await Products.findAll({
-      order: [['createdAt', 'DESC']]
-    });
-    res.json(categories);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Failed to fetch products" });
-  }
-};
+const getAll = asyncHandler(async (req, res) => {
+    const products = await Products.findByPk(req.params.id);
+    if (!products) {
+        const err = new Error("Products not found");
+        err.status = 404;
+        throw err;
+    }
+    res.json(products);
+});
 
 module.exports = { getAll};

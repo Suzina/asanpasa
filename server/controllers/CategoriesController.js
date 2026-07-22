@@ -1,89 +1,93 @@
 const { Categories } = require("../models");
+const asyncHandler = require("../middlewares/asyncHandler");
 
 
-const getAll = async (req, res) => {
-  try {
-    const categories = await Categories.findAll({
+const getAll = asyncHandler(async (req, res) => 
+{
+
+  const categories = await Categories.findAll({
       order: [['createdAt', 'DESC']]
-    });
-    res.json(categories);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Failed to fetch categories" });
+  });
+  if (!categories) {
+    const err = new Error("Category not found");
+    err.status = 404;
+    throw err;
   }
-};
+  res.json(categories);
+ 
+});
 
-const getOne = async (req, res) => {
+const getOne = asyncHandler(async (req, res) => {
   const id = req.params.id;
-  try {
-    const category = await Categories.findByPk(id);
-
-    if (!category) {
-      return res.status(404).json({ error: "Category not found" });
-    }
-
-    res.json(category);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: err.message });
-  }
-};
-const create = async (req, res) => {
-    try 
+  const category = await Categories.findByPk(id);
+  if (!category) 
   {
-    const { name } = req.body;
-
-    if (!name || !name.trim()) {
-      return res.status(400).json({ message: "Name is required" });
-    }
-
-    const category = await Categories.create({ name });
-
-    res.status(201).json(category); // return the created object
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Failed to add category" });
+    const err = new Error("Category not found");
+    err.status = 404;
+    throw err;
   }
-}
-const update = async (req, res) => {
-    const id = req.params.id;
+  res.json(category);
+ 
+});
+const create = asyncHandler(async (req, res)=> 
+{
+  
   const { name } = req.body;
 
-  if (!name || !name.trim()) {
-    return res.status(400).json({ message: "Name is required" });
-  }
-
-  try {
-    const category = await Categories.findByPk(id);
-
-    if (!category) {
-      return res.status(404).json({ error: "Category not found" });
-    }
-
-    category.name = name;
-    await category.save();
-
-    res.json(category); // return the updated object
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Failed to update category" });
-  }
-}
-const remove = async (req, res) => {
-    const id = req.params.id;
-  try 
+  if (!name || !name.trim()) 
   {
-    const category = await Categories.findByPk(id);
-
-    if (!category) {
-      return res.status(404).json({ error: "Category not found" });
-    }
-
-    await category.destroy();
-    res.json({ message: "Category deleted successfully" });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+    const err = new Error("Name is required");
+    err.status = 400;
+    throw err;
   }
-}
+
+  const category = await Categories.create({ name });
+
+  res.status(201).json(category); 
+  
+});
+
+const update = asyncHandler(async (req, res) => 
+{
+  const id = req.params.id;
+  const { name } = req.body;
+
+  if (!name || !name.trim()) 
+  {
+    const err = new Error("Name is required");
+    err.status = 400;
+    throw err;
+  }
+  const category = await Categories.findByPk(id);
+
+  if (!category) 
+  {
+    const err = new Error("Category not found");
+    err.status = 400;
+    throw err;
+  }
+
+  category.name = name;
+  await category.save();
+
+  res.json(category); // return the updated object
+  
+});
+
+const remove = asyncHandler(async (req, res) => 
+{
+  const id = req.params.id;
+  const category = await Categories.findByPk(id);
+  if (!category) 
+  {
+    const err = new Error("Category not found");
+    err.status = 400;
+    throw err;
+  }
+
+  await category.destroy();
+  res.json({ message: "Category deleted successfully" });
+} 
+);
 
 module.exports = { getAll, getOne, create, update, remove };
