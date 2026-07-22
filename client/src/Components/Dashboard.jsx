@@ -1,4 +1,3 @@
-import React from "react";
 import useDashboardUI from '../hooks/useDashboardUI';
 import Sidebar from './Sidebar';
 import Header from './Header';

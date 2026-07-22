@@ -13,7 +13,8 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    category: {
+   
+    slug: {
       type: DataTypes.STRING,
       allowNull: false,
     },
@@ -22,11 +23,14 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
       },
   },
+  
   {
     timestamps: true,      // enables createdAt/updatedAt auto-management
     underscored: true,     // maps them to created_at / updated_at in the DB
     paranoid: true,        // enables soft-delete using deleted_at automatically!
   });
+
+  
 
   return Products;
 };
