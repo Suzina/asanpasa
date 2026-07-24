@@ -2,26 +2,15 @@ const express = require("express");
 const router = express.Router();
 const { validateToken } = require("../middlewares/AuthMiddleware");
 const ProductController = require("../controllers/ProductController");
+const upload = require("../middlewares/upload");
 
 router.use(validateToken);
 
 router.get("/", ProductController.getAll);
-router.post("/", ProductController.create);
+router.post("/", upload.single("image"), ProductController.create);
 router.get("/:id", ProductController.getOne);
-router.put("/:id", ProductController.update);
+router.put("/:id", upload.single("image"),ProductController.update);
 router.delete("/:id", ProductController.remove);
    
-
-    /*router.post("/",validateToken, async (req, res) => {
-        const { name,image,price,category} = req.body;
-        Products.create({
-          name: name,
-          image: image,
-          price:price,
-          category:category,
-        });
-        res.json("SUCCESS");
-    });
-*/
 
 module.exports = router;

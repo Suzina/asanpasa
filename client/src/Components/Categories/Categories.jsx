@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect, useContext } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { Toaster, toast } from "react-hot-toast";
 import Sidebar from '../Sidebar';
 import Header from '../Header';
@@ -12,7 +12,6 @@ function Categories() {
     const errRef = useRef();
     const [name, setName] = useState('');
     const [categories, setCat] = useState([]);
-    const [loading, setLoading] = useState(false);
     const [editingId, setEditingId] = useState(null);
     const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
