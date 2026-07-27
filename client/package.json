@@ -23,7 +23,8 @@
     "react-router-dom": "^7.18.1",
     "react-slick": "^0.31.0",
     "simplebar-react": "^3.3.2",
-    "slick-carousel": "^1.8.1"
+    "slick-carousel": "^1.8.1",
+    "slugify": "^1.6.9"
   },
   "devDependencies": {
     "@babel/core": "^7.29.7",
