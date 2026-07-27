@@ -80,14 +80,9 @@ const create = asyncHandler(async (req, res) =>
 const update = asyncHandler(async (req, res) => 
 {
     const id = req.params.id;
-    const { product_id,fullname,address,phonenumber,total_amt,advance,amt_due } = req.body;
+    const { fullname,address,phonenumber,total_amt,advance,amt_due } = req.body;
 
-     if (!product_id || !fullname.trim() || !fullname || !address || !phonenumber || !total_amt || !advance|| !amt_due) 
-    {
-        const err = new Error("Field is required");
-        err.status = 400;
-        throw err;
-    }
+     
    
     const order = await Orders.findByPk(id);
 
@@ -101,26 +96,27 @@ const update = asyncHandler(async (req, res) =>
     order.fullname = fullname;
     order.address = address;
     order.phonenumber = phonenumber;
-    order.slug = slug;
+    order.total_amt = total_amt;
+    order.advance = advance;
+    order.amt_due = amt_due;
+    await order.save();
 
-    await product.save();
-
-    res.json(product); 
+    res.json(order); 
 });
 
 const remove = asyncHandler(async (req, res) => 
 {
     const id = req.params.id;
-    const product = await Products.findByPk(id);
-    if (!product) 
+    const order = await Orders.findByPk(id);
+    if (!order) 
     {
-        const err = new Error("Product not found");
+        const err = new Error("Order not found");
         err.status = 400;
         throw err;
     }
 
-    await product.destroy();
-    res.json({ message: "Product deleted successfully" });
+    await order.destroy();
+    res.json({ message: "Order deleted successfully" });
 });
 
 module.exports = { getAll, getOne, create, update, remove };
