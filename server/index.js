@@ -26,6 +26,9 @@ app.use("/products", productsRoutes);
 const categoriesRoutes = require("./routes/Categories");
 app.use("/categories", categoriesRoutes);
 
+const ordersRoutes = require("./routes/Orders");
+app.use("/orders", ordersRoutes);
+
 app.use(errorHandler); 
 
 db.sequelize.sync().then(() => {

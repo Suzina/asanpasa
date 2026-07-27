@@ -32,6 +32,11 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
         defaultValue: 0.00,
     },
+    user_id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    
     deleted_at: {
         type: DataTypes.DATE,
         allowNull: true,
@@ -45,12 +50,18 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   Orders.associate = (models) => {
-    Orders.belongsTo(models.Products, {
-      foreignKey: "product_id",
-      as: "product",
-    });
-  };
+  Orders.belongsTo(models.Products, {
+    foreignKey: "product_id",
+    as: "product",
+  });
 
+  Orders.belongsTo(models.Users, {
+    foreignKey: "user_id",
+    as: "user",
+  });
+};
+
+  
 
   return Orders;
 };
