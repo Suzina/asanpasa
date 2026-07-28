@@ -295,14 +295,17 @@ export default function useDashboardUI() {
         slugTitleInput.removeEventListener("keyup", handleKeypress);
       });
     }
-
+    
     /* ======== FOOTER YEAR ======== */
     const yearEl = document.getElementById("ec-year");
     if (yearEl) {
       yearEl.textContent = new Date().getFullYear();
     }
 
+    
     /* ======== CLEANUP ON UNMOUNT ======== */
     return () => cleanupFns.forEach((fn) => fn());
   }, []);
+
+  
 }

@@ -17,7 +17,7 @@ function Header()
 
   return (
     <div>
-		      <h3>Hello! {username}</h3>
+		      
 
       	<header className="ec-main-header" id="header">
 				<nav className="navbar navbar-static-top navbar-expand-lg">
@@ -34,6 +34,7 @@ function Header()
 							<ul id="search-results"></ul>
 						</div>
 					</div>
+						<h3>Hello! {username}</h3>
 
 					<div className="navbar-right">
 						<ul className="nav navbar-nav">

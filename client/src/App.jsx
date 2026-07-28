@@ -8,6 +8,9 @@ import CategoryView from './Components/Categories/CategoryView';
 import Products from './Components/Products/Products';
 import ProductView from './Components/Products/ProductView';
 
+import Orders from './Components/Orders/Orders';
+import OrderView from './Components/Orders/OrderView';
+import OrderAdd from './Components/Orders/OrderAdd';
 
 import { AuthProvider } from './context/AuthProvider';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
@@ -37,6 +40,15 @@ function App() {
           </Route>
           <Route element={<RequireAuth />}>
             <Route path="/admin/product/:id" element={<ProductView />} />
+          </Route>
+          <Route element={<RequireAuth />}>
+            <Route path="/admin/orders" element={<Orders />} />
+          </Route>
+          <Route element={<RequireAuth />}>
+            <Route path="/admin/order/add" element={<OrderAdd />} />
+          </Route>
+          <Route element={<RequireAuth />}>
+            <Route path="/admin/order/:id" element={<OrderView />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>

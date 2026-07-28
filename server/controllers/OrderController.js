@@ -7,21 +7,34 @@ const asyncHandler = require("../middlewares/asyncHandler");
 
 const getAll = asyncHandler(async (req, res) => 
 {
-    const orders = await Orders.findAll({
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const offset = (page - 1) * limit;
+
+    const { count, rows } = await Orders.findAndCountAll({
         order: [['createdAt', 'DESC']],
-        include: {
-            model: Products,
-            as: "product",       // must match the alias in Products.belongsTo
-            attributes: ["id", "name"]  // only pull what you need
+        limit,
+        offset,
+        include: [
+            {
+                model: Products,
+                as: "product",   // must match alias in Orders.belongsTo(Products)
+                attributes: ["name"],
             },
-        });
-    if (!orders) 
-    {
-        const err = new Error("Orders not found");
-        err.status = 404;
-        throw err;
-    }
-    res.json(orders);
+            {
+                model: Users,
+                as: "user",       // must match alias in Orders.belongsTo(Users)
+                attributes: ["username"],
+            },
+        ],
+    });
+
+    res.json({
+        items: rows,
+        totalItems: count,
+        totalPages: Math.ceil(count / limit),
+        currentPage: page,
+    });
 });
 
 const getOne = asyncHandler(async (req, res) => 
