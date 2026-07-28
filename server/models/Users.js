@@ -35,6 +35,16 @@ module.exports = (sequelize, DataTypes) => {
       underscored: true,     // maps them to created_at / updated_at in the DB
       paranoid: true,        // enables soft-delete using deleted_at automatically!
     });
-
+Users.associate = (models) => 
+  {
+    Users.hasMany(models.Orders, {
+      foreignKey: "user_id",
+      as: "orders",
+    });
+    Users.hasMany(models.OrderItem, {
+      foreignKey: "user_id",
+      as: "orderitems",
+    });
+  };
   return Users;
 };

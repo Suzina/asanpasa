@@ -1,9 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
   const Orders = sequelize.define("Orders", {
-    product_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-    },
     fullname: 
     {
       type: DataTypes.STRING,
@@ -50,18 +46,26 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   Orders.associate = (models) => {
-  Orders.belongsTo(models.Products, {
-    foreignKey: "product_id",
-    as: "product",
-  });
+    // One order belongs to one user
+    Orders.belongsTo(models.Users, {
+      foreignKey: "user_id",
+      as: "user",
+    });
 
-  Orders.belongsTo(models.Users, {
-    foreignKey: "user_id",
-    as: "user",
-  });
-};
+    // One order has many products, through OrderItems
+    Orders.belongsToMany(models.Products, {
+      through: models.OrderItem,
+      foreignKey: "order_id",
+      otherKey: "product_id",
+      as: "products",
+    });
 
-  
+    // Direct access to the join rows themselves (useful for quantity/price per line)
+    Orders.hasMany(models.OrderItem, {
+      foreignKey: "order_id",
+      as: "orderItems",
+    });
+  };
 
   return Orders;
 };

@@ -4,6 +4,9 @@ import Header from '../Header';
 import Footer from '../Footer';
 import { Toaster, toast } from "react-hot-toast";
 import { axiosPrivate } from '../../api/axios';
+import { useNavigate } from 'react-router-dom';
+import Select from 'react-select';
+
 const URL = '/orders';
 
 function OrderAdd() 
@@ -12,14 +15,16 @@ function OrderAdd()
     const errRef = useRef();
 
     const baseUrl = import.meta.env.VITE_API_BASE_URL;
+    const navigate = useNavigate();
+
     const [editingId, setEditingId] = useState(null);
     const [products, setProducts] = useState([]);
     const [fullname, setFullname] = useState('');
-    const [address, setAddress] = useState(null);
-    const [phonenumber, setPhonenumber] = useState(null);
-    const [total_amt, setTotalAmt] = useState(null);
-    const [advance, setAdvance] = useState(null);
-    const [amt_due, setAmtdue] = useState(null);
+    const [address, setAddress] = useState('');
+    const [phonenumber, setPhonenumber] = useState('');
+    const [total_amt, setTotalAmt] = useState('');
+    const [advance, setAdvance] = useState('');
+    const [amt_due, setAmtdue] = useState('');
     const [product_id, setProductId] = useState('');
 
     const getProducts = async (signal) => 
@@ -35,11 +40,11 @@ function OrderAdd()
         }
     }
    
-    const resetForm = () => 
-    {
-        setName('');
-        setEditingId(null);
-    }
+    const productOptions = products.map(product => ({
+        value: product.id,
+        label: product.name
+    }));
+   
     const handleSubmit= async (e) =>
     {
         e.preventDefault();
@@ -72,7 +77,7 @@ function OrderAdd()
             else
             {
                 response = await axiosPrivate.post(URL,
-                JSON.stringify({ name,price,image,category_id }),
+                JSON.stringify({ product_id,fullname,address,phonenumber,total_amt,advance,amt_due }),
                 {
                     headers: { 'Content-Type': 'application/json' },
                     withCredentials: true
@@ -83,15 +88,13 @@ function OrderAdd()
                 {
                     toast.error(response.data.error);
                     console.log(response.data).error;
-
+                    
                 } 
                 else 
                 {
-                    
-                    toast.success("New Product Added!");
+                    toast.success("New Order Added!");
                     console.log(response.data);
-                    setProducts(prev => [ response.data,...prev]); 
-                    resetForm();
+                    navigate('/admin/orders'); 
                 }
             }
             
@@ -101,7 +104,7 @@ function OrderAdd()
         {
             console.log(err)
     
-            if (!err?.response) 
+            if (err?.response) 
             {
                 toast.error('No Server Response');
             } else if (err.response?.status === 400) {
@@ -122,6 +125,7 @@ function OrderAdd()
         getProducts();
         return () => controller.abort();
     }, [])
+
 return (
     <>
     <Sidebar/>
@@ -130,7 +134,7 @@ return (
 		<div className="ec-content-wrapper">
             <div className="content">
                 <div className="breadcrumb-wrapper breadcrumb-wrapper-2 breadcrumb-contacts">
-                    <h1>Products</h1>
+                    <h1>Add Order</h1>
                     <Toaster
                     position="top-right"
                     reverseOrder={false}
@@ -146,26 +150,11 @@ return (
                         <div className="ec-cat-list card card-default mb-24px">
                             <div className="card-body">
                                 <div className="ec-cat-form">
-                                        <h4>{editingId !== null ? "Edit Order" : "Add New Order"}</h4>
-                                        <form id="catForm" onSubmit={handleSubmit}>
+                                    <form id="catForm" onSubmit={handleSubmit}>
+                                        <h4>Customer Information</h4>
                                             <div className="form-group row">
-                                                <label htmlFor="text" className="col-12 col-form-label">Products</label> 
                                                 <div className="col-6">
-                                                    <select
-                                                        name="product_id"
-                                                        id="Products"
-                                                        className="form-select"
-                                                        value={product_id}  // must be a number/string, e.g. 3, not { id: 3, name: "Electronics" }
-                                                        onChange={(e) => setProductId(e.target.value)}
-                                                    >
-                                                        <option value="">Select a Product</option>
-                                                        {products.map((product) => (
-                                                            <option key={product.id} value={product.id}>{product.name}</option>
-                                                        ))}
-                                                    </select>
-                                                </div>
-                                                <label htmlFor="text" className="col-12 col-form-label">Fullname</label> 
-                                                <div className="col-6">
+                                                    <label htmlFor="text" className="col-12 col-form-label">Fullname</label> 
                                                     <input name="name" className="form-control here slug-title" type="text" 
                                                     id="fullname"
                                                     ref={userRef}
@@ -175,8 +164,8 @@ return (
                                                     placeholder="Enter Fullname" required
                                                     />
                                                 </div>
-                                               <label htmlFor="text" className="col-12 col-form-label">Address</label> 
                                                 <div className="col-6">
+                                                    <label htmlFor="text" className="col-12 col-form-label">Address</label> 
                                                     <input name="address" className="form-control here slug-title" type="text" 
                                                     id="address"
                                                     ref={userRef}
@@ -186,8 +175,8 @@ return (
                                                     placeholder="Enter address" required
                                                     />
                                                 </div>
-                                                <label htmlFor="text" className="col-12 col-form-label">Phone Number</label> 
                                                 <div className="col-6">
+                                                    <label htmlFor="text" className="col-12 col-form-label">Phone Number</label> 
                                                     <input name="phonenumber" className="form-control here slug-title" type="text" 
                                                     id="phonenumber"
                                                     ref={userRef}
@@ -197,19 +186,33 @@ return (
                                                     placeholder="Enter phonenumber" required
                                                     />
                                                 </div>  
-                                                <label htmlFor="text" className="col-12 col-form-label">Total Amount</label> 
+                                                <div className="col-12"><h4>Orders</h4></div>
+
+                                                <div className="col-12">
+                                                    <label htmlFor="text" className="col-12 col-form-label">Products</label> 
+                                                    <Select
+                                                        name="product_id"
+                                                        options={productOptions}
+                                                        value={productOptions.find(option => option.value === product_id) || null}
+                                                        isSearchable={true} 
+                                                        onChange={(selectedOption) => setProductId(selectedOption ? selectedOption.value : "")}
+                                                        placeholder="Select a Product"
+                                                        />
+                                                </div>
+                                               
                                                 <div className="col-6">
+                                                    <label htmlFor="text" className="col-12 col-form-label">Total Amount</label> 
                                                     <input name="total_amt" className="form-control here slug-title" type="text" 
                                                     id="total_amt"
                                                     ref={userRef}
                                                     autoComplete="off"
                                                     onChange={(e) => setTotalAmt(e.target.value)}
                                                     value={total_amt}
-                                                    placeholder="Enter total_amt" required
+                                                    placeholder="Enter Total Price" required
                                                     />
                                                 </div>     
-                                                <label htmlFor="text" className="col-12 col-form-label">Advance</label> 
                                                 <div className="col-6">
+                                                    <label htmlFor="text" className="col-12 col-form-label">Advance</label> 
                                                     <input name="advance" className="form-control here slug-title" type="text" 
                                                     id="advance"
                                                     ref={userRef}
@@ -219,22 +222,11 @@ return (
                                                     placeholder="Enter advance" required
                                                     />
                                                 </div> 
-                                                <label htmlFor="text" className="col-12 col-form-label">Amount Due</label> 
-                                                <div className="col-6">
-                                                    <input name="advance" className="form-control here slug-title" type="text" 
-                                                    id="amt_due"
-                                                    ref={userRef}
-                                                    autoComplete="off"
-                                                    onChange={(e) => setAmtdue(e.target.value)}
-                                                    value={amt_due}
-                                                    placeholder="Enter amt due" required
-                                                    />
-                                                </div>            
                                             </div>
                                             <div className="row">
                                                 <div className="col-12">
                                                     <button name="submit" type="submit" className="btn btn-primary">
-                                                        {editingId !== null ? "Update" : "Submit"}
+                                                        {editingId !== null ? "Update" : "Save"}
                                                     </button>
                                                     {editingId !== null && (
                                                         <button type="button" className="btn btn-secondary ms-2" onClick={resetForm}>

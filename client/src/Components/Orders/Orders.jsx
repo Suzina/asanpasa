@@ -176,6 +176,11 @@ function Orders()
             errRef.current.focus();
         }
     }
+     const goToPage = (page) => 
+    {
+        if (page < 1 || page > totalPages || page === currentPage) return;
+        getOrders(page);
+    }
     useEffect(() => 
     {
         const controller = new AbortController();
@@ -204,7 +209,7 @@ return (
                     <div className="col-xl-12 col-lg-12">
                         <div className="ec-cat-list card card-default">
                             <div className="card-body">
-                                <a href={`${baseUrl}/admin/orders/add`}>Add Order</a>
+                                <a href={`${baseUrl}/admin/order/add`}>Add Order</a>
                             </div>
                         </div>
                     </div>
@@ -233,7 +238,7 @@ return (
                                                 {orders.map((order,index) => (
                                                     <tr key={order.id}>
                                                         <td>{index + 1}</td>
-                                                        <td>{order.fullname}</td>
+                                                        <td><a href={`${baseUrl}/admin/order/${order.id}`}>{order.fullname}</a></td>
                                                         <td>{order.address}</td>
                                                         <td>{order.phonenumber}</td>
                                                         <td>{order.product.name}</td>
@@ -265,8 +270,8 @@ return (
                                                                 </button>
 
 															    <div className="dropdown-menu">
-                                                                    <a className="dropdown-item" href={`${baseUrl}/admin/orders/${order.id}`}>View</a>
-                                                                    <a className="dropdown-item" href={`${baseUrl}/admin/orders/${order.id}`}>Edit</a>
+                                                                    <a className="dropdown-item" href={`${baseUrl}/admin/order/${order.id}`}>View</a>
+                                                                    <a className="dropdown-item" href={`${baseUrl}/admin/order/${order.id}`}>Edit</a>
                                                                     <a className="dropdown-item" href="#" onClick={(e) => { e.preventDefault(); handleDeleteClick(order.id); }}>Delete</a>															</div>
 														    </div>
 													    </td>

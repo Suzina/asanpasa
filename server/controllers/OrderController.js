@@ -16,16 +16,11 @@ const getAll = asyncHandler(async (req, res) =>
         limit,
         offset,
         include: [
-            {
-                model: Products,
-                as: "product",   // must match alias in Orders.belongsTo(Products)
-                attributes: ["name"],
-            },
-            {
-                model: Users,
-                as: "user",       // must match alias in Orders.belongsTo(Users)
-                attributes: ["username"],
-            },
+        {
+            model: Users,
+            as: "user",       // must match alias in Orders.belongsTo(Users)
+            attributes: ["username"],
+        },
         ],
     });
 
@@ -52,9 +47,9 @@ const getOne = asyncHandler(async (req, res) =>
 
 const create = asyncHandler(async (req, res) => 
 {
-    const { product_id,fullname,address,phonenumber,total_amt,advance,user_id } = req.body;
-
-    if (!product_id || !fullname.trim() || !fullname || !address || !phonenumber || !total_amt || !advance|| !user_id) 
+    const { product_id,fullname,address,phonenumber,total_amt,advance } = req.body;
+    const user_id = req.user.id; 
+    if (!product_id || !fullname.trim() || !fullname || !address || !phonenumber || !total_amt || !advance) 
     {
         const err = new Error("Field is required");
         err.status = 400;
@@ -77,12 +72,12 @@ const create = asyncHandler(async (req, res) =>
     include: [
         {
             model: Products,
-            as: "product",   // must match alias in Orders.belongsTo(Products)
+            as: "product",   
             attributes: ["name"],
         },
         {
             model: Users,
-            as: "user",       // must match alias in Orders.belongsTo(Users)
+            as: "user",       
             attributes: ["username"],
         },
     ],
