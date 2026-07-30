@@ -4,10 +4,13 @@ import Header from '../Header';
 import Footer from '../Footer';
 import { Toaster, toast } from "react-hot-toast";
 import { axiosPrivate } from '../../api/axios';
+import useDashboardUI from '../../hooks/useDashboardUI';
+
 const URL = '/orders';
 
 function Orders() 
 {
+    useDashboardUI();
     const userRef = useRef();
     const errRef = useRef();
 

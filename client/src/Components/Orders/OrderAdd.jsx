@@ -6,11 +6,13 @@ import { Toaster, toast } from "react-hot-toast";
 import { axiosPrivate } from '../../api/axios';
 import { useNavigate } from 'react-router-dom';
 import Select from 'react-select';
+import useDashboardUI from '../../hooks/useDashboardUI';
 
 const URL = '/orders';
 
 function OrderAdd() 
 {
+    useDashboardUI();
     const userRef = useRef();
     const errRef = useRef();
 
