@@ -30,7 +30,8 @@ export default function Login()
   {
     e.preventDefault();
     console.log(JSON.stringify({ username, password }));
-    try{
+    try
+    {
         const response = await axios.post(LOGIN_URL,
         JSON.stringify({ username, password }),
         {
@@ -50,17 +51,9 @@ export default function Login()
             const accessToken = response.data;
 
             setAuth({ username, accessToken });
-            navigate('/dashboard');
+            navigate('/admin/dashboard');
         }
         console.log(JSON.stringify(response?.data));
-        /*const accessToken = response?.data?.accessToken;
-        const roles = response?.data?.roles;
-        setAuth({ username, password, accessToken });
-        setUser('');
-        setPwd('');
-        
-        //setSuccess(true);
-        console.log("congratulations! You are in!")*/
     }
     catch (err)
     {

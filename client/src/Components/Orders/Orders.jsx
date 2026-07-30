@@ -224,7 +224,6 @@ return (
                                                     <th>Fullname</th>
                                                     <th>Address</th>
                                                     <th>Phone Number</th>
-                                                    <th>Product</th>
                                                     <th>Total Amt</th>
                                                     <th>Advance</th>
                                                     <th>Amt Due</th>
@@ -241,7 +240,6 @@ return (
                                                         <td><a href={`${baseUrl}/admin/order/${order.id}`}>{order.fullname}</a></td>
                                                         <td>{order.address}</td>
                                                         <td>{order.phonenumber}</td>
-                                                        <td>{order.product.name}</td>
                                                         <td>{order.total_amt}</td>
                                                         <td>{order.advance}</td>
                                                         <td>{order.amt_due}</td>

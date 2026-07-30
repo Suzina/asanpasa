@@ -1,7 +1,8 @@
 const { Products } = require("../models");
 const { Users } = require("../models");
 const { Orders } = require("../models");
-const slugify = require("slugify");
+const { OrderItem } = require("../models");
+
 
 const asyncHandler = require("../middlewares/asyncHandler");
 
@@ -47,11 +48,11 @@ const getOne = asyncHandler(async (req, res) =>
 
 const create = asyncHandler(async (req, res) => 
 {
-    const { product_id,fullname,address,phonenumber,total_amt,advance } = req.body;
+    const { items,fullname,address,phonenumber,total_amt,advance } = req.body;
     const user_id = req.user.id; 
-    if (!product_id || !fullname.trim() || !fullname || !address || !phonenumber || !total_amt || !advance) 
+    if (!fullname || !address || !phonenumber || !total_amt || !advance) 
     {
-        const err = new Error("Field is required");
+        const err = new Error("Required fields are missing");
         err.status = 400;
         throw err;
     }
@@ -59,7 +60,6 @@ const create = asyncHandler(async (req, res) =>
     let amt_due=total_amt-advance;
 
     const order = await Orders.create({
-        product_id,
         fullname,
         address,
         phonenumber,
@@ -68,11 +68,22 @@ const create = asyncHandler(async (req, res) =>
         amt_due,
         user_id
     });
+
+    const orderItems = items.map(item => ({
+        order_id: order.id,
+        product_id: item.product_id,
+        qty: item.qty,
+        price: item.price,
+        user_id
+    }));
+
+    await OrderItem.bulkCreate(orderItems);
+
    const orderWithProduct = await Orders.findByPk(order.id, {
     include: [
         {
             model: Products,
-            as: "product",   
+            as: "products",   
             attributes: ["name"],
         },
         {
@@ -90,8 +101,6 @@ const update = asyncHandler(async (req, res) =>
     const id = req.params.id;
     const { fullname,address,phonenumber,total_amt,advance,amt_due } = req.body;
 
-     
-   
     const order = await Orders.findByPk(id);
 
     if (!order) 

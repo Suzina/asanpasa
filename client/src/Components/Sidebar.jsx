@@ -33,6 +33,12 @@ function Sidebar()
                   <span className="nav-text">Products</span>
                 </a>
               </li>
+              <li>
+                <a className="sidenav-item-link" href={`${baseUrl}/admin/orders`}>
+                  <i className="mdi mdi-format-list-bulleted"></i>
+                  <span className="nav-text">Orders</span>
+                </a>
+              </li>
             </ul>
           </div>
         </div>

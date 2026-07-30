@@ -24,8 +24,39 @@ function OrderAdd()
     const [phonenumber, setPhonenumber] = useState('');
     const [total_amt, setTotalAmt] = useState('');
     const [advance, setAdvance] = useState('');
-    const [amt_due, setAmtdue] = useState('');
-    const [product_id, setProductId] = useState('');
+    
+    const [orderItems, setOrderItems] = useState([
+    {
+        product_id: "",
+        qty: 1,
+        price: ""
+    }
+    ]);
+
+    const addRow = () => {
+        setOrderItems([
+            ...orderItems,
+            {
+                product_id: "",
+                qty: 1,
+                price: ""
+            }
+        ]);
+    };
+    const removeRow = (index) => 
+    {
+        const items = [...orderItems];
+        items.splice(index, 1);
+        setOrderItems(items);
+    };
+
+    const handleItemChange = (index, field, value) => 
+    {
+        const items = [...orderItems];
+        items[index][field] = value;
+        setOrderItems(items);
+        console.log(items);
+    };
 
     const getProducts = async (signal) => 
     {
@@ -77,7 +108,7 @@ function OrderAdd()
             else
             {
                 response = await axiosPrivate.post(URL,
-                JSON.stringify({ product_id,fullname,address,phonenumber,total_amt,advance,amt_due }),
+                JSON.stringify({ fullname,address,phonenumber,total_amt,advance,items: orderItems }),
                 {
                     headers: { 'Content-Type': 'application/json' },
                     withCredentials: true
@@ -119,12 +150,14 @@ function OrderAdd()
         }
     }
 
-    useEffect(() => 
-    {
-        const controller = new AbortController();
+    useEffect(() => {
         getProducts();
-        return () => controller.abort();
-    }, [])
+    const total = orderItems.reduce((sum, item) => {
+        const price = parseFloat(item.price) || 0;
+        return sum + price;
+    }, 0);
+    setTotalAmt(total.toFixed(2));
+}, [orderItems]);
 
 return (
     <>
@@ -185,21 +218,79 @@ return (
                                                     value={phonenumber}
                                                     placeholder="Enter phonenumber" required
                                                     />
-                                                </div>  
-                                                <div className="col-12"><h4>Orders</h4></div>
+                                                </div> 
+                                            </div>
+                                            <div className="col-12"><h4>Orders</h4></div>
 
-                                                <div className="col-12">
-                                                    <label htmlFor="text" className="col-12 col-form-label">Products</label> 
-                                                    <Select
-                                                        name="product_id"
-                                                        options={productOptions}
-                                                        value={productOptions.find(option => option.value === product_id) || null}
-                                                        isSearchable={true} 
-                                                        onChange={(selectedOption) => setProductId(selectedOption ? selectedOption.value : "")}
-                                                        placeholder="Select a Product"
+                                            {orderItems.map((item, index) => (
+                                                <div className="row mb-3" key={index}>
+                                                    <div className="col-md-5">
+                                                        <label>Product</label>
+                                                        <Select
+                                                            options={productOptions}
+                                                            value={
+                                                                productOptions.find(
+                                                                    option => option.value === item.product_id
+                                                                ) || null
+                                                            }
+                                                            onChange={(selected) =>
+                                                                handleItemChange(
+                                                                    index,
+                                                                    "product_id",
+                                                                    selected ? selected.value : ""
+                                                                )
+                                                            }
                                                         />
+                                                    </div>
+
+                                                    <div className="col-md-2">
+                                                        <label>Qty</label>
+                                                        <input
+                                                            type="number"
+                                                            className="form-control"
+                                                            value={item.qty}
+                                                            onChange={(e) =>
+                                                                handleItemChange(index, "qty", e.target.value)
+                                                            }
+                                                        />
+                                                    </div>
+
+                                                    <div className="col-md-3">
+                                                        <label>Price</label>
+                                                        <input
+                                                            type="number"
+                                                            className="form-control"
+                                                            value={item.price}
+                                                            onChange={(e) =>
+                                                                handleItemChange(index, "price", e.target.value)
+                                                            }
+                                                        />
+                                                    </div>
+
+                                                    <div className="col-md-2 d-flex align-items-end">
+                                                        {index === 0 ? (
+                                                            <button
+                                                                type="button"
+                                                                className="btn btn-success"
+                                                                onClick={addRow}
+                                                            >
+                                                                +
+                                                            </button>
+                                                        ) : (
+                                                            <button
+                                                                type="button"
+                                                                className="btn btn-danger"
+                                                                onClick={() => removeRow(index)}
+                                                            >
+                                                                <i class="mdi mdi-delete"></i>
+                                                            </button>
+                                                        )}
+
+                                                    </div>
+
                                                 </div>
-                                               
+                                            ))}
+                                            <div className="row">
                                                 <div className="col-6">
                                                     <label htmlFor="text" className="col-12 col-form-label">Total Amount</label> 
                                                     <input name="total_amt" className="form-control here slug-title" type="text" 
@@ -208,7 +299,7 @@ return (
                                                     autoComplete="off"
                                                     onChange={(e) => setTotalAmt(e.target.value)}
                                                     value={total_amt}
-                                                    placeholder="Enter Total Price" required
+                                                    placeholder="Total Price" readonly="readonly" 
                                                     />
                                                 </div>     
                                                 <div className="col-6">
@@ -221,8 +312,9 @@ return (
                                                     value={advance}
                                                     placeholder="Enter advance" required
                                                     />
-                                                </div> 
+                                                </div>
                                             </div>
+                                              
                                             <div className="row">
                                                 <div className="col-12">
                                                     <button name="submit" type="submit" className="btn btn-primary">
