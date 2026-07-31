@@ -17,19 +17,12 @@
 
   *{ box-sizing:border-box; }
 
-  body{
-    margin:0;
-    background:var(--bg-page);
-    font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    color:var(--text-primary);
-    font-size:13px;
-    line-height:1.4;
-  }
+  
 
   .page{
     max-width:1160px;
     margin:0 auto;
-    padding:24px 20px 60px;
+    padding:24px 25px 10px;
   }
 
   /* Top bar */
@@ -45,6 +38,7 @@
     font-weight:600;
     margin:0;
     display:inline;
+    color: #000;
   }
 
   .badges{
@@ -56,7 +50,7 @@
 
   .badge{
     display:inline-block;
-    padding:3px 10px;
+    padding:10px 10px;
     border-radius:12px;
     font-size:12px;
     font-weight:500;
@@ -206,7 +200,7 @@
   }
 
   .item-category{
-    color:var(--text-muted);
+    color:var(--text-primary);
     font-size:12px;
     margin-bottom:2px;
   }
@@ -236,7 +230,7 @@
 
   .item-price{
     text-align:right;
-    color:var(--text-secondary);
+    color:var(--text-primary);
     font-size:13px;
     white-space:nowrap;
     margin-right:18px;
@@ -318,15 +312,23 @@
   .paid-label{
     font-weight:600;
     font-size:13px;
+    color:var(--text-primary);
+
   }
 
-  .paid-note{
-    color:var(--text-muted);
+  .paid-note
+  {
+    color:var(--text-primary);
     font-size:12px;
     margin-top:2px;
   }
-
-  .edit-link{
+  .advance
+  {
+    color:var(--text-primary);
+   text-align:right; display:flex; flex-direction:column; align-items:flex-end; gap:6px;
+  }
+  .edit-link
+  {
     color:var(--link);
     font-weight:600;
     font-size:13px;
@@ -334,7 +336,6 @@
     cursor:pointer;
   }
 
-  /* Timeline */
   .comment-box{
     border:1px solid var(--border);
     border-radius:8px;

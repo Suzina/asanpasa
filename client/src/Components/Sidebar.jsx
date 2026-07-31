@@ -22,7 +22,7 @@ function Sidebar()
               </li>
               <li>
                 <a className="sidenav-item-link" href={`${baseUrl}/admin/categories`}>
-                  <i className="mdi mdi-format-list-bulleted"></i>
+                  <i className="mdi mdi-dns-outline"></i>
                   <span className="nav-text">Category</span>
                 </a>
               </li>
@@ -33,12 +33,27 @@ function Sidebar()
                   <span className="nav-text">Products</span>
                 </a>
               </li>
-              <li>
-                <a className="sidenav-item-link" href={`${baseUrl}/admin/orders`}>
-                  <i className="mdi mdi-format-list-bulleted"></i>
-                  <span className="nav-text">Orders</span>
-                </a>
-              </li>
+            
+						<li class="has-sub">
+							<a class="sidenav-item-link" href="javascript:void(0)">
+								<i class="mdi mdi-cart-outline"></i>
+								<span class="nav-text">Orders</span> <b class="caret"></b>
+							</a>
+							<div class="collapse">
+								<ul class="sub-menu" id="orders" data-parent="#sidebar-menu">
+									<li class="">
+										<a class="sidenav-item-link" href={`${baseUrl}/admin/orders`}>
+											<span class="nav-text">New Order</span>
+										</a>
+									</li>
+									<li class="">
+										<a class="sidenav-item-link" href={`${baseUrl}/admin/orders`}>
+											<span class="nav-text">Order History</span>
+										</a>
+									</li>
+								</ul>
+							</div>
+						</li>
             </ul>
           </div>
         </div>

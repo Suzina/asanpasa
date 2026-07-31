@@ -28,11 +28,16 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
         defaultValue: 0.00,
     },
+    status: {
+       type: DataTypes.ENUM('Delivered', 'Pending', 'Cancelled'), // adjust values to your actual statuses
+    allowNull: false,
+    defaultValue: 'Pending'
+    },
     user_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    
+
     deleted_at: {
         type: DataTypes.DATE,
         allowNull: true,
@@ -66,6 +71,5 @@ module.exports = (sequelize, DataTypes) => {
       as: "orderItems",
     });
   };
-
   return Orders;
 };

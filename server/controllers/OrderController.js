@@ -19,7 +19,7 @@ const getAll = asyncHandler(async (req, res) =>
         include: [
         {
             model: Users,
-            as: "user",       // must match alias in Orders.belongsTo(Users)
+            as: "user",      
             attributes: ["username"],
         },
         ],
@@ -36,7 +36,28 @@ const getAll = asyncHandler(async (req, res) =>
 const getOne = asyncHandler(async (req, res) => 
 {
     const id = req.params.id;
-    const order = await Orders.findByPk(id);
+    const order = await Orders.findByPk(id, {
+        include: [
+            {
+                model: Users,
+                as: "user",       
+                attributes: ["username"],
+                required: true,  
+            },
+             {
+                model: OrderItem,
+                as: "orderItems",          // must match alias in Orders.hasMany(OrderItems, { as: "items" })
+                required: false,      // false = still return order even if it has 0 items
+                include: [
+                    {
+                        model: Products,
+                        as: "product", // must match alias in OrderItems.belongsTo(Products, { as: "product" })
+                        attributes: ["name"], // adjust to whatever columns you need
+                    },
+                ],
+            },
+        ],
+    });
     if (!order) 
     {
         const err = new Error("Order not found");
