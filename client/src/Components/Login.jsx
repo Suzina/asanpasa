@@ -2,6 +2,7 @@ import { useRef, useState, useEffect, useContext } from 'react';
 import AuthContext from "../context/AuthProvider";
 import axios from '../api/axios';
 import { useNavigate } from 'react-router-dom';
+import '../assets/css/custom.css'
 
 const LOGIN_URL = '/auth/login';
 

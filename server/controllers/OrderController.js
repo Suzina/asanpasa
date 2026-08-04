@@ -69,9 +69,9 @@ const getOne = asyncHandler(async (req, res) =>
 
 const create = asyncHandler(async (req, res) => 
 {
-    const { items,fullname,address,phonenumber,total_amt,advance } = req.body;
+    const { items,fullname,address,phonenumber,total_amt,advance,shipping_cost } = req.body;
     const user_id = req.user.id; 
-    if (!fullname || !address || !phonenumber || !total_amt || !advance) 
+    if (!fullname || !address || !phonenumber || !total_amt || !advance || !shipping_cost) 
     {
         const err = new Error("Required fields are missing");
         err.status = 400;
@@ -87,6 +87,7 @@ const create = asyncHandler(async (req, res) =>
         total_amt,
         advance,
         amt_due,
+        shipping_cost,
         user_id
     });
 
@@ -120,7 +121,7 @@ const create = asyncHandler(async (req, res) =>
 const update = asyncHandler(async (req, res) => 
 {
     const id = req.params.id;
-    const { fullname,address,phonenumber,total_amt,advance,amt_due } = req.body;
+    const { fullname,address,phonenumber,total_amt,advance,amt_due,status } = req.body;
 
     const order = await Orders.findByPk(id);
 
@@ -130,13 +131,14 @@ const update = asyncHandler(async (req, res) =>
         err.status = 400;
         throw err;
     }
+    if (fullname !== undefined) order.fullname = fullname;
+    if (address !== undefined) order.address = address;
+    if (phonenumber !== undefined) order.phonenumber = phonenumber;
+    if (total_amt !== undefined) order.total_amt = total_amt;
+    if (advance !== undefined) order.advance = advance;
+    if (amt_due !== undefined) order.amt_due = amt_due;
+    if (status !== undefined) order.status = status;
 
-    order.fullname = fullname;
-    order.address = address;
-    order.phonenumber = phonenumber;
-    order.total_amt = total_amt;
-    order.advance = advance;
-    order.amt_due = amt_due;
     await order.save();
 
     res.json(order); 
@@ -156,5 +158,7 @@ const remove = asyncHandler(async (req, res) =>
     await order.destroy();
     res.json({ message: "Order deleted successfully" });
 });
+
+
 
 module.exports = { getAll, getOne, create, update, remove };

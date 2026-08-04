@@ -20,12 +20,13 @@ function Dashboard()
             const response = await axiosPrivate.get('/auth', {
                   signal: controller.signal
               });
-              console.log(response.data);
               isMounted && setUsers(response.data);
           } 
           catch (err) 
           {
-              console.log(err);
+               if (err.name !== "CanceledError" && err.code !== "ERR_CANCELED") {
+    console.log(err);
+  }
           }
         }
 
@@ -84,8 +85,8 @@ function Dashboard()
                     </div>
                   </div>
                 </div>
-                  <div className="row">
-                              <div className="col-xl-4 col-12 p-b-15">
+                <div className="row">
+                  <div className="col-xl-4 col-12 p-b-15">
 							<div className="card card-default Sold-card-table">
 								<div className="card-header justify-content-between">
 									<h2>Recent Users</h2>

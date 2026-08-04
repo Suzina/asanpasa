@@ -30,8 +30,13 @@ module.exports = (sequelize, DataTypes) => {
     },
     status: {
        type: DataTypes.ENUM('Delivered', 'Pending', 'Cancelled'), // adjust values to your actual statuses
-    allowNull: false,
-    defaultValue: 'Pending'
+      allowNull: false,
+      defaultValue: 'Pending'
+    },
+    shipping_cost: {
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: true,
+        defaultValue: 0.00,
     },
     user_id: {
       type: DataTypes.INTEGER,

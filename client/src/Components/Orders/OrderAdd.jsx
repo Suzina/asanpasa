@@ -26,6 +26,7 @@ function OrderAdd()
     const [phonenumber, setPhonenumber] = useState('');
     const [total_amt, setTotalAmt] = useState('');
     const [advance, setAdvance] = useState('');
+    const [shipping_cost, setShippingCost] = useState('');
     
     const [orderItems, setOrderItems] = useState([
     {
@@ -110,7 +111,7 @@ function OrderAdd()
             else
             {
                 response = await axiosPrivate.post(URL,
-                JSON.stringify({ fullname,address,phonenumber,total_amt,advance,items: orderItems }),
+                JSON.stringify({ fullname,address,phonenumber,total_amt,shipping_cost,advance,items: orderItems }),
                 {
                     headers: { 'Content-Type': 'application/json' },
                     withCredentials: true
@@ -230,6 +231,9 @@ return (
                                                         <label>Product</label>
                                                         <Select
                                                             options={productOptions}
+                                                            className="product-select"
+                                                              classNamePrefix="react-select"
+
                                                             value={
                                                                 productOptions.find(
                                                                     option => option.value === item.product_id
@@ -245,8 +249,8 @@ return (
                                                         />
                                                     </div>
 
-                                                    <div className="col-md-2">
-                                                        <label>Qty</label>
+                                                    <div className="col-5 col-md-2 pd-0-right">
+                                                        <label className='pd-10'>Qty</label>
                                                         <input
                                                             type="number"
                                                             className="form-control"
@@ -257,8 +261,8 @@ return (
                                                         />
                                                     </div>
 
-                                                    <div className="col-md-3">
-                                                        <label>Price</label>
+                                                    <div className="col-5 col-md-3 pd-0-right">
+                                                        <label className='pd-10'>Price</label>
                                                         <input
                                                             type="number"
                                                             className="form-control"
@@ -269,7 +273,7 @@ return (
                                                         />
                                                     </div>
 
-                                                    <div className="col-md-2 d-flex align-items-end">
+                                                    <div className="col-2 pd-30 d-flex align-items-end">
                                                         {index === 0 ? (
                                                             <button
                                                                 type="button"
@@ -278,13 +282,13 @@ return (
                                                             >
                                                                 +
                                                             </button>
+                                                           
                                                         ) : (
-                                                            <button
-                                                                type="button"
+                                                            <button type="button"
                                                                 className="btn btn-danger"
                                                                 onClick={() => removeRow(index)}
                                                             >
-                                                                <i class="mdi mdi-delete"></i>
+                                                               <i className="mdi mdi-delete"></i>
                                                             </button>
                                                         )}
 
@@ -301,9 +305,20 @@ return (
                                                     autoComplete="off"
                                                     onChange={(e) => setTotalAmt(e.target.value)}
                                                     value={total_amt}
-                                                    placeholder="Total Price" readonly="readonly" 
+                                                    placeholder="Total Price" readOnly="readonly" 
                                                     />
-                                                </div>     
+                                                </div>    
+                                                <div className="col-6">
+                                                    <label htmlFor="text" className="col-12 col-form-label">Delivery Charge</label> 
+                                                    <input name="shipping_cost" className="form-control here slug-title" type="text" 
+                                                    id="shipping_cost"
+                                                    ref={userRef}
+                                                    autoComplete="off"
+                                                    onChange={(e) => setShippingCost(e.target.value)}
+                                                    value={shipping_cost}
+                                                    placeholder="Delivery Charge"
+                                                    />
+                                                </div>   
                                                 <div className="col-6">
                                                     <label htmlFor="text" className="col-12 col-form-label">Advance</label> 
                                                     <input name="advance" className="form-control here slug-title" type="text" 
@@ -319,11 +334,11 @@ return (
                                               
                                             <div className="row">
                                                 <div className="col-12">
-                                                    <button name="submit" type="submit" className="btn btn-primary">
+                                                    <button name="submit" type="submit" className="mt-20 btn btn-primary">
                                                         {editingId !== null ? "Update" : "Save"}
                                                     </button>
                                                     {editingId !== null && (
-                                                        <button type="button" className="btn btn-secondary ms-2" onClick={resetForm}>
+                                                        <button type="button" className="mt-20 btn btn-secondary ms-2" onClick={resetForm}>
                                                             Cancel
                                                         </button>
                                                     )}

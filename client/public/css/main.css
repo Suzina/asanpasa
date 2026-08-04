@@ -24935,3 +24935,29 @@ div.dataTables_wrapper div.dataTables_filter {
 {
   width: 100px;
 }
+.has-sub-toggle {
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+  display: flex;
+  align-items: center;
+}
+.collapse {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+.collapse.show {
+  max-height: 500px;
+}
+.sidebar .sidebar-inner > li > button {
+    padding: 15px 25px;
+    line-height: 20px;
+    color: #000;
+    display: block;
+    text-decoration: none;
+    text-transform: uppercase;
+    font-weight: 400;
+    white-space: nowrap;
+}
