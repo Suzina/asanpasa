@@ -32,7 +32,6 @@ export default function useDashboardUI() {
 
       const openOverlay = () => {
         document.body.style.overflow = "hidden";
-    console.log("Overlay");
         if (overlay) overlay.style.display = "block";
       };
       toggles.forEach((el) => el.addEventListener("click", openOverlay));
@@ -58,7 +57,6 @@ export default function useDashboardUI() {
         if (!e.target.closest(".sidebar-toggle")) return;
         e.preventDefault();
         const body = document.getElementById("body");
-            console.log("Overlay mobilr");
 
         const min = "sidebar-mobile-in";
         const minOut = "sidebar-mobile-out";

@@ -217,117 +217,163 @@ return (
                             </a>
                         </div>
                     </div>
-                        <div className="col-xl-12 col-lg-12">
-                            <div className="ec-cat-list card card-default">
-                                <div className="card-body">
-                                    <div className="table-responsive">
-										<table id="responsive-data-table" className="table" style={{ width: '100%' }}>
-                                            <thead>
-                                                <tr>
-                                                    <th>#</th>
-                                                    <th>Fullname</th>
-                                                    <th>Address</th>
-                                                    <th>Phone Number</th>
-                                                    <th>Total Amt</th>
-                                                    <th>Advance</th>
-                                                    <th>Amt Due</th>
-                                                    <th>User</th>
-                                                    <th>Status</th>
-                                                    <th>Action</th>
-                                                </tr>
-                                            </thead>
-
-                                            <tbody>
-                                                {orders.map((order,index) => (
-                                                    <tr key={order.id}>
-                                                        <td>{index + 1}</td>
-                                                        <td><a href={`${baseUrl}/admin/order/${order.id}`}>{order.fullname}</a></td>
-                                                        <td>{order.address}</td>
-                                                        <td>{order.phonenumber}</td>
-                                                        <td>{order.total_amt}</td>
-                                                        <td>{order.advance}</td>
-                                                        <td>{order.amt_due}</td>
-                                                        <td>{order.user.username}</td>
-                                                        <td>
-                                                            {order.amt_due == 0 ? (
-                                                                <span className="mb-2 mr-2 badge badge-success">
-                                                                    Paid
-                                                                </span>
-                                                            ) : (
-                                                                <span className="mb-2 mr-2 badge badge-danger">
-                                                                    Due: {order.amt_due}
-                                                                </span>
-                                                            )}
-                                                        </td>
-                                                        <td>
-														    <div className="btn-group">
-                                                                <button type="button"
-                                                                    className="btn btn-outline-success">View
-                                                                </button>
-                                                                <button type="button"
-                                                                    className="btn btn-outline-success dropdown-toggle dropdown-toggle-split"
-                                                                    data-bs-toggle="dropdown" aria-haspopup="true"
-                                                                    aria-expanded="false" data-display="static">
-                                                                    <span className="sr-only">Info</span>
-                                                                </button>
-
-															    <div className="dropdown-menu">
-                                                                    <a className="dropdown-item" href={`${baseUrl}/admin/order/${order.id}`}>View</a>
-                                                                    <a className="dropdown-item" href={`${baseUrl}/admin/order/${order.id}`}>Edit</a>
-                                                                    <a className="dropdown-item" href="#" onClick={(e) => { e.preventDefault(); handleDeleteClick(order.id); }}>Delete</a>															</div>
-														    </div>
-													    </td>
-                                                    </tr>
+                    <div className="col-xl-12 col-lg-12">
+                        <div className="ec-cat-list card card-default mb-30">
+                            <div className="card-body">
+                                <form id="catForm" onSubmit={handleSubmit}>
+                                    <div className="form-group row">
+                                        <label htmlFor="text" className="col-12 col-form-label">Name</label> 
+                                        <div className="col-12">
+                                            <input name="name" className="form-control here slug-title" type="text" 
+                                            id="name"
+                                            ref={userRef}
+                                            autoComplete="off"
+                                            onChange={(e) => setName(e.target.value)}
+                                            value={name}
+                                            placeholder="Enter product name" required
+                                            />
+                                        </div> 
+                                        <label htmlFor="text" className="col-12 col-form-label">Category</label> 
+                                        <div className="col-12">
+                                            <select
+                                                name="category_id"
+                                                id="Categories"
+                                                className="form-select"
+                                                value={category_id}  // must be a number/string, e.g. 3, not { id: 3, name: "Electronics" }
+                                                onChange={(e) => setCategoryId(e.target.value)}
+                                            >
+                                                <option value="">Select a category</option>
+                                                {categories.map((category) => (
+                                                    <option key={category.id} value={category.id}>{category.name}</option>
                                                 ))}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                
-                                    {/* ===== Pagination controls ===== */}
-                                    {totalPages > 1 && (
-                                        <div className="d-flex justify-content-between align-items-center mt-3">
-                                            <span>
-                                                Showing page {currentPage} of {totalPages} ({totalItems} total orders)
-                                            </span>
-                                            <nav>
-                                                <ul className="pagination mb-0">
-                                                    <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
-                                                        <button
-                                                            className="page-link"
-                                                            onClick={() => goToPage(currentPage - 1)}
-                                                            disabled={currentPage === 1}
-                                                        >
-                                                            Prev
-                                                        </button>
-                                                    </li>
- 
-                                                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                                                        <li
-                                                            key={page}
-                                                            className={`page-item ${page === currentPage ? 'active' : ''}`}
-                                                        >
-                                                            <button className="page-link" onClick={() => goToPage(page)}>
-                                                                {page}
-                                                            </button>
-                                                        </li>
-                                                    ))}
- 
-                                                    <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
-                                                        <button
-                                                            className="page-link"
-                                                            onClick={() => goToPage(currentPage + 1)}
-                                                            disabled={currentPage === totalPages}
-                                                        >
-                                                            Next
-                                                        </button>
-                                                    </li>
-                                                </ul>
-                                            </nav>
+                                            </select>
                                         </div>
-                                    )}
-                                </div>
+                                    </div>
+                                    <div className="row">
+                                        <div className="col-12">
+                                            <button name="submit" type="submit" className="btn btn-primary">
+                                                {editingId !== null ? "Update" : "Submit"}
+                                            </button>
+                                            {editingId !== null && (
+                                                <button type="button" className="btn btn-secondary ms-2" onClick={resetForm}>
+                                                    Cancel
+                                                </button>
+                                            )}
+                                        </div>
+                                    </div>
+                                </form>
                             </div>
                         </div>
+                        <div className="ec-cat-list card card-default">
+                            <div className="card-body">
+                                <div className="table-responsive">
+                                    <table id="responsive-data-table" className="table" style={{ width: '100%' }}>
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Fullname</th>
+                                                <th>Address</th>
+                                                <th>Phone Number</th>
+                                                <th>Total Amt</th>
+                                                <th>Advance</th>
+                                                <th>Amt Due</th>
+                                                <th>User</th>
+                                                <th>Status</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody>
+                                            {orders.map((order,index) => (
+                                                <tr key={order.id}>
+                                                    <td>{index + 1}</td>
+                                                    <td><a href={`${baseUrl}/admin/order/${order.id}`}>{order.fullname}</a></td>
+                                                    <td>{order.address}</td>
+                                                    <td>{order.phonenumber}</td>
+                                                    <td>{order.total_amt}</td>
+                                                    <td>{order.advance}</td>
+                                                    <td>{order.amt_due}</td>
+                                                    <td>{order.user.username}</td>
+                                                    <td>
+                                                        {order.amt_due == 0 ? (
+                                                            <span className="mb-2 mr-2 badge badge-success">
+                                                                Paid
+                                                            </span>
+                                                        ) : (
+                                                            <span className="mb-2 mr-2 badge badge-danger">
+                                                                Due: {order.amt_due}
+                                                            </span>
+                                                        )}
+                                                    </td>
+                                                    <td>
+                                                        <div className="btn-group">
+                                                            <button type="button"
+                                                                className="btn btn-outline-success">View
+                                                            </button>
+                                                            <button type="button"
+                                                                className="btn btn-outline-success dropdown-toggle dropdown-toggle-split"
+                                                                data-bs-toggle="dropdown" aria-haspopup="true"
+                                                                aria-expanded="false" data-display="static">
+                                                                <span className="sr-only">Info</span>
+                                                            </button>
+
+                                                            <div className="dropdown-menu">
+                                                                <a className="dropdown-item" href={`${baseUrl}/admin/order/${order.id}`}>View</a>
+                                                                <a className="dropdown-item" href={`${baseUrl}/admin/order/${order.id}`}>Edit</a>
+                                                                <a className="dropdown-item" href="#" onClick={(e) => { e.preventDefault(); handleDeleteClick(order.id); }}>Delete</a>															</div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            
+                                {/* ===== Pagination controls ===== */}
+                                {totalPages > 1 && (
+                                    <div className="d-flex justify-content-between align-items-center mt-3">
+                                        <span>
+                                            Showing page {currentPage} of {totalPages} ({totalItems} total orders)
+                                        </span>
+                                        <nav>
+                                            <ul className="pagination mb-0">
+                                                <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                                                    <button
+                                                        className="page-link"
+                                                        onClick={() => goToPage(currentPage - 1)}
+                                                        disabled={currentPage === 1}
+                                                    >
+                                                        Prev
+                                                    </button>
+                                                </li>
+
+                                                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                                                    <li
+                                                        key={page}
+                                                        className={`page-item ${page === currentPage ? 'active' : ''}`}
+                                                    >
+                                                        <button className="page-link" onClick={() => goToPage(page)}>
+                                                            {page}
+                                                        </button>
+                                                    </li>
+                                                ))}
+
+                                                <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+                                                    <button
+                                                        className="page-link"
+                                                        onClick={() => goToPage(currentPage + 1)}
+                                                        disabled={currentPage === totalPages}
+                                                    >
+                                                        Next
+                                                    </button>
+                                                </li>
+                                            </ul>
+                                        </nav>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div> 
         </div> 
