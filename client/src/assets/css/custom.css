@@ -333,6 +333,10 @@
 {
     margin-bottom: 30px;
 }
+.mb-20
+{
+    margin-bottom: 20px;
+}
  :root{
     --blue: #3b82f6;
     --dark: #1c1c1e;
@@ -364,12 +368,12 @@
   .dbx-stat-card:hover{ transform: translateY(-2px); }
  
   .dbx-stat-card.dbx-blue{
-    background: linear-gradient(160deg, #4f9dfb, #2f7dfb);
-    color: #fff;
+    background: linear-gradient(160deg, #e1e8f8, #e1e8f8);
+    color: #000;
   }
   .dbx-stat-card.dbx-dark{
-    background: #1c1c1e;
-    color: #fff;
+    background: #f8e2ee;
+    color: #000;
   }
   .dbx-stat-value{
     font-size: 30px;

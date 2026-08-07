@@ -4,7 +4,6 @@ const { Orders } = require("../models");
 const { OrderItem } = require("../models");
 const { Op } = require('sequelize');
 
-
 const asyncHandler = require("../middlewares/asyncHandler");
 
 const getAll = asyncHandler(async (req, res) => 
