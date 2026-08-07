@@ -2,6 +2,7 @@ const { Products } = require("../models");
 const { Users } = require("../models");
 const { Orders } = require("../models");
 const { OrderItem } = require("../models");
+const { Op } = require('sequelize');
 
 
 const asyncHandler = require("../middlewares/asyncHandler");
@@ -69,7 +70,7 @@ const getOne = asyncHandler(async (req, res) =>
 
 const create = asyncHandler(async (req, res) => 
 {
-    const { items,fullname,address,phonenumber,total_amt,advance,shipping_cost } = req.body;
+    const { items,fullname,address,phonenumber,total_amt,advance,shipping_cost,delivery_date } = req.body;
     const user_id = req.user.id; 
     if (!fullname || !address || !phonenumber || !total_amt || !advance || !shipping_cost) 
     {
@@ -88,7 +89,8 @@ const create = asyncHandler(async (req, res) =>
         advance,
         amt_due,
         shipping_cost,
-        user_id
+        user_id,
+        delivery_date
     });
 
     const orderItems = items.map(item => ({
@@ -159,6 +161,29 @@ const remove = asyncHandler(async (req, res) =>
     res.json({ message: "Order deleted successfully" });
 });
 
+const getUpcommingOrders = asyncHandler(async (req, res) => 
+{
+    const today = new Date();
+    const tomorrow = new Date();
+    tomorrow.setDate(today.getDate() + 1);
 
+    const todayStr = today.toISOString().split('T')[0];       // "2026-08-07"
+    const tomorrowStr = tomorrow.toISOString().split('T')[0];
 
-module.exports = { getAll, getOne, create, update, remove };
+    const orders = await Orders.findAll({
+        where: {
+            delivery_date: {
+                [Op.in]: [todayStr, tomorrowStr]
+            },
+            status: 'Pending'
+        },
+        order: [['delivery_date', 'ASC']],
+    });
+
+    res.json({
+        items: orders,
+        totalItems: orders.length
+    });
+});
+
+module.exports = { getAll, getOne, create, update, remove, getUpcommingOrders };

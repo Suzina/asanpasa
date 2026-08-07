@@ -42,7 +42,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-
+    delivery_date: {
+        type: DataTypes.DATEONLY,
+        allowNull: true,
+      },
     deleted_at: {
         type: DataTypes.DATE,
         allowNull: true,

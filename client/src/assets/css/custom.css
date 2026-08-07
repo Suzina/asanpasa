@@ -447,9 +447,12 @@
   .order-row:first-of-type {
     border-top: none;
   }
- 
+ .order-card__id
+ {
+    color: var(--dark);
+ }
   .order-row__label {
-    color: var(--muted);
+    color: var(--dark);
     font-size: 0.85rem;
   }
  

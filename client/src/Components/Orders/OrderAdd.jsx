@@ -27,7 +27,8 @@ function OrderAdd()
     const [total_amt, setTotalAmt] = useState('');
     const [advance, setAdvance] = useState('');
     const [shipping_cost, setShippingCost] = useState('');
-    
+    const [delivery_date, setDeliveryDate] = useState('');
+
     const [orderItems, setOrderItems] = useState([
     {
         product_id: "",
@@ -111,7 +112,7 @@ function OrderAdd()
             else
             {
                 response = await axiosPrivate.post(URL,
-                JSON.stringify({ fullname,address,phonenumber,total_amt,shipping_cost,advance,items: orderItems }),
+                JSON.stringify({ fullname,address,phonenumber,total_amt,shipping_cost,advance,delivery_date,items: orderItems }),
                 {
                     headers: { 'Content-Type': 'application/json' },
                     withCredentials: true
@@ -189,7 +190,7 @@ return (
                                     <form id="catForm" onSubmit={handleSubmit}>
                                         <h4>Customer Information</h4>
                                             <div className="form-group row">
-                                                <div className="col-6">
+                                                <div className="col-md-4 col-6">
                                                     <label htmlFor="text" className="col-12 col-form-label">Fullname</label> 
                                                     <input name="name" className="form-control here slug-title" type="text" 
                                                     id="fullname"
@@ -200,7 +201,7 @@ return (
                                                     placeholder="Enter Fullname" required
                                                     />
                                                 </div>
-                                                <div className="col-6">
+                                                <div className="col-md-4 col-6">
                                                     <label htmlFor="text" className="col-12 col-form-label">Address</label> 
                                                     <input name="address" className="form-control here slug-title" type="text" 
                                                     id="address"
@@ -211,7 +212,7 @@ return (
                                                     placeholder="Enter address" required
                                                     />
                                                 </div>
-                                                <div className="col-6">
+                                                <div className="col-md-4 col-6">
                                                     <label htmlFor="text" className="col-12 col-form-label">Phone Number</label> 
                                                     <input name="phonenumber" className="form-control here slug-title" type="text" 
                                                     id="phonenumber"
@@ -297,7 +298,7 @@ return (
                                                 </div>
                                             ))}
                                             <div className="row">
-                                                <div className="col-6">
+                                                <div className="col-6 col-md-3">
                                                     <label htmlFor="text" className="col-12 col-form-label">Total Amount</label> 
                                                     <input name="total_amt" className="form-control here slug-title" type="text" 
                                                     id="total_amt"
@@ -308,7 +309,7 @@ return (
                                                     placeholder="Total Price" readOnly="readonly" 
                                                     />
                                                 </div>    
-                                                <div className="col-6">
+                                                <div className="col-6 col-md-3">
                                                     <label htmlFor="text" className="col-12 col-form-label">Delivery Charge</label> 
                                                     <input name="shipping_cost" className="form-control here slug-title" type="text" 
                                                     id="shipping_cost"
@@ -319,7 +320,7 @@ return (
                                                     placeholder="Delivery Charge"
                                                     />
                                                 </div>   
-                                                <div className="col-6">
+                                                <div className="col-6 col-md-3">
                                                     <label htmlFor="text" className="col-12 col-form-label">Advance</label> 
                                                     <input name="advance" className="form-control here slug-title" type="text" 
                                                     id="advance"
@@ -328,6 +329,17 @@ return (
                                                     onChange={(e) => setAdvance(e.target.value)}
                                                     value={advance}
                                                     placeholder="Enter advance" required
+                                                    />
+                                                </div>
+                                                 <div className="col-6 col-md-3">
+                                                    <label htmlFor="text" className="col-12 col-form-label">Delivery Date</label> 
+                                                    <input name="delivery_date" className="form-control here slug-title" type="date" 
+                                                    id="delivery_date"
+                                                    ref={userRef}
+                                                    autoComplete="off"
+                                                    onChange={(e) => setDeliveryDate(e.target.value)}
+                                                    value={delivery_date}
+                                                    placeholder="Enter Delivery date" required
                                                     />
                                                 </div>
                                             </div>

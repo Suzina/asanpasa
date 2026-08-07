@@ -17,48 +17,29 @@ function Dashboard()
         let isMounted = true;
         const controller = new AbortController();
 
-        const getUsers = async () => 
+        const getOrders = async (page = 1, signal) => 
         {
-          try 
-          {
-            const response = await axiosPrivate.get('/auth', {
-                  signal: controller.signal
-              });
-              isMounted && setUsers(response.data);
-          } 
-          catch (err) 
-          {
-            if (err.name !== "CanceledError" && err.code !== "ERR_CANCELED") 
+            try 
+            {
+                setLoading(true);
+                const response = await axiosPrivate.get("/orders/upcomming-orders", {
+                    params: { page, limit: itemsPerPage },
+                    signal,
+                });
+                setOrders(response.data.items);
+                setTotalPages(response.data.totalPages);
+                setTotalItems(response.data.totalItems);
+                setCurrentPage(response.data.currentPage);
+            } 
+            catch (err) 
             {
                 console.log(err);
             }
-          }
-        }
-        const getOrders = async (page = 1, signal) => 
+            finally
             {
-                try 
-                {
-                    setLoading(true);
-                    const response = await axiosPrivate.get("/orders", {
-                        params: { page, limit: itemsPerPage },
-                        signal,
-                    });
-                    setOrders(response.data.items);
-                    setTotalPages(response.data.totalPages);
-                    setTotalItems(response.data.totalItems);
-                    setCurrentPage(response.data.currentPage);
-                } 
-                catch (err) 
-                {
-                    console.log(err);
-                }
-                finally
-                {
-                    setLoading(false);
-                }
+                setLoading(false);
             }
-
-        getUsers();
+        }
         getOrders();
 
         return () => {
@@ -76,8 +57,8 @@ function Dashboard()
         <div className="ec-content-wrapper">
           <div className="content">
             <div className="row g-3">
-              <div className="col-6 col-md-3 mb-30">
-                 <a href="" className='text-white'>
+              <div className="col-6 col-md-3">
+                 <a href={`${baseUrl}/admin/orders`} className='text-white'>
                 <div className="dbx-stat-card dbx-blue">
                   <div className="dbx-stat-icon"><i className="mdi mdi-cart-heart"></i></div>
                   <div className="dbx-stat-label">Orders</div>
@@ -88,9 +69,9 @@ function Dashboard()
                 </div>
                 </a>
               </div>
-              <div className="col-6 col-md-3 mb-30">
+              <div className="col-6 col-md-3">
                 <div className="dbx-stat-card dbx-dark">
-                  <a href="" className='text-white'>
+                  <a href={`${baseUrl}/admin/products`} className='text-white'>
                   <div className="dbx-stat-icon"><i className="mdi mdi-cart-heart"></i></div>
                   <div className="dbx-stat-label">Products</div>
                   <div>
@@ -100,41 +81,23 @@ function Dashboard()
                   </a>
                 </div>
               </div>
-              <div className="col-6 col-md-3 mb-30">
-                <div className="dbx-stat-card dbx-dark">
-                  <div className="dbx-stat-icon"><i className="mdi mdi-cart-heart"></i></div>
-                  <div className="dbx-stat-label">Categories</div>
-                  <div>
-                    <div className="dbx-stat-value">{orders.length}</div>
-                    <div className="dbx-stat-change">+15.03%</div>
-                  </div>
-                </div>
-              </div>
-              <div className="col-6 col-md-3 mb-30">
-                <div className="dbx-stat-card dbx-blue">
-                  <div className="dbx-stat-icon"><i className="mdi mdi-cart-heart"></i></div>
-                  <div className="dbx-stat-label">Users</div>
-                  <div>
-                    <div className="dbx-stat-value">{orders.length}</div>
-                    <div className="dbx-stat-change">+6.08%</div>
-                  </div>
-                </div>
-              </div>
+             
             </div>
             <div className="container grid-wrap">
               <div className="row g-3">
-                <p>Today's Orders</p>
+                
+                <h3>Upcomming Deliveries</h3>
                 {orders.map((order) => (
                   <div className="col-12 col-md-6 mb-30" key={order.id}>
                     <div className="order-card">
                       <div className="order-card__header">
                         <span className="order-card__id">#AP{order.id}</span>
                           {order.status == "Delivered" ? (
-                            <span className="badge-status badge-inprogress">{order.status}<i className="mdi mdi-check text-success"></i></span>
+                            <span className="badge badge-success">{order.status}<i className="mdi mdi-check text-success"></i></span>
                           ): order.status == "Cancelled" ? (
-                            <span className="badge-status badge-inprogress">{order.status}<i className="mdi mdi-check text-danger"></i></span>
+                            <span className="badge badge-success">{order.status}<i className="mdi mdi-check text-danger"></i></span>
                           ) : (
-                            <span className="badge-status badge-inprogress">{order.status} <i className="mdi mdi-clock-time-four-outline text-warning"></i></span>
+                            <span className="badge badge-warning">{order.status} <i className="mdi mdi-clock-time-four-outline text-warning"></i></span>
                           )}
                       </div>
                       <div className="order-row">
@@ -156,8 +119,8 @@ function Dashboard()
                         <span className="order-row__value">{order.total_amt}</span>
                       </div>
                       <div className="order-row">
-                        <span className="order-row__label">Date</span>
-                        <span className="order-row__value">Just now</span>
+                        <span className="order-row__label">Delivery Date</span>
+                        <span className="order-row__value">{order.delivery_date}</span>
                       </div>
                       <div className="order-row">
                         <span className="order-row__label"></span>
