@@ -14,39 +14,39 @@ function Dashboard()
 
   useEffect(() => 
   {
-        let isMounted = true;
-        const controller = new AbortController();
+      let isMounted = true;
+      const controller = new AbortController();
 
-        const getOrders = async (page = 1, signal) => 
-        {
-            try 
-            {
-                setLoading(true);
-                const response = await axiosPrivate.get("/orders/upcomming-orders", {
-                    params: { page, limit: itemsPerPage },
-                    signal,
-                });
-                setOrders(response.data.items);
-                setTotalPages(response.data.totalPages);
-                setTotalItems(response.data.totalItems);
-                setCurrentPage(response.data.currentPage);
-            } 
-            catch (err) 
-            {
-                console.log(err);
-            }
-            finally
-            {
-                setLoading(false);
-            }
-        }
-        getOrders();
+      const getOrders = async (page = 1, signal) => 
+      {
+          try 
+          {
+              setLoading(true);
+              const response = await axiosPrivate.get("/orders/upcomming-orders", {
+                  params: { page, limit: itemsPerPage },
+                  signal,
+              });
+              setOrders(response.data.items);
+              setTotalPages(response.data.totalPages);
+              setTotalItems(response.data.totalItems);
+              setCurrentPage(response.data.currentPage);
+          } 
+          catch (err) 
+          {
+              console.log(err);
+          }
+          finally
+          {
+              setLoading(false);
+          }
+      }
+      getOrders();
 
-        return () => {
-            isMounted = false;
-            controller.abort();
-        }
-    }, [])
+      return () => {
+          isMounted = false;
+          controller.abort();
+      }
+  }, [])
 
   useDashboardUI(); 
   return (
