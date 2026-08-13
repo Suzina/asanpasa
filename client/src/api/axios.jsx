@@ -1,12 +1,12 @@
 import axios from 'axios';
 
 export default axios.create({
-    baseURL: 'http://localhost:3000/',
+    baseURL: 'https://asanpasa.sujina-maharjan.com.np',
      withCredentials: true
 });
 
 export const axiosPrivate = axios.create({
-  baseURL: "http://localhost:30000",
+  baseURL: "https://asanpasa.sujina-maharjan.com.np",
   headers: { 'Content-Type': 'application/json' },
 });
 
