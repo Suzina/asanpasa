@@ -1,19 +1,5 @@
- * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-        }
+ /*Login Css */
 
-        body {
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: #fff;
-            padding: 20px;
-            overflow-x: hidden;
-        }
 
         .gradient-bg {
             position: fixed;
@@ -328,9 +314,7 @@
                 border-radius: 20px;
             }
             
-            .social-login {
-                flex-direction: column;
-            }
+           
             
             .animation-control {
                 bottom: 20px;
@@ -341,3 +325,162 @@
                 background: white;
             }
         }
+
+
+        /**login finish*/
+
+.mb-30
+{
+    margin-bottom: 30px;
+}
+.mb-20
+{
+    margin-bottom: 20px;
+}
+ :root{
+    --blue: #3b82f6;
+    --dark: #1c1c1e;
+    --page-bg: #f0f1f5;
+    --card-radius: 20px;
+    --muted: #8e8e93;
+     --ink: #1f2430;
+    --muted: #9aa1ac;
+    --line: #eef0f3;
+    --card-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 1px 3px rgba(16, 24, 40, 0.03);
+  }
+.dbx-container-dash{
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0 40px 60px 40px;
+  }
+ 
+  /* Stat cards */
+  .dbx-stat-card{
+    border-radius: var(--card-radius);
+    padding: 22px 24px;
+    height: 130px;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    position: relative;
+    transition: transform .15s ease;
+  }
+  .dbx-stat-card:hover{ transform: translateY(-2px); }
+ 
+  .dbx-stat-card.dbx-blue{
+    background: linear-gradient(160deg, #e1e8f8, #e1e8f8);
+    color: #000;
+  }
+  .dbx-stat-card.dbx-dark{
+    background: #f8e2ee;
+    color: #000;
+  }
+  .dbx-stat-value{
+    font-size: 30px;
+    font-weight: 700;
+  }
+ 
+  .dbx-stat-change{
+    font-size: 13px;
+    font-weight: 600;
+    opacity: 0.85;
+  }
+ 
+  .dbx-stat-icon{
+    position:absolute;
+    top: 18px;
+    right: 18px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.18);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size: 13px;
+  }
+/*********order card */
+ 
+
+  .grid-wrap {
+    max-width: 900px;
+    margin: 40px auto;
+  }
+ 
+  .order-card {
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: var(--card-shadow);
+    padding: 20px 22px;
+    height: 100%;
+  }
+ 
+  .order-card__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+ 
+  .order-card__id {
+    font-weight: 700;
+    font-size: 1.05rem;
+    letter-spacing: 0.2px;
+  }
+ 
+  .badge-status {
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 5px 12px;
+    border-radius: 999px;
+    line-height: 1;
+  }
+ 
+  .badge-inprogress { background: #f2e9fe; color: #9b51e0; }
+  .badge-complete   { background: #e4f9ef; color: #21b573; }
+  .badge-pending    { background: #e6f2fe; color: #2f8fef; }
+ 
+  .order-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-top: 1px solid var(--line);
+  }
+ 
+  .order-row:first-of-type {
+    border-top: none;
+  }
+ .order-card__id
+ {
+    color: var(--dark);
+ }
+  .order-row__label {
+    color: var(--dark);
+    font-size: 0.85rem;
+  }
+ 
+  .order-row__value {
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-align: right;
+  }
+ 
+  .order-row__user {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+ 
+  .order-row__user img {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  
+ 
+ 
+  
+ 
+ 

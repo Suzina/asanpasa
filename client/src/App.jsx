@@ -1,4 +1,3 @@
-import './assets/css/custom.css'
 
 import Login from './Components/Login';
 import Dashboard from './Components/Dashboard';
@@ -8,6 +7,11 @@ import CategoryView from './Components/Categories/CategoryView';
 import Products from './Components/Products/Products';
 import ProductView from './Components/Products/ProductView';
 
+import Orders from './Components/Orders/Orders';
+import OrderView from './Components/Orders/OrderView';
+import OrderAdd from './Components/Orders/OrderAdd';
+
+import User from './Components/Users/User';
 
 import { AuthProvider } from './context/AuthProvider';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
@@ -37,6 +41,18 @@ function App() {
           </Route>
           <Route element={<RequireAuth />}>
             <Route path="/admin/product/:id" element={<ProductView />} />
+          </Route>
+          <Route element={<RequireAuth />}>
+            <Route path="/admin/orders" element={<Orders />} />
+          </Route>
+          <Route element={<RequireAuth />}>
+            <Route path="/admin/order/add" element={<OrderAdd />} />
+          </Route>
+          <Route element={<RequireAuth />}>
+            <Route path="/admin/order/:id" element={<OrderView />} />
+          </Route>
+          <Route element={<RequireAuth />}>
+            <Route path="/admin/users" element={<User />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>

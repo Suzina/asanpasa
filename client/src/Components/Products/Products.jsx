@@ -1,3 +1,4 @@
+import useDashboardUI from '../../hooks/useDashboardUI';
 import { useRef, useState, useEffect } from 'react';
 import Sidebar from '../Sidebar';
 import Header from '../Header';
@@ -8,8 +9,10 @@ const URL = '/products';
 
 function Products() 
 {
+    useDashboardUI(); 
+    
     const userRef = useRef();
-        const errRef = useRef();
+    const errRef = useRef();
 
     const baseUrl = import.meta.env.VITE_API_BASE_URL;
     const [editingId, setEditingId] = useState(null);

@@ -2,8 +2,10 @@ import { useRef, useState, useEffect, useContext } from 'react';
 import AuthContext from "../context/AuthProvider";
 import axios from '../api/axios';
 import { useNavigate } from 'react-router-dom';
+import '../assets/css/custom.css'
 
 const LOGIN_URL = '/auth/login';
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 export default function Login() 
 {
@@ -30,7 +32,8 @@ export default function Login()
   {
     e.preventDefault();
     console.log(JSON.stringify({ username, password }));
-    try{
+    try
+    {
         const response = await axios.post(LOGIN_URL,
         JSON.stringify({ username, password }),
         {
@@ -50,17 +53,9 @@ export default function Login()
             const accessToken = response.data;
 
             setAuth({ username, accessToken });
-            navigate('/dashboard');
+            navigate('/admin/dashboard');
         }
         console.log(JSON.stringify(response?.data));
-        /*const accessToken = response?.data?.accessToken;
-        const roles = response?.data?.roles;
-        setAuth({ username, password, accessToken });
-        setUser('');
-        setPwd('');
-        
-        //setSuccess(true);
-        console.log("congratulations! You are in!")*/
     }
     catch (err)
     {
@@ -80,7 +75,7 @@ export default function Login()
   }
   return (
     <>
-      {success ? (
+    {success ? (
                 <div>
                     <h1>You are logged in!</h1>
                     <br />
@@ -89,17 +84,24 @@ export default function Login()
                     </p>
                 </div>
             ) : (
-              <div>
- <div className="gradient-bg"></div>
-    <div className="form-container">
-        <div className="logo">
-            <i className="fas fa-rocket"></i>
-            <h1>Welcome Back</h1>
-            <p>Sign in to your account to continue</p>
+                
+    	<div className="container d-flex align-items-center justify-content-center form-height-login pt-24px pb-24px">
+			 <div className="gradient-bg"></div>
+                <div className="row justify-content-center">
+				<div className="col-lg-6 col-md-10">
+					<div className="card">
+						<div className="card-header bg-primary">
+							<div className="ec-brand">
+								<a href={`${baseUrl}/admin/products`} title="AsanPasa">
+									AsanPasa
+								</a>
+							</div>
+						</div>
+						<div className="card-body p-5">
+							<h4 className="text-dark mb-5">Sign In</h4>
              <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
-        </div>
-        
-        <form id="loginForm" onSubmit={handleSubmit}>
+
+							<form id="loginForm" onSubmit={handleSubmit}>
             <div className="form-group">
                 <label htmlFor="email">Email Address</label>
                 <div className="input-with-icon">
@@ -139,10 +141,14 @@ export default function Login()
             
             
         </form>
-    </div>
-              </div>
-     
-           )}
+						
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	  )}
+      
     
     </>
   )

@@ -4,10 +4,13 @@ import Sidebar from '../Sidebar';
 import Header from '../Header';
 import { axiosPrivate } from '../../api/axios';
 import Footer from '../Footer';
+import useDashboardUI from '../../hooks/useDashboardUI';
+
 const URL = '/categories';
 
 function Categories() {
 
+    useDashboardUI();
     const userRef = useRef();
     const errRef = useRef();
     const [name, setName] = useState('');

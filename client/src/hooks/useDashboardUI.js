@@ -57,6 +57,7 @@ export default function useDashboardUI() {
         if (!e.target.closest(".sidebar-toggle")) return;
         e.preventDefault();
         const body = document.getElementById("body");
+
         const min = "sidebar-mobile-in";
         const minOut = "sidebar-mobile-out";
         if (body.classList.contains(min)) {
@@ -71,7 +72,7 @@ export default function useDashboardUI() {
       cleanupFns.push(() => document.removeEventListener("click", mobileToggle));
     }
 
-    /* ======== SIDEBAR MENU (expand/collapse submenus) ======== */
+    /* ======== SIDEBAR MENU (expand/collapse submenus) ======== 
     const subMenuLinks = document.querySelectorAll(".sidebar .nav > .has-sub > a");
     const handleSubMenuClick = function () {
       const parent = this.parentElement;
@@ -101,7 +102,7 @@ export default function useDashboardUI() {
     nestedSubLinks.forEach((el) => el.addEventListener("click", handleNestedClick));
     cleanupFns.push(() =>
       nestedSubLinks.forEach((el) => el.removeEventListener("click", handleNestedClick))
-    );
+    );*/
 
     /* ======== SIDEBAR TOGGLE FOR DESKTOP LAYOUTS ======== */
     const body = document.getElementById("body");
