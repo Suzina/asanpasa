@@ -5,7 +5,7 @@ const path = require('path');
 
 app.use(express.json());
 app.use(cors({
-  origin: "*",
+  origin: "http://localhost:5173",
   credentials: true,
   allowedHeaders: ["Content-Type", "accessToken"]
 }));
@@ -32,12 +32,12 @@ app.use("/api/orders", ordersRoutes);
 app.use(errorHandler); 
 
 // serve React build
-//app.use(express.static(path.join(__dirname, '../client/dist')));
+app.use(express.static(path.join(__dirname, '../client/dist')));
 
-/*app.use((req, res) => {
+app.use((req, res) => {
   res.sendFile(path.join(__dirname, '../client/dist', 'index.html'));
 });
-*/
+
 db.sequelize.sync().then(() => {
   app.listen(3000,() => {
     console.log("Server running on port 3000");
