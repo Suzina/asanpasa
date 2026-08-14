@@ -86,7 +86,7 @@ export default function Login()
     	<div className="container d-flex align-items-center justify-content-center form-height-login pt-24px pb-24px">
 			 <div className="gradient-bg"></div>
                 <div className="row justify-content-center">
-				<div className="col-lg-6 col-md-10">
+				<div className="col-10">
 					<div className="card">
 						<div className="card-header bg-primary">
 							<div className="ec-brand">
