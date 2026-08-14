@@ -1,12 +1,12 @@
 import axios from 'axios';
-
+  const baseUrl = import.meta.env.VITE_API_SERVER_URL;
 export default axios.create({
-    baseURL: 'https://asanpasa.sujina-maharjan.com.np',
+    baseURL: baseUrl,
      withCredentials: true
 });
 
 export const axiosPrivate = axios.create({
-  baseURL: "https://asanpasa.sujina-maharjan.com.np",
+  baseURL: baseUrl,
   headers: { 'Content-Type': 'application/json' },
 });
 

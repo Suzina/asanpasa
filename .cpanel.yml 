@@ -1,0 +1,9 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/sujinam1/asanpasa.sujina-maharjan.com.np/asanpasa
+    - /bin/cp -R * $DEPLOYPATH
+    - cd $DEPLOYPATH/client && npm install && npm run build
+    - cd $DEPLOYPATH/server && npm install --production
+    - mkdir -p $DEPLOYPATH/server/tmp
+    - touch $DEPLOYPATH/server/tmp/restart.txt

@@ -6,5 +6,5 @@ export default function RedirectIfAuth() {
   const { auth } = useContext(AuthContext);
   const token = auth?.accessToken || sessionStorage.getItem("accessToken");
 
-  return token ? <Navigate to="/dashboard" replace /> : <Outlet />;
+  return token ? <Navigate to="/admin/dashboard" replace /> : <Outlet />;
 }

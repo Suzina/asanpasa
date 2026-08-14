@@ -28,7 +28,7 @@ function App() {
             <Route path="/" element={<Login />} />
           </Route>
           <Route element={<RequireAuth />}>
-            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/admin/dashboard" element={<Dashboard />} />
           </Route>
           <Route element={<RequireAuth />}>
             <Route path="/admin/categories" element={<Categories />} />
