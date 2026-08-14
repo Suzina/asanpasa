@@ -25,6 +25,7 @@ function Dashboard()
                   params: { page, limit: itemsPerPage },
                   signal,
               });
+              console.log(response);
               setOrders(response.data.items);
               setTotalPages(response.data.totalPages);
               setTotalItems(response.data.totalItems);
