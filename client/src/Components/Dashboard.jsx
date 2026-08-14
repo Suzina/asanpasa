@@ -11,7 +11,6 @@ function Dashboard()
   const itemsPerPage = 10;
   const [loading, setLoading] = useState(false);
   const baseUrl = import.meta.env.VITE_API_BASE_URL;
-
   useEffect(() => 
   {
       let isMounted = true;

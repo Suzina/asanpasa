@@ -5,7 +5,7 @@ const path = require('path');
 
 app.use(express.json());
 app.use(cors({
-  origin: "http://localhost:5173",
+  origin: "*",
   credentials: true,
   allowedHeaders: ["Content-Type", "accessToken"]
 }));
@@ -14,23 +14,23 @@ const db = require("./models");
 const errorHandler = require("./middlewares/errorHandler");
 
 // Routers
-
 const userRoutes = require("./routes/Users");
-app.use("/auth", userRoutes);
+app.use("/api/auth", userRoutes);
 
-const dashboardRoutes = require("./routes/Dashboard");
-app.use("/dashboard", dashboardRoutes);
+/*const dashboardRoutes = require("./routes/Dashboard");
+app.use("/dashboard", dashboardRoutes);*/
 
 const productsRoutes = require("./routes/Products");
-app.use("/products", productsRoutes);
+app.use("/api/products", productsRoutes);
 
 const categoriesRoutes = require("./routes/Categories");
-app.use("/categories", categoriesRoutes);
+app.use("/api/categories", categoriesRoutes);
 
 const ordersRoutes = require("./routes/Orders");
-app.use("/orders", ordersRoutes);
+app.use("/api/orders", ordersRoutes);
 
 app.use(errorHandler); 
+
 // serve React build
 app.use(express.static(path.join(__dirname, '../client/dist')));
 

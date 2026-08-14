@@ -41,7 +41,6 @@ export default function Login()
             withCredentials: true
         }
         );
-
         if (response.data.error) 
         {
             setErrMsg(response.data.error);
@@ -53,9 +52,8 @@ export default function Login()
             const accessToken = response.data;
 
             setAuth({ username, accessToken });
-            navigate('/admin/dashboard');
-        }
-        console.log(JSON.stringify(response?.data));
+            navigate('/admin/dashboard', { replace: true });        }
+            console.log(JSON.stringify(response?.data));
     }
     catch (err)
     {
@@ -99,49 +97,44 @@ export default function Login()
 						</div>
 						<div className="card-body p-5">
 							<h4 className="text-dark mb-5">Sign In</h4>
-             <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
+                            <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
 
 							<form id="loginForm" onSubmit={handleSubmit}>
-            <div className="form-group">
-                <label htmlFor="email">Email Address</label>
-                <div className="input-with-icon">
-                    <i className="fas fa-envelope"></i>
-                    <input type="username" 
-                    className="form-control" 
-                    id="username"
-                    ref={userRef}
-                    autoComplete="off"
-                    onChange={(e) => setUser(e.target.value)}
-                    value={username}
-                    placeholder="Enter your email" required />
-                </div>
-            </div>
+                                <div className="form-group">
+                                    <label htmlFor="email">Email Address</label>
+                                    <div className="input-with-icon">
+                                        <i className="fas fa-envelope"></i>
+                                        <input type="username" 
+                                        className="form-control" 
+                                        id="username"
+                                        ref={userRef}
+                                        autoComplete="off"
+                                        onChange={(e) => setUser(e.target.value)}
+                                        value={username}
+                                        placeholder="Enter your email" required />
+                                    </div>
+                                </div>
             
-            <div className="form-group">
-                <label htmlFor="password">Password</label>
-                <div className="input-with-icon">
-                    <i className="fas fa-lock"></i>
-                    <input 
-                    type="password" 
-                    id="password" 
-                    onChange={(e) => setPwd(e.target.value)}
-                    value={password}
-                    className="form-control" 
-                    placeholder="Enter your password" required />
-                </div>
-            </div>
-            
-            <div className="checkbox-group">
-                <input type="checkbox" id="remember" />
-                <label htmlFor="remember">Remember me for 30 days</label>
-                <a href="#">Forgot password?</a>
-            </div>
-            
-            <button type="submit" className="submit-btn">Sign In</button>
-            
-            
-        </form>
-						
+                                <div className="form-group">
+                                    <label htmlFor="password">Password</label>
+                                    <div className="input-with-icon">
+                                        <i className="fas fa-lock"></i>
+                                        <input 
+                                        type="password" 
+                                        id="password" 
+                                        onChange={(e) => setPwd(e.target.value)}
+                                        value={password}
+                                        className="form-control" 
+                                        placeholder="Enter your password" required />
+                                    </div>
+                                </div>
+                                <div className="checkbox-group">
+                                    <input type="checkbox" id="remember" />
+                                    <label htmlFor="remember">Remember me for 30 days</label>
+                                    <a href="#">Forgot password?</a>
+                                </div>
+                                <button type="submit" className="submit-btn">Sign In</button>
+                            </form>
 						</div>
 					</div>
 				</div>

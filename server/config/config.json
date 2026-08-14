@@ -1,23 +1,26 @@
 {
-  "development": {
+  "development": 
+  {
     "username": "root",
     "password": "sujinaM@123",
     "database": "asanpasa",
     "host": "localhost",
     "dialect": "mysql"
   },
-  "test": {
+  "test": 
+  {
     "username": "root",
     "password": null,
     "database": "database_test",
     "host": "127.0.0.1",
     "dialect": "mysql"
   },
-  "production": {
-    "username": "root",
-    "password": null,
-    "database": "database_production",
-    "host": "127.0.0.1",
+  "production": 
+  {
+    "username": "sujinam1_asanpasa",
+    "password": "asanpasa@2026",
+    "database": "sujinam1_asanpasa",
+    "host": "localhost",
     "dialect": "mysql"
   }
 }
