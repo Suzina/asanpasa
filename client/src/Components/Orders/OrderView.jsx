@@ -238,7 +238,7 @@ function OrderView()
                                     </button>
                                 </div>
                             </div>
-                     </div>
+                        </div>
                     <div className="grid">
                         <div className="col-main">
                             <div className="card">
@@ -257,7 +257,7 @@ function OrderView()
                                             <div className="item-category">{item.product?.name}</div>
                                             <div className="item-name">{item.price}</div>
                                             <div className="item-variants">
-                                            <span>Medium</span>
+                                                <span>Medium</span>
                                             </div>
                                         </div>
                                         <div className="item-price">{item.quantity} x {item.price}</div>
@@ -281,7 +281,7 @@ function OrderView()
                                             }`}
                                     
                                             onClick={(e) => { e.preventDefault(); changeStatus(order.id,newStatus); }}>
-                                           { renderBtnText() } 
+                                        { renderBtnText() } 
                                         </button>
                                     </div>
                                 </div>
