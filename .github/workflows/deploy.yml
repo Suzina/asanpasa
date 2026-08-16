@@ -53,4 +53,4 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no \
           ${{ secrets.CPANEL_USER }}@${{ secrets.CPANEL_HOST }} \
-          "cd ${{ env.APP_PATH }}/server && npm ci --omit=dev && mkdir -p tmp && touch tmp/restart.txt"
+          "source ${{ secrets.CPANEL_NODE_ACTIVATE_PATH }} && cd ${{ env.APP_PATH }}/server && npm ci --omit=dev && mkdir -p tmp && touch tmp/restart.txt"
