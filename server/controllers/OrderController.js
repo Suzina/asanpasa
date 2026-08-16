@@ -169,7 +169,7 @@ const getUpcommingOrders = asyncHandler(async (req, res) =>
     const todayStr = today.toISOString().split('T')[0];       // "2026-08-07"
     const tomorrowStr = tomorrow.toISOString().split('T')[0];
 
-    const orders = await Orders.findAll({
+    /*const orders = await Orders.findAll({
         where: {
             delivery_date: {
                 [Op.in]: [todayStr, tomorrowStr]
@@ -199,12 +199,69 @@ const getUpcommingOrders = asyncHandler(async (req, res) =>
             ],
         },
     ],
+    });*/
+    const order = await Orders.findAll({
+        where: {
+            
+            status: 'Pending'
+        },
+        attributes: ["id", "fullname", "total_amt", "delivery_date","status"],
+        order: [['delivery_date', 'ASC']],
+        include: [
+        {
+            model: Users,
+            as: "user",       
+            attributes: ["username"],
+            required: true,  
+        },
+            {
+            model: OrderItem,
+            as: "orderItems",  
+            attributes: ["id"],        // must match alias in Orders.hasMany(OrderItems, { as: "items" })
+            required: false,      // false = still return order even if it has 0 items
+            include: [
+                {
+                    model: Products,
+                    as: "product", // must match alias in OrderItems.belongsTo(Products, { as: "product" })
+                    attributes: ["name"], // adjust to whatever columns you need
+                },
+            ],
+        },
+    ],
+    });
+
+    if (!order) 
+    {
+        return res.status(404).json({ error: "Order not found" });
+    }
+
+    res.json(order);
+});
+
+const getTotalOrders = asyncHandler(async (req, res) => 
+{
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const offset = (page - 1) * limit;
+
+    const { count, rows } = await Orders.findAndCountAll({
+        order: [['createdAt', 'DESC']],
+        limit,
+        offset,
+        include: [
+        {
+            model: Users,
+            as: "user",      
+            attributes: ["username"],
+        },
+        ],
     });
 
     res.json({
-        items: orders,
-        totalItems: orders.length
+        items: rows,
+        totalItems: count,
+        totalPages: Math.ceil(count / limit),
+        currentPage: page,
     });
 });
-
 module.exports = { getAll, getOne, create, update, remove, getUpcommingOrders };
