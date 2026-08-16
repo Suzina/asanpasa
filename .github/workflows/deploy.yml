@@ -1,0 +1,55 @@
+name: Deploy to cPanel
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      APP_PATH: /home/sujinam1/asanpasa.sujina-maharjan.com.np/asanpasa
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Build React app
+        working-directory: ./client
+        run: |
+          npm ci
+          npm run build
+
+      - name: Assemble deploy folder
+        run: |
+          mkdir -p deploy/server
+          mkdir -p deploy/client
+          rsync -av --exclude 'node_modules' server/ deploy/server/
+          cp -r client/dist deploy/client/dist
+
+      - name: Deploy to cPanel via rsync
+        uses: burnett01/rsync-deployments@6.0.0
+        with:
+          switches: -avzr --delete
+          path: ./deploy/
+          remote_path: ${{ env.APP_PATH }}/
+          remote_host: ${{ secrets.CPANEL_HOST }}
+          remote_user: ${{ secrets.CPANEL_USER }}
+          remote_key: ${{ secrets.CPANEL_SSH_KEY }}
+
+      - name: Setup SSH agent
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.CPANEL_SSH_KEY }}
+
+      - name: Install server deps on cPanel & restart
+        run: |
+          ssh -o StrictHostKeyChecking=no \
+          ${{ secrets.CPANEL_USER }}@${{ secrets.CPANEL_HOST }} \
+          "cd ${{ env.APP_PATH }}/server && npm ci --omit=dev && mkdir -p tmp && touch tmp/restart.txt"
