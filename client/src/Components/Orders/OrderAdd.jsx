@@ -30,6 +30,37 @@ function OrderAdd()
     const [shipping_cost, setShippingCost] = useState('');
     const [delivery_date, setDeliveryDate] = useState('');
 
+    const getOrder = async (signal) => 
+    {
+        try 
+        {
+            const response = await axiosPrivate.get(`/orders/${id}`, { signal });
+            const data = response.data;
+            setFullname(data.fullname);
+            setAddress(data.address);
+            setPhonenumber(data.phonenumber);
+            setTotalAmt(data.total_amt);
+            setAdvance(data.advance);
+            setShippingCost(data.shipping_cost);
+            setDeliveryDate(data.delivery_date);
+            if (data.orderItems && data.orderItems.length > 0) 
+            {
+                setOrderItems(
+                    data.orderItems.map((item) => ({
+                        product_id: item.product_id,
+                        qty: item.quantity,
+                        price: item.price,
+                        
+                    }))
+                );
+             }
+
+        } 
+        catch (err) 
+        {
+            console.log(err);
+        }
+    }
     const [orderItems, setOrderItems] = useState([
     {
         product_id: "",
@@ -80,7 +111,7 @@ function OrderAdd()
         value: product.id,
         label: product.name
     }));
-   
+    
     const handleSubmit= async (e) =>
     {
         e.preventDefault();
@@ -90,7 +121,7 @@ function OrderAdd()
             if (editingId !== null) 
             {
                 response = await axiosPrivate.put(`${URL}/${editingId}`, formData, {
-                headers: { 'Content-Type': 'multipart/form-data' },
+                headers: { 'Content-Type': 'application/json' },
                 withCredentials: true
                  });
     
@@ -106,7 +137,6 @@ function OrderAdd()
                             prod.id === editingId ? { ...prod, ...response.data } : prod
                         )
                     );
-                    resetForm();
                 }
 
             }
@@ -155,15 +185,34 @@ function OrderAdd()
         }
     }
 
+    /*useEffect(() => {
+        getProducts();
+        if (id) 
+        {
+            getOrder();
+            setEditingId(id);
+        }
+        const total = orderItems.reduce((sum, item) => {
+            const price = parseFloat(item.price) || 0;
+            return sum + price;
+        }, 0);
+        setTotalAmt(total.toFixed(2));
+    }, [orderItems,id]);*/
     useEffect(() => {
         getProducts();
-    const total = orderItems.reduce((sum, item) => {
-        const price = parseFloat(item.price) || 0;
-        return sum + price;
-    }, 0);
-    setTotalAmt(total.toFixed(2));
-}, [orderItems]);
-
+        if (id) {
+            setEditingId(id);
+            getOrder();
+        }
+    }, [id]);
+    useEffect(() => {
+        const total = orderItems.reduce((sum, item) => {
+            const price = parseFloat(item.price) || 0;
+            const qty = parseFloat(item.qty) || 0;
+            return sum + price * qty; // multiply by qty too, see note below
+        }, 0);
+        setTotalAmt(total.toFixed(2));
+    }, [orderItems]);
 return (
     <>
     <Sidebar/>
@@ -173,6 +222,8 @@ return (
             <div className="content">
                 <div className="breadcrumb-wrapper breadcrumb-wrapper-2 breadcrumb-contacts">
                     <h1>Add Order</h1>
+                    
+                   
                     <Toaster
                     position="top-right"
                     reverseOrder={false}
@@ -256,7 +307,7 @@ return (
                                                         <input
                                                             type="number"
                                                             className="form-control"
-                                                            value={item.qty}
+                                                            value={item.qty ?? ""}
                                                             onChange={(e) =>
                                                                 handleItemChange(index, "qty", e.target.value)
                                                             }
@@ -268,8 +319,8 @@ return (
                                                         <input
                                                             type="number"
                                                             className="form-control"
-                                                            value={item.price}
-                                                            onChange={(e) =>
+                                                                value={item.price ?? ""}
+                                                                    onChange={(e) =>
                                                                 handleItemChange(index, "price", e.target.value)
                                                             }
                                                         />
@@ -351,9 +402,9 @@ return (
                                                         {editingId !== null ? "Update" : "Save"}
                                                     </button>
                                                     {editingId !== null && (
-                                                        <button type="button" className="mt-20 btn btn-secondary ms-2" onClick={resetForm}>
-                                                            Cancel
-                                                        </button>
+                                                        <a href={`${baseUrl}/admin/orders`} type="button" className="mt-20 btn btn-secondary ms-2">
+                                                            Go Back
+                                                        </a>
                                                     )}
                                                 </div>
                                             </div>
