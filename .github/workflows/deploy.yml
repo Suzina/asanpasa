@@ -3,6 +3,7 @@ name: Deploy to cPanel
 on:
   push:
     branches: [main]
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -18,7 +19,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22.23.2
 
       - name: Build React app
         working-directory: ./client
