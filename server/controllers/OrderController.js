@@ -164,7 +164,7 @@ const getUpcommingOrders = asyncHandler(async (req, res) =>
 {
     const today = new Date();
     const tomorrow = new Date();
-    tomorrow.setDate(today.getDate() + 1);
+    tomorrow.setDate(today.getDate() + 5);
 
     const todayStr = today.toISOString().split('T')[0];       // "2026-08-07"
     const tomorrowStr = tomorrow.toISOString().split('T')[0];
@@ -176,7 +176,29 @@ const getUpcommingOrders = asyncHandler(async (req, res) =>
             },
             status: 'Pending'
         },
+        attributes: ["id", "fullname", "total_amt", "delivery_date","status"],
         order: [['delivery_date', 'ASC']],
+        include: [
+        {
+            model: Users,
+            as: "user",       
+            attributes: ["username"],
+            required: true,  
+        },
+            {
+            model: OrderItem,
+            as: "orderItems",  
+            attributes: ["id"],        // must match alias in Orders.hasMany(OrderItems, { as: "items" })
+            required: false,      // false = still return order even if it has 0 items
+            include: [
+                {
+                    model: Products,
+                    as: "product", // must match alias in OrderItems.belongsTo(Products, { as: "product" })
+                    attributes: ["name"], // adjust to whatever columns you need
+                },
+            ],
+        },
+    ],
     });
 
     res.json({

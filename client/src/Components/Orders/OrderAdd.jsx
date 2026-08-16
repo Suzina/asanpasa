@@ -4,7 +4,7 @@ import Header from '../Header';
 import Footer from '../Footer';
 import { Toaster, toast } from "react-hot-toast";
 import { axiosPrivate } from '../../api/axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams} from 'react-router-dom';
 import Select from 'react-select';
 import useDashboardUI from '../../hooks/useDashboardUI';
 
@@ -19,6 +19,7 @@ function OrderAdd()
     const baseUrl = import.meta.env.VITE_API_BASE_URL;
     const navigate = useNavigate();
 
+    const { id } = useParams();
     const [editingId, setEditingId] = useState(null);
     const [products, setProducts] = useState([]);
     const [fullname, setFullname] = useState('');

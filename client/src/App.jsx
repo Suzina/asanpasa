@@ -52,6 +52,9 @@ function App() {
             <Route path="/admin/order/:id" element={<OrderView />} />
           </Route>
           <Route element={<RequireAuth />}>
+            <Route path="/admin/order/edit/:id" element={<OrderAdd />} />
+          </Route>
+          <Route element={<RequireAuth />}>
             <Route path="/admin/users" element={<User />} />
           </Route>
           <Route path="*" element={<NotFound />} />

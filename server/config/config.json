@@ -1,9 +1,9 @@
 {
   "development": 
   {
-    "username": "sujinam1_asanpasa",
-    "password": "asanpasa@2026",
-    "database": "sujinam1_asanpasa",
+    "username": "root",
+    "password": "sujinaM@123",
+    "database": "asanpasa",
     "host": "localhost",
     "dialect": "mysql"
   },

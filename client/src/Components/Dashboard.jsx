@@ -61,7 +61,7 @@ function Dashboard()
                 <a href={`${baseUrl}/admin/orders`} className='text-white'>
                   <div className="dbx-stat-card dbx-blue">
                     <div className="dbx-stat-icon"><i className="mdi mdi-cart-heart"></i></div>
-                    <div className="dbx-stat-label">Orders</div>
+                    <div className="dbx-stat-label">Pending Orders</div>
                     <div>
                       <div className="dbx-stat-value">{orders.length}</div>
                       <div className="dbx-stat-change">+11.01%</div>
@@ -71,9 +71,9 @@ function Dashboard()
               </div>
               <div className="col-6 col-md-3">
                 <div className="dbx-stat-card dbx-dark">
-                  <a href={`${baseUrl}/admin/products`} className='text-black'>
+                  <a href={`${baseUrl}/admin/orders`} className='text-black'>
                     <div className="dbx-stat-icon"><i className="mdi mdi-cart-heart"></i></div>
-                    <div className="dbx-stat-label">Products</div>
+                    <div className="dbx-stat-label">Delivered Orders</div>
                     <div>
                       <div className="dbx-stat-value">{orders.length}</div>
                       <div className="dbx-stat-change">-0.03%</div>
@@ -82,11 +82,10 @@ function Dashboard()
                 </div>
               </div>
             </div>
-            <div className="container grid-wrap">
               <div className="row g-3">
-                <h3 className='mb-20'>Upcomming Deliveries</h3>
+                <h3 className='p-20'>Upcomming Deliveries</h3>
                 {orders.map((order) => (
-                  <div className="col-12 col-md-6 mb-30" key={order.id}>
+                  <div className="col-12 col-md-4 mb-30" key={order.id}>
                     <div className="order-card">
                       <div className="order-card__header">
                         <span className="order-card__id">#AP{order.id}</span>
@@ -106,7 +105,7 @@ function Dashboard()
                       </div>
                       <div className="order-row">
                         <span className="order-row__label">Products</span>
-                        <span className="order-row__value">{order.address}</span>
+                        <span className="order-row__value">{order.orderItems.map(item => item.product.name).join(", ")}</span>
                       </div>
                       <div className="order-row">
                         <span className="order-row__label">Total Amt</span>
@@ -118,13 +117,12 @@ function Dashboard()
                       </div>
                       <div className="order-row">
                         <span className="order-row__label"></span>
-                        <a href=""><span className="order-row__value">View Details</span></a>
+                        <a href={`${baseUrl}/admin/order/${order.id}`}><span className="order-row__value">View Details</span></a>
                       </div>
                     </div>
                   </div>
                 ))}
               </div>
-            </div>
           </div>
         </div>
         <Footer />
