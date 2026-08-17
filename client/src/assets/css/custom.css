@@ -407,7 +407,7 @@
     margin: 40px auto;
   }
  
-  .order-card {
+  /*.order-card {
     background: #ffffff;
     border-radius: 16px;
     box-shadow: var(--card-shadow);
@@ -427,7 +427,7 @@
     font-size: 1.05rem;
     letter-spacing: 0.2px;
   }
- 
+ */
   .badge-status {
     font-size: 0.72rem;
     font-weight: 600;

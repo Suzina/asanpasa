@@ -31,7 +31,6 @@ export default function Login()
   const handleSubmit= async (e) =>
   {
     e.preventDefault();
-    console.log(JSON.stringify({ username, password }));
     try
     {
         const response = await axios.post(LOGIN_URL,
@@ -53,7 +52,6 @@ export default function Login()
 
             setAuth({ username, accessToken });
             navigate('/admin/dashboard', { replace: true });        }
-            console.log(JSON.stringify(response?.data));
     }
     catch (err)
     {

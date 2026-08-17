@@ -146,15 +146,6 @@ function Orders()
         }
     }
 
-    const handleEditClick = (editprod) => 
-    {
-        setName(editprod.name);
-        setPrice(editprod.price);
-        setCat(editprod.category_id);
-        setEditingId(editprod.id);
-        userRef.current?.focus();
-    }
-
     const handleDeleteClick = async (id) => 
     {
         try 

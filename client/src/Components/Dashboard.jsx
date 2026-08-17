@@ -15,16 +15,15 @@ function Dashboard()
       let isMounted = true;
       const controller = new AbortController();
 
-      const getUpcommingOrders = async (page = 1, signal) => 
+      const getUpcommingOrders = async (signal) => 
       {
           try 
           {
               const response = await axiosPrivate.get("/orders/upcomming-orders", {
-                  params: { page, limit: itemsPerPage },
                   signal,
               });
-              console.log(response.data.items);
-              setOrders(response.data.items);
+             
+              setOrders(response.data);
           } 
           catch (err) 
           {
@@ -79,66 +78,86 @@ function Dashboard()
             </div>
             <div className="row g-3">
               <h3 className='p-20'>Upcomming Deliveries</h3>
+              <p className='text-right'>{orders.length} of {orders.length}</p>
               {orders && orders.length > 0 ? (
                 orders.map((order) => (
                   <div className="col-12 col-md-4 mb-30" key={order.id}>
                     <div className="order-card">
-                      <div className="order-card__header">
-                        <span className="order-card__id">#AP{order.id}</span>
+                      <div className="order-card-header">
+                        <div className="customer">
+                          <div className="order-avatar">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" 
+                            strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                              <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                          </div>
+                          <div>
+                            <div className="customer-name">  {order.fullname || "N/A"}</div>
+                            <div className="order-id">Order #{order.id}</div>
+                          </div>
+                        </div>
                         {order.status == "Delivered" ? (
-                          <span className="badge badge-success">
+                          <div className="status text-success">
                             {order.status}
-                            <i className="mdi mdi-check text-success"></i>
-                          </span>
+                            <i className="mdi mdi-check"></i>
+                          </div>
                         ) : order.status == "Cancelled" ? (
-                          <span className="badge badge-success">
+                          <div className="status text-danger">
                             {order.status}
-                            <i className="mdi mdi-check text-danger"></i>
-                          </span>
+                            <i className="ml mdi mdi-check"></i>
+                          </div>
                         ) : (
-                          <span className="badge badge-warning">
-                            {order.status} <i className="mdi mdi-clock-time-four-outline text-warning"></i>
-                          </span>
+                          <div className="status text-warning">
+                            {order.status}
+                            <i className="ml-1 mdi mdi-clock-time-four-outline"></i>
+                          </div>
                         )}
                       </div>
 
-                      <div className="order-row">
-                        <span className="order-row__label">Fullname</span>
-                        <span className="order-row__value order-row__user">
-                          {order.fullname || "N/A"}
-                        </span>
+                      <div className="info-row">
+                        <div className="info-block">
+                          <div className="info-label text-dark">Delivery date</div>
+                          <div className="info-value">{order.delivery_date ?? "N/A"}</div>
+                        </div>
+                        <div className="info-block right">
+                          <div className="info-label">Total payment</div>
+                          <div className="info-value">{order.total_amt ?? "N/A"}</div>
+                        </div>
                       </div>
 
-                      <div className="order-row">
-                        <span className="order-row__label">Products</span>
-                        <span className="order-row__value">
-                          {order.orderItems && order.orderItems.length > 0
-                            ? order.orderItems
-                                .map((item) => item.product?.name || "Product not found")
-                                .join(", ")
-                            : "No products found"}
-                        </span>
+                      <div className="items">
+                        {order.orderItems && order.orderItems.length > 0 ? (
+                          order.orderItems.map((item) => (
+                            <div className="item" key={item.id}>
+                              <img className="item-thumb" src="https://media.istockphoto.com/id/1980276924/vector/no-photo-thumbnail-graphic-element-no-found-or-available-image-in-the-gallery-or-album-flat.jpg?s=612x612&w=0&k=20&c=ZBE3NqfzIeHGDPkyvulUw14SaWfDj2rZtyiKv3toItk=" alt="Beef steak" />
+                              <div className="item-info">
+                                <div className="item-name">{item.product?.name || "Product not found"}</div>
+                                <div className="item-price">Rs {item.price}</div>
+                              </div>
+                              <div className="item-qty">{item.quantity}x</div>
+                            </div>
+                          ))
+                        ) : (
+                          <div className="col-12 text-center py-30">
+                            <p>No Product found.</p>
+                          </div>
+                        )}
                       </div>
-
-                      <div className="order-row">
-                        <span className="order-row__label">Total Amt</span>
-                        <span className="order-row__value">{order.total_amt ?? "N/A"}</span>
-                      </div>
-
-                      <div className="order-row">
-                        <span className="order-row__label">Delivery Date</span>
-                        <span className="order-row__value">
-                          {order.delivery_date || "Not scheduled"}
-                        </span>
-                      </div>
-
-                      <div className="order-row">
-                        <span className="order-row__label"></span>
-                        <a href={`${baseUrl}/admin/order/${order.id}`}>
-                          <span className="order-row__value">View Details</span>
+                      <div className="more-items">+2 more items</div>
+                        <div className="notes">
+                          <div className="notes-text">{order.phonenumber}</div>
+                          <div className="notes-text">{order.address}</div>
+                        </div>
+                        <a href={`${baseUrl}/admin/order/${order.id}`} className="details-btn">
+                          Order details
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M7 17L17 7"></path>
+                            <path d="M7 7h10v10"></path>
+                          </svg>
                         </a>
                       </div>
-                    </div>
+                  
                   </div>
                 ))
             ) : (

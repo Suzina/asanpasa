@@ -200,12 +200,12 @@ const getUpcommingOrders = asyncHandler(async (req, res) =>
         },
     ],
     });*/
+    
     const order = await Orders.findAll({
         where: {
-            
             status: 'Pending'
         },
-        attributes: ["id", "fullname", "total_amt", "delivery_date","status"],
+        attributes: ["id", "fullname", "total_amt", "delivery_date","status","phonenumber","address"],
         order: [['delivery_date', 'ASC']],
         include: [
         {
@@ -217,7 +217,7 @@ const getUpcommingOrders = asyncHandler(async (req, res) =>
             {
             model: OrderItem,
             as: "orderItems",  
-            attributes: ["id"],        // must match alias in Orders.hasMany(OrderItems, { as: "items" })
+            attributes: ["id","quantity","price"],        // must match alias in Orders.hasMany(OrderItems, { as: "items" })
             required: false,      // false = still return order even if it has 0 items
             include: [
                 {
