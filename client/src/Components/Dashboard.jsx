@@ -8,7 +8,6 @@ import { axiosPrivate } from '../api/axios';
 function Dashboard() 
 {
   const [orders, setOrders] = useState([]);
-  const itemsPerPage = 10;
   const baseUrl = import.meta.env.VITE_API_BASE_URL;
   useEffect(() => 
   {
@@ -57,7 +56,7 @@ function Dashboard()
                     <div className="dbx-stat-icon"><i className="mdi mdi-cart-heart"></i></div>
                     <div className="dbx-stat-label">Pending Orders</div>
                     <div>
-                      <div className="dbx-stat-value"></div>
+                      <div className="dbx-stat-value">20</div>
                       <div className="dbx-stat-change">+11.01%</div>
                     </div>
                   </div>
@@ -69,7 +68,7 @@ function Dashboard()
                     <div className="dbx-stat-icon"><i className="mdi mdi-cart-heart"></i></div>
                     <div className="dbx-stat-label">Add New Orders</div>
                     <div>
-                      <div className="dbx-stat-value"></div>
+                      <div className="dbx-stat-value">30</div>
                       <div className="dbx-stat-change">-0.03%</div>
                     </div>
                   </a>

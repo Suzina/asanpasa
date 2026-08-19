@@ -122,7 +122,8 @@ const create = asyncHandler(async (req, res) =>
 const update = asyncHandler(async (req, res) => 
 {
     const id = req.params.id;
-    const { fullname,address,phonenumber,total_amt,advance,amt_due,status } = req.body;
+    const { items,fullname,address,phonenumber,total_amt,advance,shipping_cost,delivery_date,status } = req.body;
+    const user_id = req.user.id; 
 
     const order = await Orders.findByPk(id);
 
@@ -132,17 +133,58 @@ const update = asyncHandler(async (req, res) =>
         err.status = 400;
         throw err;
     }
+    
+    order.user_id = user_id;
     if (fullname !== undefined) order.fullname = fullname;
     if (address !== undefined) order.address = address;
     if (phonenumber !== undefined) order.phonenumber = phonenumber;
-    if (total_amt !== undefined) order.total_amt = total_amt;
     if (advance !== undefined) order.advance = advance;
-    if (amt_due !== undefined) order.amt_due = amt_due;
     if (status !== undefined) order.status = status;
+    if (shipping_cost !== undefined) order.shipping_cost = shipping_cost;
+    if (delivery_date !== undefined) order.delivery_date = delivery_date;
+    if (total_amt !== undefined && advance !== undefined)
+    {
+        let amt_due=total_amt-advance;
+        order.amt_due = amt_due;
+
+    }
+    if (total_amt !== undefined)
+    {
+        let computedTotal = total_amt;
+        if (Array.isArray(items)) 
+        {
+            computedTotal = items.reduce((sum, item) => {
+                const qty = parseFloat(item.qty) || 0;
+                const price = parseFloat(item.price) || 0;
+                return sum + qty * price;
+            }, 0);
+        }
+        order.total_amt = computedTotal;
+    }
+  
 
     await order.save();
+    if (Array.isArray(items)) 
+        {
+            await OrderItem.destroy({ where: { order_id: id }});
 
-    res.json(order); 
+            const rows = items
+                .filter(item => item.product_id) // drop empty rows
+                .map(item => ({
+                    order_id: id,
+                    product_id: item.product_id,
+                    quantity: parseFloat(item.qty) || 0,
+                    price: parseFloat(item.price) || 0,
+                    user_id : user_id,
+                }));
+
+            if (rows.length > 0) 
+            {
+                await OrderItem.bulkCreate(rows);
+            }
+        }
+
+    res.send("Update Successful"); 
 });
 
 const remove = asyncHandler(async (req, res) => 
@@ -264,4 +306,38 @@ const getTotalOrders = asyncHandler(async (req, res) =>
         currentPage: page,
     });
 });
-module.exports = { getAll, getOne, create, update, remove, getUpcommingOrders };
+const search = asyncHandler(async (req, res) => 
+{
+    const { fullname, phonenumber, address, status } = req.query;
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const offset = (page - 1) * limit;
+
+    const filter = {};
+
+    if (fullname) filter.fullname = { [Op.like]: `%${fullname}%` };
+    if (phonenumber) filter.phonenumber = { [Op.like]: `%${phonenumber}%` };
+    if (address) filter.address = { [Op.like]: `%${address}%` };
+    if (status) filter.status = status;
+
+    const { count, rows } = await Orders.findAndCountAll({
+        where: filter,
+        order: [['createdAt', 'DESC']],
+        limit,
+        offset,
+        include: [
+        {
+            model: Users,
+            as: "user",      
+            attributes: ["username"],
+        },
+        ],
+    });
+
+    res.json({
+        items: rows,
+        totalItems: count,
+        totalPages: Math.ceil(count / limit),
+        currentPage: page,
+    });});
+module.exports = { getAll, getOne, create, update, remove, getUpcommingOrders, search };
