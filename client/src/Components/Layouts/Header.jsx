@@ -9,7 +9,6 @@ function Header()
 	function handleLogout(e) 
 	{
 		e.preventDefault();
-		alert("clicked");
   		sessionStorage.removeItem("accessToken"); // or whatever key you stored it under
   		sessionStorage.removeItem("username");
   		navigate("/");
@@ -17,8 +16,6 @@ function Header()
 
   return (
     <div>
-		      
-
       	<header className="ec-main-header" id="header">
 				<nav className="navbar navbar-static-top navbar-expand-lg">
 					<button id="sidebar-toggler" className="sidebar-toggle"></button>
@@ -34,18 +31,18 @@ function Header()
 							<ul id="search-results"></ul>
 						</div>
 					</div>
-						<h3>Hello! {username}</h3>
+					<h3>Hello! {username}</h3>
 
 					<div className="navbar-right">
 						<ul className="nav navbar-nav">
 							<li className="dropdown user-menu">
 								<button className="dropdown-toggle nav-link ec-drop" data-bs-toggle="dropdown"
 									aria-expanded="false">
-									<img src="/img/user/user.png" className="user-image" alt="User Image" />
+									<img src="/img/user/u7.jpg" className="user-image" alt="User Image" />
 								</button>
 								<ul className="dropdown-menu dropdown-menu-right ec-dropdown-menu">
 									<li className="dropdown-header">
-										<img src="/img/user/user.png" className="img-circle" alt="User Image" />
+										<img src="/img/user/u7.jpg" className="img-circle" alt="User Image" />
 										<div className="d-inline-block">
 											{username} <small className="pt-1">john.example@gmail.com</small>
 										</div>

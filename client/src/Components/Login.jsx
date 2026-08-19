@@ -86,15 +86,12 @@ export default function Login()
                 <div className="row justify-content-center">
 				<div className="col-10">
 					<div className="card">
-						<div className="card-header bg-primary">
+						<div className="logo card-header">
 							<div className="ec-brand">
-								<a href={`${baseUrl}/admin/products`} title="AsanPasa">
-									AsanPasa
-								</a>
+							    <img src="/img/logo/logo.webp" width="100px;"/>
 							</div>
 						</div>
 						<div className="card-body p-5">
-							<h4 className="text-dark mb-5">Sign In</h4>
                             <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
 
 							<form id="loginForm" onSubmit={handleSubmit}>
@@ -126,11 +123,7 @@ export default function Login()
                                         placeholder="Enter your password" required />
                                     </div>
                                 </div>
-                                <div className="checkbox-group">
-                                    <input type="checkbox" id="remember" />
-                                    <label htmlFor="remember">Remember me for 30 days</label>
-                                    <a href="#">Forgot password?</a>
-                                </div>
+                                
                                 <button type="submit" className="submit-btn">Sign In</button>
                             </form>
 						</div>

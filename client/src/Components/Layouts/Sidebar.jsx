@@ -28,8 +28,8 @@ function Sidebar()
       <div id="sidebar" className="sidebar ec-sidebar-footer">
         <div className="ec-brand">
           <a href={`${baseUrl}`} title="AsanPasa">
-            <img className="ec-brand-icon" src="/img/logo/ec-site-logo.png" alt="" />
-            <span className="ec-brand-name text-truncate">AsanPasa</span>
+            <img className="ec-brand-icon" src="/img/logo/logo.webp" alt="" />
+            <span className="ec-brand-name text-truncate">AsanPasa:</span>
           </a>
         </div>
         <div className="ec-navigation" data-simplebar>

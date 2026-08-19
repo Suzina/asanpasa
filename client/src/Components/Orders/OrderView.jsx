@@ -1,10 +1,10 @@
 import '../../assets/css/order.css'
 import {  useState, useEffect} from 'react';
 import { useParams } from 'react-router-dom';
-import Sidebar from '../Sidebar';
-import Header from '../Header';
+import Sidebar from '../Layouts/Sidebar';
+import Header from '../Layouts/Header';
+import Footer from '../Layouts/Footer';
 import { axiosPrivate } from '../../api/axios';
-import Footer from '../Footer';
 import useDashboardUI from '../../hooks/useDashboardUI';
 import { Toaster, toast } from "react-hot-toast";
 import { useNavigate } from 'react-router-dom';
