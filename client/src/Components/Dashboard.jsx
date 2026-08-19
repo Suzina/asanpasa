@@ -1,7 +1,7 @@
 import useDashboardUI from '../hooks/useDashboardUI';
-import Sidebar from './Sidebar';
-import Header from './Header';
-import Footer from './Footer';
+import Sidebar from './Layouts/Sidebar';
+import Header from './Layouts/Header';
+import Footer from './Layouts/Footer';
 import { useEffect, useState } from "react";
 import { axiosPrivate } from '../api/axios';
 

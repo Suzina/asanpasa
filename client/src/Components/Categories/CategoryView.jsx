@@ -1,9 +1,9 @@
 import {  useState, useEffect} from 'react';
 import { useParams } from 'react-router-dom';
-import Sidebar from '../Sidebar';
-import Header from '../Header';
+import Sidebar from '../Layouts/Sidebar';
+import Header from '../Layouts/Header';
+import Footer from '../Layouts/Footer';
 import { axiosPrivate } from '../../api/axios';
-import Footer from '../Footer';
 
 function CategoryView() 
 {

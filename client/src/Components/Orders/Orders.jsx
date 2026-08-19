@@ -143,7 +143,7 @@ return (
                     <div className="col-xl-12 col-lg-12">
                         <div className="ec-cat-list card card-default mb-30">
                             <div className="card-body">
-                                <form id="catForm" onSubmit={handleSubmit}>
+                                <form onSubmit={handleSubmit}>
                                     <div className="form-group row">
                                         <div className="col-12 col-md-3">
                                             <label htmlFor="text" className="col-12 col-form-label">Name</label> 

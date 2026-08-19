@@ -1,8 +1,8 @@
 import useDashboardUI from '../../hooks/useDashboardUI';
 import { useRef, useState, useEffect } from 'react';
-import Sidebar from '../Sidebar';
-import Header from '../Header';
-import Footer from '../Footer';
+import Sidebar from '../Layouts/Sidebar';
+import Header from '../Layouts/Header';
+import Footer from '../Layouts/Footer';
 import { Toaster, toast } from "react-hot-toast";
 import { axiosPrivate } from '../../api/axios';
 const URL = '/products';
