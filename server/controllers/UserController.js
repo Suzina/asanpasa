@@ -113,7 +113,7 @@ const login = asyncHandler(async (req, res) =>
   const accessToken = sign(
       { username: user.username, id: user.id },
       "importantsecret",
-      { expiresIn: "1h" }
+      //{ expiresIn: "5h" }
     );
     res.json(accessToken);
 } 

@@ -1,12 +1,13 @@
 import { useRef, useState, useEffect } from 'react';
-import Sidebar from '../Sidebar';
-import Header from '../Header';
-import Footer from '../Footer';
+import Sidebar from '../Layouts/Sidebar';
+import Header from '../Layouts/Header';
+import Footer from '../Layouts/Footer';
 import { Toaster, toast } from "react-hot-toast";
 import { axiosPrivate } from '../../api/axios';
 import useDashboardUI from '../../hooks/useDashboardUI';
 
 const URL = '/orders';
+const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 function Orders() 
 {
@@ -14,27 +15,23 @@ function Orders()
     const userRef = useRef();
     const errRef = useRef();
 
-    const baseUrl = import.meta.env.VITE_API_BASE_URL;
-    const [editingId, setEditingId] = useState(null);
     const [orders, setOrders] = useState([]);
-    const [name, setName] = useState('');
-    const [image, setImage] = useState(null);
-    const [price, setPrice] = useState('');
-    const [categories, setCategories] = useState([]);
-    const [category_id, setCategoryId] = useState('');
+    const [fullname, setFullname] = useState('');
+    const [address, setAddress] = useState(null);
+    const [phonenumber, setPhonenumber] = useState('');
+    const [status, setStatus] = useState('');
 
         
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [totalItems, setTotalItems] = useState(0);
     const itemsPerPage = 10;
-    const [loading, setLoading] = useState(false);
+    const [isSearching, setIsSearching] = useState(false);
 
     const getOrders = async (page = 1, signal) => 
     {
         try 
         {
-            setLoading(true);
             const response = await axiosPrivate.get(URL, {
                 params: { page, limit: itemsPerPage },
                 signal,
@@ -48,126 +45,51 @@ function Orders()
         {
             console.log(err);
         }
-        finally
-        {
-            setLoading(false);
-        }
+        
     }
-    const getCats = async (signal) => 
-    {
-        try 
-        {
-            const response = await axiosPrivate.get('/categories', { signal });
-            setCategories(response.data);
-        } 
-        catch (err) 
-        {
-            console.log(err);
-        }
-    }
+    
     const resetForm = () => 
     {
-        setName('');
-        setEditingId(null);
+        setFullname('');
+        setAddress('');
+        setPhonenumber('');
+        setStatus('');
     }
-    const handleSubmit= async (e) =>
-    {
-        e.preventDefault();
-        try
-        {
-            let response;
-            if (editingId !== null) 
-            {
-                response = await axiosPrivate.put(`${URL}/${editingId}`, formData, {
-                headers: { 'Content-Type': 'multipart/form-data' },
+    const searchOrders = async (page = 1) => {
+        try {
+            const response = await axiosPrivate.get("orders/search", {
+                params: { fullname, address, phonenumber, status, page, limit: itemsPerPage },
                 withCredentials: true
-                 });
-    
-                if (response.data.error) 
-                {
-                    toast.error(response.data.error)
-                } 
-                else 
-                {
-                    toast.success("Product Updated!");
-                    setProducts(prev =>
-                        prev.map(prod =>
-                            prod.id === editingId ? { ...prod, ...response.data } : prod
-                        )
-                    );
-                    resetForm();
-                }
+            });
 
-            }
-            else
-            {
-                response = await axiosPrivate.post(URL,
-                JSON.stringify({ name,price,image,category_id }),
-                {
-                    headers: { 'Content-Type': 'application/json' },
-                    withCredentials: true
-                }
-                );
-                
-                if (response.data.error) 
-                {
-                    toast.error(response.data.error);
-                    console.log(response.data).error;
-
-                } 
-                else 
-                {
-                    
-                    toast.success("New Product Added!");
-                    console.log(response.data);
-                    setProducts(prev => [ response.data,...prev]); 
-                    resetForm();
-                }
-            }
-            
-            
-        }
-        catch (err)
-        {
-            console.log(err)
-    
-            if (!err?.response) 
-            {
-                toast.error('No Server Response');
-            } else if (err.response?.status === 400) {
-                toast.error(err.response?.data?.error || err.response?.data?.message || 'Something went wrong');
-            } else if (err.response?.status === 401) {
-                toast.error('Unauthorized');
-            } else {
-                toast.error(err.response?.data?.error || err.response?.data?.message || 'Something went wrong');
-
-            }
+            setOrders(response.data.items);
+            setTotalPages(response.data.totalPages);
+            setTotalItems(response.data.totalItems);
+            setCurrentPage(response.data.currentPage);
+        } catch (err) {
+            toast.error(err.response?.data?.error || err.response?.data?.message || 'Something went wrong');
             errRef.current.focus();
         }
-    }
+    };
 
-    const handleEditClick = (editprod) => 
-    {
-        setName(editprod.name);
-        setPrice(editprod.price);
-        setCat(editprod.category_id);
-        setEditingId(editprod.id);
-        userRef.current?.focus();
-    }
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setIsSearching(true);
+        await searchOrders(1);   
+    };
 
     const handleDeleteClick = async (id) => 
     {
         try 
         {
             await axiosPrivate.delete(`${URL}/${id}`, { withCredentials: true });
-            setCat(prev => prev.filter(cat => cat.id !== id));
-            if (editingId === id) resetForm();
-            toast.success("Category deleted successfully")
+            setOrders(prev => prev.filter(orders => orders.id !== id));
+            toast.success("Order deleted successfully");
         } 
         catch (err) 
         {
             console.log(err)
-    
+
             if (!err?.response) 
             {
                 toast.error('No Server Response');
@@ -176,19 +98,20 @@ function Orders()
             {
                 toast.error(err.response?.data?.error || err.response?.data?.message || 'Something went wrong');
             }
-            errRef.current.focus();
         }
     }
-     const goToPage = (page) => 
-    {
+    const goToPage = (page) => {
         if (page < 1 || page > totalPages || page === currentPage) return;
-        getOrders(page);
-    }
+        if (isSearching) {
+            searchOrders(page);
+        } else {
+            getOrders(page);
+        }
+    };
     useEffect(() => 
     {
         const controller = new AbortController();
         getOrders();
-        getCats();
         return () => controller.abort();
     }, [])
 return (
@@ -222,43 +145,57 @@ return (
                             <div className="card-body">
                                 <form id="catForm" onSubmit={handleSubmit}>
                                     <div className="form-group row">
-                                        <label htmlFor="text" className="col-12 col-form-label">Name</label> 
-                                        <div className="col-12">
-                                            <input name="name" className="form-control here slug-title" type="text" 
-                                            id="name"
-                                            ref={userRef}
+                                        <div className="col-12 col-md-3">
+                                            <label htmlFor="text" className="col-12 col-form-label">Name</label> 
+                                            <input name="fullname" className="form-control here slug-title" type="text" 
+                                            id="fullname"
                                             autoComplete="off"
-                                            onChange={(e) => setName(e.target.value)}
-                                            value={name}
-                                            placeholder="Enter product name" required
+                                            onChange={(e) => setFullname(e.target.value)}
+                                            value={fullname}
+                                            placeholder="Enter Name"
                                             />
                                         </div> 
-                                        <label htmlFor="text" className="col-12 col-form-label">Category</label> 
-                                        <div className="col-12">
+                                        <div className="col-12 col-md-3">
+                                            <label htmlFor="text" className="col-12 col-form-label">Phone No.</label> 
+                                            <input name="phonenumber" className="form-control here slug-title" type="text" 
+                                            id="phonenumber"
+                                            autoComplete="off"
+                                            onChange={(e) => setPhonenumber(e.target.value)}
+                                            value={phonenumber}
+                                            placeholder="Enter Address"
+                                            />
+                                        </div> 
+                                        <div className="col-12 col-md-3">
+                                            <label htmlFor="text" className="col-12 col-form-label">Address</label> 
+                                            <input name="address" className="form-control here slug-title" type="text" 
+                                            id="address"
+                                            autoComplete="off"
+                                            onChange={(e) => setAddress(e.target.value)}
+                                            value={address}
+                                            placeholder="Enter Address"
+                                            />
+                                        </div> 
+                                        <div className="col-12 col-md-3">
+                                            <label htmlFor="text" className="col-12 col-form-label">Status</label> 
                                             <select
-                                                name="category_id"
-                                                id="Categories"
+                                                name="status"
+                                                id="status"
                                                 className="form-select"
-                                                value={category_id}  // must be a number/string, e.g. 3, not { id: 3, name: "Electronics" }
-                                                onChange={(e) => setCategoryId(e.target.value)}
+                                                value={status} 
+                                                onChange={(e) => setStatus(e.target.value)}
                                             >
-                                                <option value="">Select a category</option>
-                                                {categories.map((category) => (
-                                                    <option key={category.id} value={category.id}>{category.name}</option>
-                                                ))}
+                                                <option value="">Select a Status</option>
+                                                <option value="Pending">Pending</option>
+                                                <option value="Delivered">Delivered</option>
+                                                <option value="Cancelled">Cancelled</option>
                                             </select>
                                         </div>
                                     </div>
                                     <div className="row">
                                         <div className="col-12">
                                             <button name="submit" type="submit" className="btn btn-primary">
-                                                {editingId !== null ? "Update" : "Submit"}
+                                                Search
                                             </button>
-                                            {editingId !== null && (
-                                                <button type="button" className="btn btn-secondary ms-2" onClick={resetForm}>
-                                                    Cancel
-                                                </button>
-                                            )}
                                         </div>
                                     </div>
                                 </form>
@@ -295,15 +232,19 @@ return (
                                                     <td>{order.amt_due}</td>
                                                     <td>{order.user.username}</td>
                                                     <td>
-                                                        {order.amt_due == 0 ? (
-                                                            <span className="mb-2 mr-2 badge badge-success">
-                                                                Paid
-                                                            </span>
-                                                        ) : (
-                                                            <span className="mb-2 mr-2 badge badge-danger">
-                                                                Due: {order.amt_due}
-                                                            </span>
-                                                        )}
+                                                       {order.status === "Delivered" ? (
+                                                        <span className="mb-2 mr-2 badge badge-success">
+                                                            Delivered
+                                                        </span>
+                                                    ) : order.status === "Cancelled" ? (
+                                                        <span className="mb-2 mr-2 badge badge-danger">
+                                                            Cancelled
+                                                        </span>
+                                                    ) : (
+                                                        <span className="mb-2 mr-2 badge pending">
+                                                            {order.status}
+                                                        </span>
+                                                    )}
                                                     </td>
                                                     <td>
                                                         <div className="btn-group">
@@ -319,7 +260,7 @@ return (
 
                                                             <div className="dropdown-menu">
                                                                 <a className="dropdown-item" href={`${baseUrl}/admin/order/${order.id}`}>View</a>
-                                                                <a className="dropdown-item" href={`${baseUrl}/admin/order/${order.id}`}>Edit</a>
+                                                                <a className="dropdown-item" href={`${baseUrl}/admin/order/edit/${order.id}`}>Edit</a>
                                                                 <a className="dropdown-item" href="#" onClick={(e) => { e.preventDefault(); handleDeleteClick(order.id); }}>Delete</a>															</div>
                                                         </div>
                                                     </td>
@@ -329,7 +270,6 @@ return (
                                     </table>
                                 </div>
                             
-                                {/* ===== Pagination controls ===== */}
                                 {totalPages > 1 && (
                                     <div className="d-flex justify-content-between align-items-center mt-3">
                                         <span>

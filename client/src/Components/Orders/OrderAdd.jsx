@@ -29,6 +29,7 @@ function OrderAdd()
     const [advance, setAdvance] = useState('');
     const [shipping_cost, setShippingCost] = useState('');
     const [delivery_date, setDeliveryDate] = useState('');
+    const [status, setStatus] = useState('');
 
     const getOrder = async (signal) => 
     {
@@ -43,6 +44,7 @@ function OrderAdd()
             setAdvance(data.advance);
             setShippingCost(data.shipping_cost);
             setDeliveryDate(data.delivery_date);
+            setStatus(data.status);
             if (data.orderItems && data.orderItems.length > 0) 
             {
                 setOrderItems(
@@ -120,30 +122,30 @@ function OrderAdd()
             let response;
             if (editingId !== null) 
             {
-                response = await axiosPrivate.put(`${URL}/${editingId}`, formData, {
-                headers: { 'Content-Type': 'application/json' },
-                withCredentials: true
-                 });
-    
+            
+                response = await axiosPrivate.put(`${URL}/${editingId}`,
+                JSON.stringify({ fullname,address,phonenumber,status,total_amt,shipping_cost,advance,delivery_date,items: orderItems }),
+                {
+                    headers: { 'Content-Type': 'application/json' },
+                    withCredentials: true
+                }
+                );
                 if (response.data.error) 
                 {
                     toast.error(response.data.error)
                 } 
                 else 
                 {
-                    toast.success("Product Updated!");
-                    setProducts(prev =>
-                        prev.map(prod =>
-                            prod.id === editingId ? { ...prod, ...response.data } : prod
-                        )
-                    );
+                    toast.success("Order Updated!");
+                    navigate('/admin/orders'); 
+
                 }
 
             }
             else
             {
                 response = await axiosPrivate.post(URL,
-                JSON.stringify({ fullname,address,phonenumber,total_amt,shipping_cost,advance,delivery_date,items: orderItems }),
+                JSON.stringify({ fullname,address,phonenumber,status,total_amt,shipping_cost,advance,delivery_date,items: orderItems }),
                 {
                     headers: { 'Content-Type': 'application/json' },
                     withCredentials: true
@@ -153,13 +155,11 @@ function OrderAdd()
                 if (response.data.error) 
                 {
                     toast.error(response.data.error);
-                    console.log(response.data).error;
                     
                 } 
                 else 
                 {
                     toast.success("New Order Added!");
-                    console.log(response.data);
                     navigate('/admin/orders'); 
                 }
             }
@@ -229,7 +229,7 @@ return (
                     reverseOrder={false}
                     />
                     <p className="breadcrumbs">
-                        <span><a href={`${baseUrl}/dashboard`}>Home</a></span>
+                        <span><a href={`${baseUrl}/admin/dashboard`}>Home</a></span>
                         <span><i className="mdi mdi-chevron-right"></i><a href={`${baseUrl}/admin/orders`}>Orders</a></span>
                         <span><i className="mdi mdi-chevron-right"></i></span>Add Orders
                     </p>
@@ -275,12 +275,20 @@ return (
                                                     placeholder="Enter phonenumber" required
                                                     />
                                                 </div> 
+                                                <div className="col-md-4 col-6">
+                                                    <label htmlFor="text" className="col-12 col-form-label">Order Status</label> 
+                                                    <select value={status} className='product-select' name='status' id="status" onChange={(e) => setStatus(e.target.value)}>
+                                                        <option value="Pending">Pending</option>
+                                                        <option value="Delivered">Delivered</option>
+                                                        <option value="Cancelled">Cancelled</option>
+                                                    </select>
+                                                </div> 
                                             </div>
                                             <div className="col-12"><h4>Orders</h4></div>
 
                                             {orderItems.map((item, index) => (
                                                 <div className="row mb-3" key={index}>
-                                                    <div className="col-md-5">
+                                                    <div className="col-4 col-md-5 mb-3">
                                                         <label>Product</label>
                                                         <Select
                                                             options={productOptions}
@@ -302,7 +310,7 @@ return (
                                                         />
                                                     </div>
 
-                                                    <div className="col-5 col-md-2 pd-0-right">
+                                                    <div className="col-3 col-md-2 pd-0-right">
                                                         <label className='pd-10'>Qty</label>
                                                         <input
                                                             type="number"
@@ -314,7 +322,7 @@ return (
                                                         />
                                                     </div>
 
-                                                    <div className="col-5 col-md-3 pd-0-right">
+                                                    <div className="col-4 col-md-3 pd-0-right">
                                                         <label className='pd-10'>Price</label>
                                                         <input
                                                             type="number"
@@ -326,7 +334,7 @@ return (
                                                         />
                                                     </div>
 
-                                                    <div className="col-2 pd-30 d-flex align-items-end">
+                                                    <div className="col-1 pd-30 d-flex align-items-end">
                                                         {index === 0 ? (
                                                             <button
                                                                 type="button"
@@ -349,7 +357,7 @@ return (
 
                                                 </div>
                                             ))}
-                                            <div className="row">
+                                            <div className="row mb-3">
                                                 <div className="col-6 col-md-3">
                                                     <label htmlFor="text" className="col-12 col-form-label">Total Amount</label> 
                                                     <input name="total_amt" className="form-control here slug-title" type="text" 
@@ -398,11 +406,11 @@ return (
                                               
                                             <div className="row">
                                                 <div className="col-12">
-                                                    <button name="submit" type="submit" className="mt-20 btn btn-primary">
+                                                    <button name="submit" type="submit" className="mr-20 btn btn-primary">
                                                         {editingId !== null ? "Update" : "Save"}
                                                     </button>
                                                     {editingId !== null && (
-                                                        <a href={`${baseUrl}/admin/orders`} type="button" className="mt-20 btn btn-secondary ms-2">
+                                                        <a href={`${baseUrl}/admin/orders`} type="button" className="mr-20 btn btn-secondary ms-2">
                                                             Go Back
                                                         </a>
                                                     )}

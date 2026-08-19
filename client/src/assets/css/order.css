@@ -228,7 +228,7 @@
     display:inline-block;
   }
 
-  .item-price{
+  /*.item-price{
     text-align:right;
     color:var(--text-primary);
     font-size:13px;
@@ -243,7 +243,7 @@
     min-width:70px;
     text-align:right;
   }
-
+*/
   .trash-icon{
     width:15px;
     height:15px;

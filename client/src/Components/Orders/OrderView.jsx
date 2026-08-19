@@ -213,16 +213,17 @@ function OrderView()
                             <div className="topbar">
                                 <div className="topbar-left">
                                     <h1>Order: {order.fullname}</h1>
-                                    <span className="badges">
+                                    <div className="subheading">
+                                        <span className="promo-text">Order Placed on: {order.delivery_date}</span>
+                                    </div>
+                                    <span className="badges p-10">
                                         {renderPaymentBadge()}
                                         {renderStatusBadge()}
                                     </span>
-                                    <div className="subheading">
-                                        {order.createdAt}
-                                    </div>
+                                    
                                 </div>
                                 <div className="topbar-right">
-                                    <a className="btn" href="/admin/orders/add">
+                                    <a className="btn" href={`${baseUrl}/admin/order/edit/${order.id}`}>
                                         <svg className="icon" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
                                         Edit
                                     </a>
@@ -236,16 +237,18 @@ function OrderView()
                                         <i className="mdi mdi-close"></i>
                                         Cancel Order
                                     </button>
+                                   
                                 </div>
                             </div>
                         </div>
                     <div className="grid">
                         <div className="col-main">
-                            <div className="card">
-                                <div className="card-header">
+                            <div className="order-card">
+                                <div className="order-card-header">
                                     <div className="card-header-left">
                                         <h2 className="card-title">Order Item</h2>
                                         <span className="badge unfulfilled">{order.status}</span>
+                                        
                                     </div>
                                 </div>
                                 {order?.orderItems?.map((item) => (
@@ -265,12 +268,7 @@ function OrderView()
                                         <button className="btn"><i className="mdi mdi-delete"></i></button>                                    </div>
                                 ))}
                                 <div className="promo-bar">
-                                    <span className="promo-text"></span>
-                                    {
-                                        order.status === "Delivered"
-                                        ? newStatus="Pending"
-                                        : newStatus="Delivered"
-                                    }
+                                    <span className="promo-text">Delivery Date <br/> {order.delivery_date}</span>
                                     <div className="promo-actions">
                                         <button className={`btn ${
                                                 order.status === "Delivered"
@@ -287,8 +285,8 @@ function OrderView()
                                 </div>
                             </div>
 
-                            <div className="card">
-                                <div className="card-header">
+                            <div className="order-card">
+                                <div className="order-card-header">
                                     <div className="card-header-left">
                                         <h2 className="card-title">Order Summary</h2>
                                         {renderPaymentBadge()}
