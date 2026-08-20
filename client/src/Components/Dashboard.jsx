@@ -80,7 +80,7 @@ function Dashboard()
               <p className='text-right'>{orders.length} of {orders.length}</p>
               {orders && orders.length > 0 ? (
                 orders.map((order) => (
-                  <div className="col-12 col-md-4 mb-30" key={order.id}>
+                  <div className="col-12 col-md-3 col-sm-4 mb-30" key={order.id}>
                     <div className="order-card">
                       <div className="order-card-header">
                         <div className="customer">

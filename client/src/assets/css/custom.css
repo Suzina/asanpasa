@@ -458,7 +458,10 @@
     border-radius: 50%;
     object-fit: cover;
   }
-  
+  .ndp-input {
+    min-width: 0px !important;
+   
+}
  
  
   
