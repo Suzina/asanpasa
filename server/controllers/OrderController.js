@@ -116,7 +116,7 @@ const create = asyncHandler(async (req, res) =>
         },
     ],
 });
-    res.status(201).json(orderWithProduct); 
+    res.status(201).json(orderWithProduct);
 });
 
 const update = asyncHandler(async (req, res) => 

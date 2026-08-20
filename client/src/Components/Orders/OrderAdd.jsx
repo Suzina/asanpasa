@@ -7,6 +7,9 @@ import { axiosPrivate } from '../../api/axios';
 import { useNavigate, useParams} from 'react-router-dom';
 import Select from 'react-select';
 import useDashboardUI from '../../hooks/useDashboardUI';
+import { NepaliDatePicker, adToBs } from "@himal_bhattarai/nepali-datepicker";
+
+
 
 const URL = '/orders';
 
@@ -28,7 +31,7 @@ function OrderAdd()
     const [total_amt, setTotalAmt] = useState('');
     const [advance, setAdvance] = useState('');
     const [shipping_cost, setShippingCost] = useState('');
-    const [delivery_date, setDeliveryDate] = useState('');
+    const [fulldelivery_date, setDeliveryDate] = useState('');
     const [status, setStatus] = useState('');
 
     const getOrder = async (signal) => 
@@ -43,7 +46,18 @@ function OrderAdd()
             setTotalAmt(data.total_amt);
             setAdvance(data.advance);
             setShippingCost(data.shipping_cost);
-            setDeliveryDate(data.delivery_date);
+           if (data?.delivery_date) 
+            {
+                const [year, month, day] = data.delivery_date
+                .split("-")
+                .map(Number);
+                setDeliveryDate({
+                    year,
+                    month,
+                    day
+                });
+            }
+            console.log(fulldelivery_date);
             setStatus(data.status);
             if (data.orderItems && data.orderItems.length > 0) 
             {
@@ -122,7 +136,7 @@ function OrderAdd()
             let response;
             if (editingId !== null) 
             {
-            
+                const delivery_date=fulldelivery_date.delivery_date;
                 response = await axiosPrivate.put(`${URL}/${editingId}`,
                 JSON.stringify({ fullname,address,phonenumber,status,total_amt,shipping_cost,advance,delivery_date,items: orderItems }),
                 {
@@ -144,6 +158,7 @@ function OrderAdd()
             }
             else
             {
+                const delivery_date=fulldelivery_date.delivery_date;
                 response = await axiosPrivate.post(URL,
                 JSON.stringify({ fullname,address,phonenumber,status,total_amt,shipping_cost,advance,delivery_date,items: orderItems }),
                 {
@@ -151,7 +166,7 @@ function OrderAdd()
                     withCredentials: true
                 }
                 );
-                
+                console.log(response.data);
                 if (response.data.error) 
                 {
                     toast.error(response.data.error);
@@ -170,10 +185,7 @@ function OrderAdd()
         {
             console.log(err)
     
-            if (err?.response) 
-            {
-                toast.error('No Server Response');
-            } else if (err.response?.status === 400) {
+            if (err.response?.status === 400) {
                 toast.error(err.response?.data?.error || err.response?.data?.message || 'Something went wrong');
             } else if (err.response?.status === 401) {
                 toast.error('Unauthorized');
@@ -181,23 +193,10 @@ function OrderAdd()
                 toast.error(err.response?.data?.error || err.response?.data?.message || 'Something went wrong');
 
             }
-            errRef.current.focus();
         }
     }
 
-    /*useEffect(() => {
-        getProducts();
-        if (id) 
-        {
-            getOrder();
-            setEditingId(id);
-        }
-        const total = orderItems.reduce((sum, item) => {
-            const price = parseFloat(item.price) || 0;
-            return sum + price;
-        }, 0);
-        setTotalAmt(total.toFixed(2));
-    }, [orderItems,id]);*/
+    
     useEffect(() => {
         getProducts();
         if (id) {
@@ -252,6 +251,7 @@ return (
                                                     value={fullname}
                                                     placeholder="Enter Fullname" required
                                                     />
+                                                  
                                                 </div>
                                                 <div className="col-md-4 col-6">
                                                     <label htmlFor="text" className="col-12 col-form-label">Address</label> 
@@ -393,14 +393,30 @@ return (
                                                 </div>
                                                  <div className="col-6 col-md-3">
                                                     <label htmlFor="text" className="col-12 col-form-label">Delivery Date</label> 
-                                                    <input name="delivery_date" className="form-control here slug-title" type="date" 
-                                                    id="delivery_date"
-                                                    ref={userRef}
-                                                    autoComplete="off"
-                                                    onChange={(e) => setDeliveryDate(e.target.value)}
-                                                    value={delivery_date}
-                                                    placeholder="Enter Delivery date" required
-                                                    />
+                                                    
+                                                    <NepaliDatePicker
+    value={fulldelivery_date}
+    onChange={(bs, ad) => {
+        setDeliveryDate(bs);
+        setDeliveryDate(prev => ({
+            ...prev,
+            delivery_date: `${bs.year}-${String(bs.month).padStart(2, "0")}-${String(bs.day).padStart(2, "0")}`
+        }));
+    }}
+    
+    styles={{
+    primary:     "#b094daff",   // main accent color (header, selected day, etc.)
+    primarySoft: "#e8f0fe",   // light tint of primary (hover backgrounds)
+    background:  "#ffffff",   // calendar popup and input background
+    text:        "#1e293b",   // main text color
+    textMuted:   "#94a3b8",   // muted text (day headers, placeholder, AD date)
+    border:      "#e2e8f0",   // all borders
+    todayBg:     "#dbeafe",   // today's date highlight background
+    controlsBg:  "#eff6ff",   // month/year selector bar background
+    radius:      "12px",      // border radius of the popup
+    shadow:      "0 8px 32px rgba(0,0,0,0.12)",  // popup drop shadow
+  }}
+/>
                                                 </div>
                                             </div>
                                               
