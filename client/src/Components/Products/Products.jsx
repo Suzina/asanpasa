@@ -5,6 +5,9 @@ import Header from '../Layouts/Header';
 import Footer from '../Layouts/Footer';
 import { Toaster, toast } from "react-hot-toast";
 import { axiosPrivate } from '../../api/axios';
+import { validateproductForm } from  "../../Utils/validateForm";
+import { validateImage } from  "../../Utils/validateForm";
+
 const URL = '/products';
 
 function Products() 
@@ -22,6 +25,7 @@ function Products()
     const [price, setPrice] = useState('');
     const [categories, setCategories] = useState([]);
     const [category_id, setCategoryId] = useState('');
+    const [errors, setErrors] = useState({});
 
     const getProducts = async (signal) => 
     {
@@ -55,6 +59,19 @@ function Products()
     const handleSubmit= async (e) =>
     {
         e.preventDefault();
+        const validationErrors = validateproductForm({
+            name,
+            price,
+            category_id
+        });
+        if (Object.keys(validationErrors).length > 0) 
+        {
+            setErrors(validationErrors);
+            return;
+        }
+
+        setErrors({});
+
         try
         {
             let response;
@@ -99,11 +116,10 @@ function Products()
                 } 
                 else 
                 {
-                    
                     toast.success("New Product Added!");
                     console.log(response.data);
-                    setProducts(prev => [ response.data,...prev]); 
-                    resetForm();
+                    //setProducts(prev => [ response.data,...prev]); 
+                    //resetForm();
                 }
             }
             
@@ -127,7 +143,6 @@ function Products()
             errRef.current.focus();
         }
     }
-
     const handleEditClick = (editprod) => 
     {
         setName(editprod.name);
@@ -161,6 +176,41 @@ function Products()
             errRef.current.focus();
         }
     }
+
+    const handleImageChange = async (e) => 
+    {
+        const file = e.target.files[0];
+        const error = await validateImage(file, {
+            required: true,
+            maxSize: 2 * 1024 * 1024,
+            allowedTypes: [
+                "image/jpeg",
+                "image/png",
+                "image/webp"
+            ],
+            minWidth: 200,
+            minHeight: 200,
+        });
+
+        if (error) {
+            setErrors((prev) => ({
+                ...prev,
+                image: error,
+            }));
+
+            setImage(null);
+            e.target.value = "";
+            return;
+        }
+
+        setErrors((prev) => ({
+            ...prev,
+            image: "",
+        }));
+
+        setImage(file);
+    };
+    
     useEffect(() => 
     {
         const controller = new AbortController();
@@ -168,7 +218,7 @@ function Products()
         getCats();
         return () => controller.abort();
     }, [])
-return (
+    return (
     <>
     <Sidebar/>
     <div className="ec-page-wrapper">
@@ -195,53 +245,103 @@ return (
                                             <div className="form-group row">
                                                 <label htmlFor="text" className="col-12 col-form-label">Name</label> 
                                                 <div className="col-12">
-                                                    <input name="name" className="form-control here slug-title" type="text" 
+                                                    <input name="name" 
+                                                    className={`form-control ${
+                                                        errors.name ? "is-invalid" : ""
+                                                    }`}
+                                                    type="text" 
                                                     id="name"
                                                     ref={userRef}
                                                     autoComplete="off"
-                                                    onChange={(e) => setName(e.target.value)}
+                                                    onChange={(e) => {
+                                                        setName(e.target.value);
+                                                        setErrors((prev) => ({
+                                                            ...prev,
+                                                            name: ""
+                                                        }));
+                                                    }}
                                                     value={name}
-                                                    placeholder="Enter product name" required
+                                                    placeholder="Enter product name" 
                                                     />
+                                                    {errors.name && (
+                                                        <div className="invalid-feedback">
+                                                            {errors.name}
+                                                        </div>
+                                                    )}
                                                 </div>
                                                 <label htmlFor="text" className="col-12 col-form-label">Image</label> 
                                                 <div className="thumb-upload-set colo-md-12">
                                                     <div className="thumb-upload">
                                                         <div className="thumb-edit">
-<input
-  type="file"
-  accept="image/*"
-  onChange={(e) => setImage(e.target.files[0])}
-/>                                                        </div>
-                                                       
+                                                            {errors.image && (
+                                                            <div className="text-danger">
+                                                                {errors.image}
+                                                            </div>
+                                                            )}
+                                                            <input
+                                                            type="file"
+                                                            className={`form-control ${
+                                                                errors.image ? "is-invalid" : ""
+                                                            }`}
+                                                            accept="image/*"
+                                                            onChange={handleImageChange}
+                                                            />                                                      
+                                                      </div>
                                                     </div>
 												</div>
                                                 
                                                 <label htmlFor="text" className="col-12 col-form-label">Price</label> 
                                                 <div className="col-12">
-                                                    <input name="price" className="form-control here slug-title" type="text" 
+                                                    <input name="price" 
+                                                    className={`form-control ${
+                                                        errors.price ? "is-invalid" : ""
+                                                    }`}
+                                                    type="number" 
                                                     id="price"
                                                     ref={userRef}
                                                     autoComplete="off"
-                                                    onChange={(e) => setPrice(e.target.value)}
+                                                    onChange={(e) => {
+                                                        setPrice(e.target.value);
+                                                        setErrors((prev) => ({
+                                                            ...prev,
+                                                            price: ""
+                                                        }));
+                                                    }}
                                                     value={price}
-                                                    placeholder="Enter product price" required
+                                                    placeholder="Enter product price" 
                                                     />
+                                                    {errors.price && (
+                                                        <div className="invalid-feedback">
+                                                            {errors.price}
+                                                        </div>
+                                                    )}
                                                 </div>
                                                 <label htmlFor="text" className="col-12 col-form-label">Category</label> 
                                                 <div className="col-12">
-<select
-    name="category_id"
-    id="Categories"
-    className="form-select"
-    value={category_id}  // must be a number/string, e.g. 3, not { id: 3, name: "Electronics" }
-    onChange={(e) => setCategoryId(e.target.value)}
->
-    <option value="">Select a category</option>
-    {categories.map((category) => (
-        <option key={category.id} value={category.id}>{category.name}</option>
-    ))}
-</select>
+                                                    <select
+                                                        name="category_id"
+                                                        id="Categories"
+                                                        className={`form-select ${
+                                                            errors.category_id ? "is-invalid" : ""
+                                                        }`}
+                                                        value={category_id}  
+                                                        onChange={(e) => {
+                                                            setCategoryId(e.target.value);
+                                                            setErrors((prev) => ({
+                                                                ...prev,
+                                                                category_id: ""
+                                                            }));
+                                                        }}                                                    >
+                                                        <option value="">Select a category</option>
+                                                        {categories.map((category) => (
+                                                            <option key={category.id} value={category.id}>{category.name}</option>
+                                                        ))}
+                                                    </select>
+                                                    {errors.category_id && (
+                                                        <div className="invalid-feedback">
+                                                            {errors.category_id}
+                                                        </div>
+                                                    )}
                                                 </div>
                                             </div>
                                             <div className="row">

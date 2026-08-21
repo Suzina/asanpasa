@@ -71,7 +71,9 @@ const create = asyncHandler(async (req, res) =>
 {
     const { items,fullname,address,phonenumber,total_amt,advance,shipping_cost,delivery_date } = req.body;
     const user_id = req.user.id; 
-    if (!fullname || !address || !phonenumber || !total_amt || !advance || !shipping_cost) 
+    const toNullIfEmpty = (val) => (val === "" || val === undefined ? null : val);
+
+    if (!fullname || !address || !phonenumber || !total_amt || !advance) 
     {
         const err = new Error("Required fields are missing");
         err.status = 400;
@@ -85,11 +87,11 @@ const create = asyncHandler(async (req, res) =>
         address,
         phonenumber,
         total_amt,
-        advance,
-        amt_due,
-        shipping_cost,
+        advance: toNullIfEmpty(advance),
+        amt_due: toNullIfEmpty(amt_due),
+        shipping_cost: toNullIfEmpty(shipping_cost),
         user_id,
-        delivery_date
+        delivery_date: toNullIfEmpty(delivery_date),
     });
 
     const orderItems = items.map(item => ({
@@ -306,6 +308,7 @@ const getTotalOrders = asyncHandler(async (req, res) =>
         currentPage: page,
     });
 });
+
 const search = asyncHandler(async (req, res) => 
 {
     const { fullname, phonenumber, address, status } = req.query;
@@ -340,4 +343,5 @@ const search = asyncHandler(async (req, res) =>
         totalPages: Math.ceil(count / limit),
         currentPage: page,
     });});
+    
 module.exports = { getAll, getOne, create, update, remove, getUpcommingOrders, search };
