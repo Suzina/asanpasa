@@ -5,6 +5,7 @@ import Header from '../Layouts/Header';
 import Footer from '../Layouts/Footer';
 import { axiosPrivate } from '../../api/axios';
 import useDashboardUI from '../../hooks/useDashboardUI';
+import { validateCategoryForm } from  "../../Utils/validateForm";
 
 const URL = '/categories';
 
@@ -17,6 +18,7 @@ function Categories() {
     const [categories, setCat] = useState([]);
     const [editingId, setEditingId] = useState(null);
     const baseUrl = import.meta.env.VITE_API_BASE_URL;
+    const [errors, setErrors] = useState({});
 
     const getCats = async (signal) => 
     {
@@ -38,6 +40,14 @@ function Categories() {
     const handleSubmit= async (e) =>
     {
         e.preventDefault();
+        const validationErrors = validateCategoryForm({ name });
+        if (Object.keys(validationErrors).length > 0) 
+        {
+            setErrors(validationErrors);
+            return;
+        }
+
+        setErrors({});
         try
         {
             let response;
@@ -87,8 +97,6 @@ function Categories() {
                     resetForm();
                 }
             }
-            
-            
         }
         catch (err)
         {
@@ -173,14 +181,29 @@ function Categories() {
                                             <div className="form-group row">
                                                 <label htmlFor="text" className="col-12 col-form-label">Name</label> 
                                                 <div className="col-12">
-                                                    <input name="name" className="form-control here slug-title" type="text" 
+                                                    <input name="name" 
+                                                    className={`form-control ${
+                                                        errors.name ? "is-invalid" : ""
+                                                    }`}
+                                                    type="text" 
                                                     id="name"
                                                     ref={userRef}
                                                     autoComplete="off"
-                                                    onChange={(e) => setName(e.target.value)}
+                                                    onChange={(e) => {
+                                                        setName(e.target.value);
+                                                        setErrors((prev) => ({
+                                                            ...prev,
+                                                            name: ""
+                                                        }));
+                                                    }}
                                                     value={name}
-                                                    placeholder="Enter category name" required
+                                                    placeholder="Enter category name" 
                                                     />
+                                                    {errors.name && (
+                                                        <div className="invalid-feedback">
+                                                            {errors.name}
+                                                        </div>
+                                                    )}
                                                 </div>
                                             </div>
                                             <div className="row">

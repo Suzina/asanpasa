@@ -8,8 +8,7 @@ import { useNavigate, useParams} from 'react-router-dom';
 import Select from 'react-select';
 import useDashboardUI from '../../hooks/useDashboardUI';
 import { NepaliDatePicker, adToBs } from "@himal_bhattarai/nepali-datepicker";
-
-
+import validateForm from "../../Utils/validateForm";
 
 const URL = '/orders';
 
@@ -33,6 +32,7 @@ function OrderAdd()
     const [shipping_cost, setShippingCost] = useState('');
     const [fulldelivery_date, setDeliveryDate] = useState('');
     const [status, setStatus] = useState('');
+    const [errors, setErrors] = useState({});
 
     const getOrder = async (signal) => 
     {
@@ -100,6 +100,11 @@ function OrderAdd()
         const items = [...orderItems];
         items.splice(index, 1);
         setOrderItems(items);
+        setErrors((prev) => {
+            const { itemErrors, ...rest } = prev;
+            return rest;
+        });
+
     };
 
     const handleItemChange = (index, field, value) => 
@@ -107,7 +112,6 @@ function OrderAdd()
         const items = [...orderItems];
         items[index][field] = value;
         setOrderItems(items);
-        console.log(items);
     };
 
     const getProducts = async (signal) => 
@@ -131,6 +135,22 @@ function OrderAdd()
     const handleSubmit= async (e) =>
     {
         e.preventDefault();
+        const validationErrors = validateForm({
+            fullname,
+            address,
+            phonenumber,
+            advance,
+            fulldelivery_date,
+            orderItems
+        });
+
+        if (Object.keys(validationErrors).length > 0) 
+        {
+            setErrors(validationErrors);
+            return;
+        }
+        setErrors({});
+       
         try
         {
             let response;
@@ -191,7 +211,6 @@ function OrderAdd()
                 toast.error('Unauthorized');
             } else {
                 toast.error(err.response?.data?.error || err.response?.data?.message || 'Something went wrong');
-
             }
         }
     }
@@ -243,45 +262,94 @@ return (
                                             <div className="form-group row">
                                                 <div className="col-md-4 col-6">
                                                     <label htmlFor="text" className="col-12 col-form-label">Fullname</label> 
-                                                    <input name="name" className="form-control here slug-title" type="text" 
-                                                    id="fullname"
-                                                    ref={userRef}
-                                                    autoComplete="off"
-                                                    onChange={(e) => setFullname(e.target.value)}
-                                                    value={fullname}
-                                                    placeholder="Enter Fullname" required
+                                                    <input name="name" 
+                                                        className={`form-control ${
+                                                            errors.fullname ? "is-invalid" : ""
+                                                        }`}
+                                                        type="text" 
+                                                        id="fullname"
+                                                        ref={userRef}
+                                                        autoComplete="off"
+                                                        onChange={(e) => {
+                                                            setFullname(e.target.value);
+                                                            setErrors((prev) => ({
+                                                                ...prev,
+                                                                fullname: ""
+                                                            }));
+                                                        }}
+                                                        value={fullname}
+                                                        placeholder="Enter Fullname"
                                                     />
-                                                  
+                                                    {errors.fullname && (
+                                                        <div className="text-danger">
+                                                            {errors.fullname}
+                                                        </div>
+                                                    )}
                                                 </div>
                                                 <div className="col-md-4 col-6">
                                                     <label htmlFor="text" className="col-12 col-form-label">Address</label> 
-                                                    <input name="address" className="form-control here slug-title" type="text" 
-                                                    id="address"
-                                                    ref={userRef}
-                                                    autoComplete="off"
-                                                    onChange={(e) => setAddress(e.target.value)}
-                                                    value={address}
-                                                    placeholder="Enter address" required
+                                                    <input name="address" 
+                                                        className={`form-control ${
+                                                                errors.address ? "is-invalid" : ""
+                                                            }`}
+                                                        type="text" 
+                                                        id="address"
+                                                        ref={userRef}
+                                                        autoComplete="off"
+                                                        onChange={(e) => { setAddress(e.target.value);
+                                                             setErrors((prev) => ({
+                                                                ...prev,
+                                                                address: ""
+                                                            }));
+                                                        }}
+                                                        value={address}
+                                                        placeholder="Enter address"
                                                     />
+                                                    {errors.address && (
+                                                        <div className="text-danger">
+                                                            {errors.address}
+                                                        </div>
+                                                    )}
                                                 </div>
                                                 <div className="col-md-4 col-6">
                                                     <label htmlFor="text" className="col-12 col-form-label">Phone Number</label> 
-                                                    <input name="phonenumber" className="form-control here slug-title" type="text" 
+                                                    <input name="phonenumber" 
+                                                    className={`form-control ${
+                                                                errors.phonenumber ? "is-invalid" : ""
+                                                            }`}
+                                                    type="text" 
                                                     id="phonenumber"
                                                     ref={userRef}
                                                     autoComplete="off"
-                                                    onChange={(e) => setPhonenumber(e.target.value)}
+                                                    onChange={(e) => { setPhonenumber(e.target.value);
+                                                             setErrors((prev) => ({
+                                                                ...prev,
+                                                                phonenumber: ""
+                                                            }));
+                                                        }}
                                                     value={phonenumber}
-                                                    placeholder="Enter phonenumber" required
+                                                    placeholder="Enter phonenumber"
                                                     />
+                                                    {errors.phonenumber && (
+                                                        <div className="text-danger">
+                                                            {errors.phonenumber}
+                                                        </div>
+                                                    )}
                                                 </div> 
                                                 <div className="col-md-4 col-6">
                                                     <label htmlFor="text" className="col-12 col-form-label">Order Status</label> 
-                                                    <select value={status} className='product-select' name='status' id="status" onChange={(e) => setStatus(e.target.value)}>
+                                                    <select value={status}  className={`product-select ${
+                                                                errors.status ? "is-invalid" : ""
+                                                            }`} name='status' id="status" onChange={(e) => setStatus(e.target.value)}>
                                                         <option value="Pending">Pending</option>
                                                         <option value="Delivered">Delivered</option>
                                                         <option value="Cancelled">Cancelled</option>
                                                     </select>
+                                                    {errors.status && (
+                                                        <div className="text-danger">
+                                                            {errors.status}
+                                                        </div>
+                                                    )}
                                                 </div> 
                                             </div>
                                             <div className="col-12"><h4>Orders</h4></div>
@@ -293,8 +361,7 @@ return (
                                                         <Select
                                                             options={productOptions}
                                                             className="product-select"
-                                                              classNamePrefix="react-select"
-
+                                                            classNamePrefix="react-select"
                                                             value={
                                                                 productOptions.find(
                                                                     option => option.value === item.product_id
@@ -308,6 +375,11 @@ return (
                                                                 )
                                                             }
                                                         />
+                                                        {errors.itemErrors?.[index]?.product_id && (
+                                                            <div className="text-danger">
+                                                                {errors.itemErrors[index].product_id}
+                                                            </div>
+                                                        )}
                                                     </div>
 
                                                     <div className="col-3 col-md-2 pd-0-right">
@@ -320,6 +392,11 @@ return (
                                                                 handleItemChange(index, "qty", e.target.value)
                                                             }
                                                         />
+                                                        {errors.itemErrors?.[index]?.qty && (
+                                                            <div className="text-danger">
+                                                                {errors.itemErrors[index].qty}
+                                                            </div>
+                                                        )}
                                                     </div>
 
                                                     <div className="col-4 col-md-3 pd-0-right">
@@ -327,36 +404,35 @@ return (
                                                         <input
                                                             type="number"
                                                             className="form-control"
-                                                                value={item.price ?? ""}
-                                                                    onChange={(e) =>
+                                                            value={item.price ?? ""}
+                                                            onChange={(e) =>
                                                                 handleItemChange(index, "price", e.target.value)
                                                             }
                                                         />
+                                                        {errors.itemErrors?.[index]?.price && (
+                                                            <div className="text-danger">
+                                                                {errors.itemErrors[index].price}
+                                                            </div>
+                                                        )}
                                                     </div>
 
                                                     <div className="col-1 pd-30 d-flex align-items-end">
                                                         {index === 0 ? (
-                                                            <button
-                                                                type="button"
-                                                                className="btn btn-success"
-                                                                onClick={addRow}
-                                                            >
-                                                                +
-                                                            </button>
-                                                           
+                                                            <button type="button" className="btn btn-success" onClick={addRow}>+</button>
                                                         ) : (
-                                                            <button type="button"
-                                                                className="btn btn-danger"
-                                                                onClick={() => removeRow(index)}
-                                                            >
-                                                               <i className="mdi mdi-delete"></i>
+                                                            <button type="button" className="btn btn-danger" onClick={() => removeRow(index)}>
+                                                                <i className="mdi mdi-delete"></i>
                                                             </button>
                                                         )}
-
                                                     </div>
-
                                                 </div>
                                             ))}
+
+                                            {errors.orderItems && (
+                                                <div className="text-danger mb-3">
+                                                    {errors.orderItems}
+                                                </div>
+                                            )}
                                             <div className="row mb-3">
                                                 <div className="col-6 col-md-3">
                                                     <label htmlFor="text" className="col-12 col-form-label">Total Amount</label> 
@@ -371,7 +447,9 @@ return (
                                                 </div>    
                                                 <div className="col-6 col-md-3">
                                                     <label htmlFor="text" className="col-12 col-form-label">Delivery Charge</label> 
-                                                    <input name="shipping_cost" className="form-control here slug-title" type="text" 
+                                                    <input name="shipping_cost" 
+                                                    className="form-control here slug-title" 
+                                                    type="number" 
                                                     id="shipping_cost"
                                                     ref={userRef}
                                                     autoComplete="off"
@@ -379,44 +457,69 @@ return (
                                                     value={shipping_cost}
                                                     placeholder="Delivery Charge"
                                                     />
+                                                    
                                                 </div>   
                                                 <div className="col-6 col-md-3">
                                                     <label htmlFor="text" className="col-12 col-form-label">Advance</label> 
-                                                    <input name="advance" className="form-control here slug-title" type="text" 
+                                                    <input name="advance" 
+                                                    type="number" 
                                                     id="advance"
                                                     ref={userRef}
                                                     autoComplete="off"
-                                                    onChange={(e) => setAdvance(e.target.value)}
                                                     value={advance}
-                                                    placeholder="Enter advance" required
+                                                    placeholder="Enter advance"
+                                                    className={`form-control ${
+                                                            errors.advance ? "is-invalid" : ""
+                                                        }`}
+                                                    onChange={(e) => {
+                                                        setAdvance(e.target.value);
+                                                        setErrors((prev) => ({
+                                                            ...prev,
+                                                            advance: ""
+                                                        }));
+                                                    }}
                                                     />
+                                                    {errors.advance && (
+                                                        <div className="text-danger">
+                                                            {errors.advance}
+                                                        </div>
+                                                    )}
                                                 </div>
                                                  <div className="col-6 col-md-3">
-                                                    <label htmlFor="text" className="col-12 col-form-label">Delivery Date</label> 
-                                                    
+                                                    <label htmlFor="text" className="col-12 col-form-label">Delivery Date</label>                                                     
                                                     <NepaliDatePicker
-    value={fulldelivery_date}
-    onChange={(bs, ad) => {
-        setDeliveryDate(bs);
-        setDeliveryDate(prev => ({
-            ...prev,
-            delivery_date: `${bs.year}-${String(bs.month).padStart(2, "0")}-${String(bs.day).padStart(2, "0")}`
-        }));
-    }}
-    
-    styles={{
-    primary:     "#b094daff",   // main accent color (header, selected day, etc.)
-    primarySoft: "#e8f0fe",   // light tint of primary (hover backgrounds)
-    background:  "#ffffff",   // calendar popup and input background
-    text:        "#1e293b",   // main text color
-    textMuted:   "#94a3b8",   // muted text (day headers, placeholder, AD date)
-    border:      "#e2e8f0",   // all borders
-    todayBg:     "#dbeafe",   // today's date highlight background
-    controlsBg:  "#eff6ff",   // month/year selector bar background
-    radius:      "12px",      // border radius of the popup
-    shadow:      "0 8px 32px rgba(0,0,0,0.12)",  // popup drop shadow
-  }}
-/>
+                                                        value={fulldelivery_date}
+                                                        onChange={(bs, ad) => 
+                                                        {
+                                                            setDeliveryDate(bs);
+                                                            setDeliveryDate(prev => ({
+                                                                ...prev,
+                                                                delivery_date: `${bs.year}-${String(bs.month).padStart(2, "0")}-${String(bs.day).padStart(2, "0")}`
+                                                            }));
+                                                            setErrors((prev) => ({
+                                                            ...prev,
+                                                            fulldelivery_date: ""
+                                                        }));
+                                                        }}
+                                                        
+                                                        styles={{
+                                                        primary:     "#b094daff",   // main accent color (header, selected day, etc.)
+                                                        primarySoft: "#e8f0fe",   // light tint of primary (hover backgrounds)
+                                                        background:  "#ffffff",   // calendar popup and input background
+                                                        text:        "#1e293b",   // main text color
+                                                        textMuted:   "#94a3b8",   // muted text (day headers, placeholder, AD date)
+                                                        border:      "#e2e8f0",   // all borders
+                                                        todayBg:     "#dbeafe",   // today's date highlight background
+                                                        controlsBg:  "#eff6ff",   // month/year selector bar background
+                                                        radius:      "12px",      // border radius of the popup
+                                                        shadow:      "0 8px 32px rgba(0,0,0,0.12)",  // popup drop shadow
+                                                    }}
+                                                    />
+                                                    {errors.fulldelivery_date && (
+                                                        <div className="text-danger">
+                                                            {errors.fulldelivery_date}
+                                                        </div>
+                                                    )}
                                                 </div>
                                             </div>
                                               
@@ -437,7 +540,6 @@ return (
                                 </div>
                             </div>
                         </div>
-                        
                 </div>
             </div> 
         </div> 
