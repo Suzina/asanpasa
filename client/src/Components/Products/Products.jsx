@@ -118,8 +118,8 @@ function Products()
                 {
                     toast.success("New Product Added!");
                     console.log(response.data);
-                    //setProducts(prev => [ response.data,...prev]); 
-                    //resetForm();
+                    setProducts(prev => [ response.data,...prev]); 
+                    resetForm();
                 }
             }
             
@@ -241,7 +241,7 @@ function Products()
                                 <div className="ec-cat-form">
                                         <h4>{editingId !== null ? "Edit Product" : "Add New Product"}</h4>
                                         
-                                        <form id="catForm" onSubmit={handleSubmit}>
+                                        <form id="catForm" onSubmit={handleSubmit} >
                                             <div className="form-group row">
                                                 <label htmlFor="text" className="col-12 col-form-label">Name</label> 
                                                 <div className="col-12">

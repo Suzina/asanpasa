@@ -55,9 +55,9 @@ const create = asyncHandler(async (req, res) =>
     {
         image="";
     }
-    res.send(req.file);
+    //res.send(req.file);
 
-    /*const slug = slugify(name, { lower: true, strict: true });
+    const slug = slugify(name, { lower: true, strict: true });
     const product = await Products.create({
         name: name.trim(),
         image: image,
@@ -72,7 +72,7 @@ const create = asyncHandler(async (req, res) =>
         attributes: ["id", "name"],
     },
 });
-    res.status(201).json(productWithCategory); */
+    res.status(201).json(productWithCategory); 
 });
 
 const update = asyncHandler(async (req, res) => 
