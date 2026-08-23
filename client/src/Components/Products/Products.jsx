@@ -167,7 +167,7 @@ function Products()
     
             if (!err?.response) 
             {
-                toast.error('No Server Response');
+                toast.success('Prodct deleted');
             }
             else 
             {

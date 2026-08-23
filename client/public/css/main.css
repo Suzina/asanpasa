@@ -18039,6 +18039,7 @@ a.badge-purple:focus, a.badge-purple.focus {
 }
 .card-default .card-body {
   padding: 24px;
+  min-height: 300px;
 }
 .card-default .card-body p {
   line-height: 1.5;
