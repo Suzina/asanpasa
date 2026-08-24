@@ -76,8 +76,8 @@ function Dashboard()
               </div>
             </div>
             <div className="row g-3">
-              <h3 className='p-20'>Upcomming Deliveries</h3>
-              <p className='text-right'>{orders.length} of {orders.length}</p>
+              <h4 className='p-20'>Upcomming Deliveries</h4>
+              <p className='text-right mb-10'>{orders.length} of {orders.length}</p>
               {orders && orders.length > 0 ? (
                 orders.map((order) => (
                   <div className="col-12 col-md-3 col-sm-4 mb-30" key={order.id}>
@@ -85,6 +85,7 @@ function Dashboard()
                       <div className="order-card-header">
                         <div className="customer">
                           <div className="order-avatar">
+                            <img src="/img/user/u8.jpg" width="38px"/>
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" 
                             strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                               <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
@@ -145,7 +146,7 @@ function Dashboard()
                       </div>
                       <div className="more-items">+2 more items</div>
                         <div className="notes">
-                          <div className="notes-text">{order.phonenumber}</div>
+                          <div className="notes-text">{order.phonenumber}, {order.phonenumber2}</div>
                           <div className="notes-text">{order.address}</div>
                         </div>
                         <a href={`${baseUrl}/admin/order/${order.id}`} className="details-btn">

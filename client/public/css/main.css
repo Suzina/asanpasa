@@ -20264,7 +20264,7 @@ div.copied {
 }
 @media (max-width: 575.98px) {
   .navbar .navbar-right .navbar-nav li > .dropdown-menu {
-    right: -130px;
+    right: -50px;
   }
 }
 @media (min-width: 992px) {
@@ -20640,7 +20640,6 @@ div.copied {
 @media (max-width: 575.98px) {
   .dropdown-notify {
     width: 300px;
-    right: -67px;
     left: auto;
   }
 }
