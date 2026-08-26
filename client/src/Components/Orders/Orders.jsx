@@ -145,37 +145,34 @@ return (
                             <div className="card-body">
                                 <form onSubmit={handleSubmit}>
                                     <div className="form-group row">
-                                        <div className="col-12 col-md-3">
+                                        <div className="col-6 col-md-3">
                                             <label htmlFor="text" className="col-12 col-form-label">Name</label> 
                                             <input name="fullname" className="form-control here slug-title" type="text" 
                                             id="fullname"
                                             autoComplete="off"
                                             onChange={(e) => setFullname(e.target.value)}
                                             value={fullname}
-                                            placeholder="Enter Name"
                                             />
                                         </div> 
-                                        <div className="col-12 col-md-3">
+                                        <div className="col-6 col-md-3">
                                             <label htmlFor="text" className="col-12 col-form-label">Phone No.</label> 
                                             <input name="phonenumber" className="form-control here slug-title" type="text" 
                                             id="phonenumber"
                                             autoComplete="off"
                                             onChange={(e) => setPhonenumber(e.target.value)}
                                             value={phonenumber}
-                                            placeholder="Enter Address"
                                             />
                                         </div> 
-                                        <div className="col-12 col-md-3">
+                                        <div className="col-6 col-md-3">
                                             <label htmlFor="text" className="col-12 col-form-label">Address</label> 
                                             <input name="address" className="form-control here slug-title" type="text" 
                                             id="address"
                                             autoComplete="off"
                                             onChange={(e) => setAddress(e.target.value)}
                                             value={address}
-                                            placeholder="Enter Address"
                                             />
                                         </div> 
-                                        <div className="col-12 col-md-3">
+                                        <div className="col-6 col-md-3">
                                             <label htmlFor="text" className="col-12 col-form-label">Status</label> 
                                             <select
                                                 name="status"
@@ -204,6 +201,7 @@ return (
                         <div className="ec-cat-list card card-default">
                             <div className="card-body">
                                 <div className="table-responsive">
+                                    <p>1 result for pending orders.</p>
                                     <table id="responsive-data-table" className="table" style={{ width: '100%' }}>
                                         <thead>
                                             <tr>

@@ -60,10 +60,12 @@ function OrderView()
     {
         if (order.status==="Delivered") 
         {
+            newStatus="Pending";
             return "Mark as pending";
         } 
         else if(order.status==="Pending")
         {
+            newStatus="Delivered";
             return "Mark as delivered";
         }
         else if(order.status==="Cancelled")
@@ -92,6 +94,7 @@ function OrderView()
     };
     const changeStatus = async (id,status) => 
     {
+        //console.log(id,status);
         try 
         {
            let response = await axiosPrivate.put(`${URL}`,
@@ -126,7 +129,7 @@ function OrderView()
                 toast.error(err.response?.data?.error || err.response?.data?.message || 'Something went wrong');
             }
         }
-       console.log(id);
+       // console.log(id);
     }
     const handleDeleteClick = async (id) => {
         try 
@@ -210,6 +213,13 @@ function OrderView()
                                 position="top-right"
                                 reverseOrder={false}
                                 />
+                                <div className="breadcrumb-wrapper breadcrumb-wrapper-2 breadcrumb-contacts">
+                                    <p className="breadcrumbs">
+                                        <span><a href={`${baseUrl}/admin/dashboard`}>Home</a></span>
+                                        <span><i className="mdi mdi-chevron-right"></i><a href={`${baseUrl}/admin/orders`}>Orders</a></span>
+                                        <span><i className="mdi mdi-chevron-right"></i></span>{order.fullname}
+                                    </p>
+                                </div>
                             <div className="topbar">
                                 <div className="topbar-left">
                                     <h1>Order: {order.fullname}</h1>
@@ -352,7 +362,7 @@ function OrderView()
                                     </li>
                                     <li>
                                         <svg className="icon" viewBox="0 0 24 24"><path d="M4 4h16v16H4z" opacity="0"/><path d="M22 6l-10 7L2 6"/><rect x="2" y="4" width="20" height="16" rx="2"/></svg>
-                                        {order.phonenumber}
+                                        {order.phonenumber}, {order.phonenumber2}
                                     </li>
                                     <li>
                                         <svg className="icon" viewBox="0 0 24 24"><path d="M4 4h16v16H4z" opacity="0"/><path d="M22 6l-10 7L2 6"/><rect x="2" y="4" width="20" height="16" rx="2"/></svg>
