@@ -38,7 +38,7 @@
   --bs-font-sans-serif: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   --bs-font-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   --bs-gradient: linear-gradient(180deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0));
-  --bs-body-font-family: Roboto, sans-serif;
+  --bs-body-font-family: Stack Sans Text, sans-serif;
   --bs-body-font-size: 0.875rem;
   --bs-body-font-weight: 400;
   --bs-body-line-height: 1.5;
@@ -18039,6 +18039,7 @@ a.badge-purple:focus, a.badge-purple.focus {
 }
 .card-default .card-body {
   padding: 24px;
+  min-height: 300px;
 }
 .card-default .card-body p {
   line-height: 1.5;
@@ -20263,7 +20264,7 @@ div.copied {
 }
 @media (max-width: 575.98px) {
   .navbar .navbar-right .navbar-nav li > .dropdown-menu {
-    right: -130px;
+    right: -50px;
   }
 }
 @media (min-width: 992px) {
@@ -20639,7 +20640,6 @@ div.copied {
 @media (max-width: 575.98px) {
   .dropdown-notify {
     width: 300px;
-    right: -67px;
     left: auto;
   }
 }
@@ -24960,20 +24960,4 @@ div.dataTables_wrapper div.dataTables_filter {
     text-transform: uppercase;
     font-weight: 400;
     white-space: nowrap;
-}
-.text-success
-{
-  color:#22bb33
-}
-.text-warning
-{
-  color:#856404
-}
-.text-danger
-{
-  color:#721c24
-}
-.react-select__input {
-    height: 25px !important;
-    opacity: 0 !important;
 }
