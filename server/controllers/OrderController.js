@@ -69,7 +69,7 @@ const getOne = asyncHandler(async (req, res) =>
 
 const create = asyncHandler(async (req, res) => 
 {
-    const { items,fullname,address,phonenumber,total_amt,advance,shipping_cost,delivery_date } = req.body;
+    const { items,fullname,address,phonenumber,phonenumber2,total_amt,advance,shipping_cost,delivery_date } = req.body;
     const user_id = req.user.id; 
     const toNullIfEmpty = (val) => (val === "" || val === undefined ? null : val);
 
@@ -86,6 +86,7 @@ const create = asyncHandler(async (req, res) =>
         fullname,
         address,
         phonenumber,
+        phonenumber2,
         total_amt,
         advance: toNullIfEmpty(advance),
         amt_due: toNullIfEmpty(amt_due),
@@ -124,7 +125,7 @@ const create = asyncHandler(async (req, res) =>
 const update = asyncHandler(async (req, res) => 
 {
     const id = req.params.id;
-    const { items,fullname,address,phonenumber,total_amt,advance,shipping_cost,delivery_date,status } = req.body;
+    const { items,fullname,address,phonenumber,phonenumber2,total_amt,advance,shipping_cost,delivery_date,status } = req.body;
     const user_id = req.user.id; 
 
     const order = await Orders.findByPk(id);
@@ -140,6 +141,7 @@ const update = asyncHandler(async (req, res) =>
     if (fullname !== undefined) order.fullname = fullname;
     if (address !== undefined) order.address = address;
     if (phonenumber !== undefined) order.phonenumber = phonenumber;
+    if (phonenumber2 !== undefined) order.phonenumber2 = phonenumber2;
     if (advance !== undefined) order.advance = advance;
     if (status !== undefined) order.status = status;
     if (shipping_cost !== undefined) order.shipping_cost = shipping_cost;
@@ -249,7 +251,7 @@ const getUpcommingOrders = asyncHandler(async (req, res) =>
         where: {
             status: 'Pending'
         },
-        attributes: ["id", "fullname", "total_amt", "delivery_date","status","phonenumber","address"],
+        attributes: ["id", "fullname", "total_amt", "delivery_date","status","phonenumber","phonenumber2","address"],
         order: [['delivery_date', 'ASC']],
         include: [
         {

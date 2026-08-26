@@ -27,6 +27,7 @@ function OrderAdd()
     const [fullname, setFullname] = useState('');
     const [address, setAddress] = useState('');
     const [phonenumber, setPhonenumber] = useState('');
+    const [phonenumber2, setPhonenumber2] = useState('');
     const [total_amt, setTotalAmt] = useState('');
     const [advance, setAdvance] = useState('');
     const [shipping_cost, setShippingCost] = useState('');
@@ -43,6 +44,7 @@ function OrderAdd()
             setFullname(data.fullname);
             setAddress(data.address);
             setPhonenumber(data.phonenumber);
+            setPhonenumber2(data.phonenumber2);
             setTotalAmt(data.total_amt);
             setAdvance(data.advance);
             setShippingCost(data.shipping_cost);
@@ -139,6 +141,7 @@ function OrderAdd()
             fullname,
             address,
             phonenumber,
+            phonenumber2,
             advance,
             fulldelivery_date,
             orderItems
@@ -158,7 +161,7 @@ function OrderAdd()
             {
                 const delivery_date=fulldelivery_date.delivery_date;
                 response = await axiosPrivate.put(`${URL}/${editingId}`,
-                JSON.stringify({ fullname,address,phonenumber,status,total_amt,shipping_cost,advance,delivery_date,items: orderItems }),
+                JSON.stringify({ fullname,address,phonenumber,phonenumber2,status,total_amt,shipping_cost,advance,delivery_date,items: orderItems }),
                 {
                     headers: { 'Content-Type': 'application/json' },
                     withCredentials: true
@@ -180,7 +183,7 @@ function OrderAdd()
             {
                 const delivery_date=fulldelivery_date.delivery_date;
                 response = await axiosPrivate.post(URL,
-                JSON.stringify({ fullname,address,phonenumber,status,total_amt,shipping_cost,advance,delivery_date,items: orderItems }),
+                JSON.stringify({ fullname,address,phonenumber,phonenumber2,status,total_amt,shipping_cost,advance,delivery_date,items: orderItems }),
                 {
                     headers: { 'Content-Type': 'application/json' },
                     withCredentials: true
@@ -278,7 +281,6 @@ return (
                                                             }));
                                                         }}
                                                         value={fullname}
-                                                        placeholder="Enter Fullname"
                                                     />
                                                     {errors.fullname && (
                                                         <div className="text-danger">
@@ -303,7 +305,6 @@ return (
                                                             }));
                                                         }}
                                                         value={address}
-                                                        placeholder="Enter address"
                                                     />
                                                     {errors.address && (
                                                         <div className="text-danger">
@@ -328,7 +329,7 @@ return (
                                                             }));
                                                         }}
                                                     value={phonenumber}
-                                                    placeholder="Enter phonenumber"
+                                                    placeholder="98********"
                                                     />
                                                     {errors.phonenumber && (
                                                         <div className="text-danger">
@@ -337,6 +338,31 @@ return (
                                                     )}
                                                 </div> 
                                                 <div className="col-md-4 col-6">
+                                                    <label htmlFor="text" className="col-12 col-form-label">Alternative Phn No.</label> 
+                                                    <input name="phonenumber2" 
+                                                    className={`form-control ${
+                                                                errors.phonenumber2 ? "is-invalid" : ""
+                                                            }`}
+                                                    type="text" 
+                                                    id="phonenumber2"
+                                                    ref={userRef}
+                                                    autoComplete="off"
+                                                    onChange={(e) => { setPhonenumber2(e.target.value);
+                                                             setErrors((prev) => ({
+                                                                ...prev,
+                                                                phonenumber2: ""
+                                                            }));
+                                                        }}
+                                                    value={phonenumber2}
+                                                    placeholder="98********"
+                                                    />
+                                                    {errors.phonenumber2 && (
+                                                        <div className="text-danger">
+                                                            {errors.phonenumber2}
+                                                        </div>
+                                                    )}
+                                                </div> 
+                                                <div className="col-md-4 col-12">
                                                     <label htmlFor="text" className="col-12 col-form-label">Order Status</label> 
                                                     <select value={status}  className={`product-select ${
                                                                 errors.status ? "is-invalid" : ""
@@ -442,7 +468,7 @@ return (
                                                     autoComplete="off"
                                                     onChange={(e) => setTotalAmt(e.target.value)}
                                                     value={total_amt}
-                                                    placeholder="Total Price" readOnly="readonly" 
+                                                    readOnly="readonly" 
                                                     />
                                                 </div>    
                                                 <div className="col-6 col-md-3">
@@ -455,7 +481,6 @@ return (
                                                     autoComplete="off"
                                                     onChange={(e) => setShippingCost(e.target.value)}
                                                     value={shipping_cost}
-                                                    placeholder="Delivery Charge"
                                                     />
                                                     
                                                 </div>   
@@ -467,7 +492,6 @@ return (
                                                     ref={userRef}
                                                     autoComplete="off"
                                                     value={advance}
-                                                    placeholder="Enter advance"
                                                     className={`form-control ${
                                                             errors.advance ? "is-invalid" : ""
                                                         }`}

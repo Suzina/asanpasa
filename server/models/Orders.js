@@ -13,6 +13,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
     },
+    phonenumber2: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
     total_amt: {
         type: DataTypes.DECIMAL(10, 2),
         allowNull: false,
