@@ -4,10 +4,23 @@ import Header from './Layouts/Header';
 import Footer from './Layouts/Footer';
 import { useEffect, useState } from "react";
 import { axiosPrivate } from '../api/axios';
+import { getTodayBS } from "@himal_bhattarai/nepali-datepicker";
 
 function Dashboard() 
 {
   const [orders, setOrders] = useState([]);
+  const [total_pending_orders, setTotalPendingOrders] = useState(0);
+  const [total_orders, setTotalOrders] = useState(0);
+  //const { year, month, day } = getTodayBS();
+  //const formatted = `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+  const today = getTodayBS(); // { year, month, day } — month is 1-indexed
+  const monthNamesEn = [
+    "Baisakh", "Jestha", "Ashadh", "Shrawan", "Bhadra", "Ashwin",
+    "Kartik", "Mangsir", "Poush", "Magh", "Falgun", "Chaitra"
+  ];
+  const monthNameEn = monthNamesEn[today.month - 1];
+  const dayName = new Date().toLocaleDateString('en-US', { weekday: 'long' }); 
+
   const baseUrl = import.meta.env.VITE_API_BASE_URL;
   useEffect(() => 
   {
@@ -21,8 +34,26 @@ function Dashboard()
               const response = await axiosPrivate.get("/orders/upcomming-orders", {
                   signal,
               });
+             setTotalPendingOrders(response.data.length);
+            setOrders(response.data);
+          } 
+          catch (err) 
+          {
+              console.log(err);
+          }
+          finally
+          {
+          }
+      }
+      const getTotalOrders = async (signal) => 
+      {
+          try 
+          {
+              const response = await axiosPrivate.get("/orders/get-total-orders", {
+                  signal,
+              });
              
-              setOrders(response.data);
+             setTotalOrders(response.data.totalItems);
           } 
           catch (err) 
           {
@@ -34,7 +65,7 @@ function Dashboard()
       }
       
       getUpcommingOrders();
-
+      getTotalOrders();
       return () => {
           isMounted = false;
           controller.abort();
@@ -50,34 +81,61 @@ function Dashboard()
         <div className="ec-content-wrapper">
           <div className="content">
             <div className="row g-3">
-              <div className="col-6 col-md-3">
+           
+              <div className="col-7">
+                <div class="card-date">
+                  <div class="date-info">
+                    <span class="day-month">{today.day} {monthNameEn}</span>
+                    <span class="weekday">{dayName}</span>
+                  </div>
+                  <span class="year">{today.year} <i className="mdi mdi-calendar-heart-outline"></i></span>
+                </div>
+              </div>
+              <div className="col-5">
+                <div class="card-date">
+                  <div class="date-info">
+                    <span class="day-month">100</span>
+                    <span class="weekday">Order</span>
+                  </div>
+                  <span class="year"><i className="mdi mdi-cart-heart"></i></span>
+                </div>
+              </div>
+              <div className="col-6 col-md-3 mt-3">
                 <a href={`${baseUrl}/admin/orders`} className='text-white'>
                   <div className="dbx-stat-card dbx-blue">
                     <div className="dbx-stat-icon"><i className="mdi mdi-cart-heart"></i></div>
                     <div className="dbx-stat-label">Pending Orders</div>
                     <div>
-                      <div className="dbx-stat-value">20</div>
+                      <div className="dbx-stat-value">{total_pending_orders}</div>
                       <div className="dbx-stat-change">+11.01%</div>
                     </div>
                   </div>
                 </a>
               </div>
-              <div className="col-6 col-md-3">
+              <div className="col-6 col-md-3 mt-3">
                 <div className="dbx-stat-card dbx-dark">
                   <a href={`${baseUrl}/admin/order/add`} className='text-black'>
                     <div className="dbx-stat-icon"><i className="mdi mdi-cart-heart"></i></div>
                     <div className="dbx-stat-label">Add New Orders</div>
                     <div>
-                      <div className="dbx-stat-value">30</div>
+                      <div className="dbx-stat-value">{total_orders}</div>
                       <div className="dbx-stat-change">-0.03%</div>
                     </div>
                   </a>
                 </div>
               </div>
+             
+            </div>
+           
+            <div className="row g-3 mt-3 p-20">
+                <div className="col-8 col-md-12">
+                  <h4 className=''>Upcomming Deliveries</h4>
+                </div>
+                <div className="col-4 col-md-12">
+                  <p className='text-right mb-10'>{orders.length} of {orders.length}</p>
+                </div>
             </div>
             <div className="row g-3">
-              <h4 className='p-20'>Upcomming Deliveries</h4>
-              <p className='text-right mb-10'>{orders.length} of {orders.length}</p>
               {orders && orders.length > 0 ? (
                 orders.map((order) => (
                   <div className="col-12 col-md-3 col-sm-4 mb-30" key={order.id}>

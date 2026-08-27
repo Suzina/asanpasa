@@ -284,30 +284,16 @@ const getUpcommingOrders = asyncHandler(async (req, res) =>
     res.json(order);
 });
 
-const getTotalOrders = asyncHandler(async (req, res) => 
+const getOrders = asyncHandler(async (req, res) => 
 {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
-    const offset = (page - 1) * limit;
-
-    const { count, rows } = await Orders.findAndCountAll({
-        order: [['createdAt', 'DESC']],
-        limit,
-        offset,
-        include: [
-        {
-            model: Users,
-            as: "user",      
-            attributes: ["username"],
-        },
-        ],
+    const { count } = await Orders.findAndCountAll({
+        where: {
+            deletedAt: null,
+        }
     });
 
     res.json({
-        items: rows,
-        totalItems: count,
-        totalPages: Math.ceil(count / limit),
-        currentPage: page,
+        totalItems: count
     });
 });
 
@@ -346,4 +332,4 @@ const search = asyncHandler(async (req, res) =>
         currentPage: page,
     });});
     
-module.exports = { getAll, getOne, create, update, remove, getUpcommingOrders, search };
+module.exports = { getAll, getOne, create, update, remove, getUpcommingOrders, search,getOrders };
