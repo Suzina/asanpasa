@@ -49,7 +49,7 @@ function OrderView()
         } 
         else if (order.status === "Pending") 
         {
-            return <span className="badge badge-primary">Pending</span>;
+            return <span className="badge pending">Pending</span>;
         }
         else
         {
@@ -153,6 +153,28 @@ function OrderView()
             }
         }
     }
+    const handleOrderDeleteClick = async (id) => {
+        try 
+        {
+            let response = await axiosPrivate.delete(`/order-items/${id}`, { withCredentials: true });
+            console.log(response.data);
+            setOrder((prev) => ({ ...prev, orderItems: prev.orderItems.filter((item) => item.id !== id) }));
+            toast.success(response.data.message);
+
+        } 
+        catch (err) 
+        {
+            console.log(err)
+            if (!err?.response) 
+            {
+                toast.error('No Server Response');
+            }
+            else 
+            {
+                toast.error(err.response?.data?.error || err.response?.data?.message || 'Something went wrong');
+            }
+        }
+    }
     const  CollectPaymentClick = async (id) => 
     {
         try 
@@ -222,15 +244,12 @@ function OrderView()
                                 </div>
                             <div className="topbar">
                                 <div className="topbar-left">
-                                    <h1>Order: {order.fullname}</h1>
-                                    <div className="subheading">
-                                        <span className="promo-text">Order Placed on: {order.delivery_date}</span>
-                                    </div>
-                                    <span className="badges p-10">
-                                        {renderPaymentBadge()}
-                                        {renderStatusBadge()}
-                                    </span>
-                                    
+                                    <h1>Order: {order.fullname} 
+                                        <span className="badges p-10">
+                                            {renderPaymentBadge()}
+                                            {renderStatusBadge()}
+                                        </span>
+                                    </h1>
                                 </div>
                                 <div className="topbar-right">
                                     <a className="btn" href={`${baseUrl}/admin/order/edit/${order.id}`}>
@@ -247,7 +266,6 @@ function OrderView()
                                         <i className="mdi mdi-close"></i>
                                         Cancel Order
                                     </button>
-                                   
                                 </div>
                             </div>
                         </div>
@@ -257,8 +275,7 @@ function OrderView()
                                 <div className="order-card-header">
                                     <div className="card-header-left">
                                         <h2 className="card-title">Order Item</h2>
-                                        <span className="badge unfulfilled">{order.status}</span>
-                                        
+                                        <span className="badge unfulfilled">{order?.orderItems?.length || 0} Items</span>
                                     </div>
                                 </div>
                                 {order?.orderItems?.map((item) => (
@@ -275,7 +292,8 @@ function OrderView()
                                         </div>
                                         <div className="item-price">{item.quantity} x {item.price}</div>
                                         <div className="item-total">Rs {item.quantity * item.price}</div>                   
-                                        <button className="btn"><i className="mdi mdi-delete"></i></button>                                    </div>
+                                        <button className="btn" onClick={(e) => { e.preventDefault(); handleOrderDeleteClick(item.id); }}><i className="mdi mdi-delete"></i></button>                                    
+                                    </div>
                                 ))}
                                 <div className="promo-bar">
                                     <span className="promo-text">Delivery Date <br/> {order.delivery_date}</span>
@@ -335,7 +353,7 @@ function OrderView()
                                 </div>
 
                                 <div className="promo-bar">
-                                    <span className="promo-text">Review your order.</span>
+                                    <span className="promo-text">Order Placed on <br/>{order.createdAt}</span>
                                     <div className="promo-actions">
                                         <button className="btn btn-primary"
                                             onClick={(e) => { e.preventDefault(); CollectPaymentClick(order.id); }}>

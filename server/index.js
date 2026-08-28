@@ -29,6 +29,9 @@ app.use("/api/categories", categoriesRoutes);
 const ordersRoutes = require("./routes/Orders");
 app.use("/api/orders", ordersRoutes);
 
+const orderItemsRoutes = require("./routes/OrderItems");
+app.use("/api/order-items", orderItemsRoutes);
+
 app.use(errorHandler); 
 
 // serve React build

@@ -212,10 +212,10 @@ const getUpcommingOrders = asyncHandler(async (req, res) =>
     const tomorrow = new Date();
     tomorrow.setDate(today.getDate() + 5);
 
-    const todayStr = today.toISOString().split('T')[0];       // "2026-08-07"
+     /*const todayStr = today.toISOString().split('T')[0];       
     const tomorrowStr = tomorrow.toISOString().split('T')[0];
 
-    /*const orders = await Orders.findAll({
+    const orders = await Orders.findAll({
         where: {
             delivery_date: {
                 [Op.in]: [todayStr, tomorrowStr]
@@ -251,7 +251,7 @@ const getUpcommingOrders = asyncHandler(async (req, res) =>
         where: {
             status: 'Pending'
         },
-        attributes: ["id", "fullname", "total_amt", "delivery_date","status","phonenumber","phonenumber2","address"],
+        attributes: ["id","fullname", "total_amt", "delivery_date","status","phonenumber","phonenumber2","address"],
         order: [['delivery_date', 'ASC']],
         include: [
         {
@@ -260,17 +260,17 @@ const getUpcommingOrders = asyncHandler(async (req, res) =>
             attributes: ["username"],
             required: true,  
         },
-            {
+        {
             model: OrderItem,
             as: "orderItems",  
-            attributes: ["id","quantity","price"],        // must match alias in Orders.hasMany(OrderItems, { as: "items" })
-            required: false,      // false = still return order even if it has 0 items
+            attributes: ["id","quantity","price"],       
+            required: false,     
             include: [
-                {
-                    model: Products,
-                    as: "product", // must match alias in OrderItems.belongsTo(Products, { as: "product" })
-                    attributes: ["name"], // adjust to whatever columns you need
-                },
+            {
+                model: Products,
+                as: "product", 
+                attributes: ["name"], 
+            },
             ],
         },
     ],
@@ -330,6 +330,6 @@ const search = asyncHandler(async (req, res) =>
         totalItems: count,
         totalPages: Math.ceil(count / limit),
         currentPage: page,
-    });});
+});});
     
 module.exports = { getAll, getOne, create, update, remove, getUpcommingOrders, search,getOrders };
