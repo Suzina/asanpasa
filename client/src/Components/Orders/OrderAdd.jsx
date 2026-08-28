@@ -174,7 +174,7 @@ function OrderAdd()
                 else 
                 {
                     toast.success("Order Updated!");
-                    navigate('/admin/orders'); 
+                    navigate(-1); 
 
                 }
 
