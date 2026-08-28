@@ -70,6 +70,7 @@ function OrderView()
         }
         else if(order.status==="Cancelled")
         {
+            newStatus="Pending";
             return "Cancelled";
         }
         else
@@ -298,6 +299,7 @@ function OrderView()
                                 <div className="promo-bar">
                                     <span className="promo-text">Delivery Date <br/> {order.delivery_date}</span>
                                     <div className="promo-actions">
+
                                         <button className={`btn ${
                                                 order.status === "Delivered"
                                                 ? "btn-success"
