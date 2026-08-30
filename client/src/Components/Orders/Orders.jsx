@@ -45,7 +45,9 @@ function Orders()
         }
         
     }
-    const searchOrders = async (page = 1) => {
+    const searchOrders = async (page = 1) => 
+    {
+        console.log("Searching orders with query:", query, "and status:", status);
         try {
             const response = await axiosPrivate.get("orders/search", {
                 params: { query, status, page, limit: itemsPerPage },
@@ -56,16 +58,11 @@ function Orders()
             setTotalPages(response.data.totalPages);
             setTotalItems(response.data.totalItems);
             setCurrentPage(response.data.currentPage);
+
         } catch (err) {
             toast.error(err.response?.data?.error || err.response?.data?.message || 'Something went wrong');
             errRef.current.focus();
         }
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setIsSearching(true);
-        await searchOrders(1);   
     };
 
     const handleDeleteClick = async (id) => 
@@ -98,12 +95,19 @@ function Orders()
             getOrders(page);
         }
     };
-    useEffect(() => 
-    {
-        const controller = new AbortController();
-        getOrders();
-        return () => controller.abort();
-    }, [])
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            if (query || status) {
+                setIsSearching(true);
+                searchOrders(1);
+            } else {
+                setIsSearching(false);
+                getOrders(1);
+            }
+        }, 400);
+
+        return () => clearTimeout(timer);
+    }, [query, status]);
 return (
     <>
     <Sidebar/>
@@ -131,49 +135,38 @@ return (
                         </div>
                     </div>
                     <div className="col-xl-12 col-lg-12">
-                        <div className="ec-cat-list card card-default mb-30">
-                            <div className="card-body search-card-body">
-                                <form onSubmit={handleSubmit}>
-                                    <div className="form-group row">
-                                        <div className="col-6 col-md-3">
-                                            <label htmlFor="text" className="col-12 col-form-label">Name</label> 
-                                            <input name="query" className="form-control here slug-title" type="text" 
-                                            id="query"
-                                            autoComplete="off"
-                                            onChange={(e) => setQuery(e.target.value)}
-                                            value={query}
-                                            />
-                                        </div> 
-                                        <div className="col-6 col-md-3">
-                                            <label htmlFor="text" className="col-12 col-form-label">Status</label> 
-                                            <select
-                                                name="status"
-                                                id="status"
-                                                className="form-select"
-                                                value={status} 
-                                                onChange={(e) => setStatus(e.target.value)}
-                                            >
-                                                <option value="">Select a Status</option>
-                                                <option value="Pending">Pending</option>
-                                                <option value="Delivered">Delivered</option>
-                                                <option value="Cancelled">Cancelled</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div className="row">
-                                        <div className="col-12">
-                                            <button name="submit" type="submit" className="btn btn-primary">
-                                                Search
-                                            </button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
                         <div className="ec-cat-list card card-default">
+                            <div className="search-card-body">
+                                <div className="form-group row">
+                                    <div className="col-8 col-md-3">
+                                        <input name="query" className="form-control here slug-title" type="text" 
+                                        id="query"
+                                        autoComplete="off"
+                                        onChange={(e) => setQuery(e.target.value)}
+                                        value={query}
+                                        />
+                                    </div> 
+                                    <div className="col-4 col-md-3">
+                                        <select
+                                            name="status"
+                                            id="status"
+                                            className="form-select"
+                                            value={status} 
+                                            onChange={(e) => setStatus(e.target.value)}
+
+                                        >
+                                            <option value="">Select a Status</option>
+                                            <option value="Pending">Pending</option>
+                                            <option value="Delivered">Delivered</option>
+                                            <option value="Cancelled">Cancelled</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <p>{orders.length} result{orders.length !== 1 ? 's' : ''} for {query ? `query "${query}"` : status ? `status "${status}"` : 'all orders'}.</p>
+
+                            </div>
                             <div className="card-body">
                                 <div className="table-responsive">
-                                    <p>1 result for pending orders.</p>
                                     <table id="responsive-data-table" className="table" style={{ width: '100%' }}>
                                         <thead>
                                             <tr>
