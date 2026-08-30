@@ -16,9 +16,7 @@ function Orders()
     const errRef = useRef();
 
     const [orders, setOrders] = useState([]);
-    const [fullname, setFullname] = useState('');
-    const [address, setAddress] = useState(null);
-    const [phonenumber, setPhonenumber] = useState('');
+    const [query, setQuery] = useState('');
     const [status, setStatus] = useState('');
 
         
@@ -47,18 +45,10 @@ function Orders()
         }
         
     }
-    
-    const resetForm = () => 
-    {
-        setFullname('');
-        setAddress('');
-        setPhonenumber('');
-        setStatus('');
-    }
     const searchOrders = async (page = 1) => {
         try {
             const response = await axiosPrivate.get("orders/search", {
-                params: { fullname, address, phonenumber, status, page, limit: itemsPerPage },
+                params: { query, status, page, limit: itemsPerPage },
                 withCredentials: true
             });
 
@@ -142,34 +132,16 @@ return (
                     </div>
                     <div className="col-xl-12 col-lg-12">
                         <div className="ec-cat-list card card-default mb-30">
-                            <div className="card-body">
+                            <div className="card-body search-card-body">
                                 <form onSubmit={handleSubmit}>
                                     <div className="form-group row">
                                         <div className="col-6 col-md-3">
                                             <label htmlFor="text" className="col-12 col-form-label">Name</label> 
-                                            <input name="fullname" className="form-control here slug-title" type="text" 
-                                            id="fullname"
+                                            <input name="query" className="form-control here slug-title" type="text" 
+                                            id="query"
                                             autoComplete="off"
-                                            onChange={(e) => setFullname(e.target.value)}
-                                            value={fullname}
-                                            />
-                                        </div> 
-                                        <div className="col-6 col-md-3">
-                                            <label htmlFor="text" className="col-12 col-form-label">Phone No.</label> 
-                                            <input name="phonenumber" className="form-control here slug-title" type="text" 
-                                            id="phonenumber"
-                                            autoComplete="off"
-                                            onChange={(e) => setPhonenumber(e.target.value)}
-                                            value={phonenumber}
-                                            />
-                                        </div> 
-                                        <div className="col-6 col-md-3">
-                                            <label htmlFor="text" className="col-12 col-form-label">Address</label> 
-                                            <input name="address" className="form-control here slug-title" type="text" 
-                                            id="address"
-                                            autoComplete="off"
-                                            onChange={(e) => setAddress(e.target.value)}
-                                            value={address}
+                                            onChange={(e) => setQuery(e.target.value)}
+                                            value={query}
                                             />
                                         </div> 
                                         <div className="col-6 col-md-3">

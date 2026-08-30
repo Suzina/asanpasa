@@ -16,6 +16,10 @@
 }
 
 /*-------------------Dashboard Order Css-------------------------*/
+.search-card-body
+{
+  min-height: fit-content !important;
+}
   .order-card {
     width: auto;
     background: #ffffff;

@@ -299,29 +299,37 @@ const getOrders = asyncHandler(async (req, res) =>
 
 const search = asyncHandler(async (req, res) => 
 {
-    const { fullname, phonenumber, address, status } = req.query;
+    const { query,status } = req.query;
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const offset = (page - 1) * limit;
 
     const filter = {};
 
-    if (fullname) filter.fullname = { [Op.like]: `%${fullname}%` };
-    if (phonenumber) filter.phonenumber = { [Op.like]: `%${phonenumber}%` };
-    if (address) filter.address = { [Op.like]: `%${address}%` };
-    if (status) filter.status = status;
-
+    if (query) 
+    {
+        filter[Op.or] = [
+            { fullname:    { [Op.like]: `%${query}%` } },
+            { phonenumber: { [Op.like]: `%${query}%` } },
+            { address:     { [Op.like]: `%${query}%` } },
+        ];
+    }
+    if (status) 
+    {
+        filter.status = { [Op.like]: `%${status}%` };
+    }
+   
     const { count, rows } = await Orders.findAndCountAll({
         where: filter,
         order: [['createdAt', 'DESC']],
         limit,
         offset,
         include: [
-        {
-            model: Users,
-            as: "user",      
-            attributes: ["username"],
-        },
+            {
+                model: Users,
+                as: "user",
+                attributes: ["username"],
+            },
         ],
     });
 
@@ -330,6 +338,8 @@ const search = asyncHandler(async (req, res) =>
         totalItems: count,
         totalPages: Math.ceil(count / limit),
         currentPage: page,
-});});
+    });
+
+});
     
 module.exports = { getAll, getOne, create, update, remove, getUpcommingOrders, search,getOrders };
