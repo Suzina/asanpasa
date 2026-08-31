@@ -1,15 +1,17 @@
 
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 
 function Header() 
 {
 	const username = sessionStorage.getItem("username");
 	const navigate = useNavigate();
+	const [query, setQuery] = useState('');
 
 	function handleLogout(e) 
 	{
 		e.preventDefault();
-  		sessionStorage.removeItem("accessToken"); // or whatever key you stored it under
+  		sessionStorage.removeItem("accessToken"); 
   		sessionStorage.removeItem("username");
   		navigate("/");
 	}
@@ -21,8 +23,13 @@ function Header()
 					<button id="sidebar-toggler" className="sidebar-toggle"></button>
 					<div className="search-form d-lg-inline-block">
 						<div className="input-group">
-							<input type="text" name="query" id="search-input" className="form-control"
-								placeholder="search.." />
+							<input name="query" className="form-control" type="text" 
+                                        id="query"
+                                        autoComplete="off"
+                                        onChange={(e) => setQuery(e.target.value)}
+                                        value={query}
+										placeholder="search.." 
+                                        />
 							<button type="button" name="search" id="search-btn" className="btn btn-flat">
 								<i className="mdi mdi-magnify"></i>
 							</button>
@@ -31,7 +38,7 @@ function Header()
 							<ul id="search-results"></ul>
 						</div>
 					</div>
-					<h3>Hello! {username}</h3>
+					<h3>Hello! {username} </h3>
 
 					<div className="navbar-right">
 						<ul className="nav navbar-nav">
@@ -44,7 +51,7 @@ function Header()
 									<li className="dropdown-header">
 										<img src="/img/user/u7.jpg" className="img-circle" alt="User Image" />
 										<div className="d-inline-block">
-											{username} <small className="pt-1">john.example@gmail.com</small>
+											{username} <small className="pt-1">{username}@gmail.com</small>
 										</div>
 									</li>
 									

@@ -351,8 +351,16 @@
     background: linear-gradient(160deg, #e1e8f8, #e1e8f8);
     color: #000;
   }
-  .dbx-stat-card.dbx-dark{
+  .dbx-stat-card.dbx-pink{
     background: #f8e2ee;
+    color: #000;
+  }
+.dbx-green{
+    background: linear-gradient(160deg, #c0e1c2, #c0e1c2);
+    color: #000;
+  }
+  .dbx-yellow{
+    background: linear-gradient(160deg, #f9f4c3, #f9f4c3);
     color: #000;
   }
   .dbx-stat-value{

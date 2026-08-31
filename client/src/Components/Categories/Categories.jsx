@@ -167,7 +167,7 @@ function Categories() {
                     position="top-right"
                     reverseOrder={false}
                     />
-                    <p className="breadcrumbs"><span><a href={`${baseUrl}/dashboard`}>Home</a></span>
+                    <p className="breadcrumbs"><span><a href={`${baseUrl}/admin/dashboard`}>Home</a></span>
                     <span><i className="mdi mdi-chevron-right"></i></span>Categories</p>
                 </div>
                 <div className="row">
