@@ -83,7 +83,7 @@ function Dashboard()
             <div className="row g-3">
            
               <div className="col-7">
-                <div class="card-date">
+                <div class="card-date dbx-green">
                   <div class="date-info">
                     <span class="day-month">{today.day} {monthNameEn}</span>
                     <span class="weekday">{dayName}</span>
@@ -92,12 +92,14 @@ function Dashboard()
                 </div>
               </div>
               <div className="col-5">
-                <div class="card-date">
+                <div class="card-date dbx-yellow">
+                  <a href={`${baseUrl}/admin/products`} className='text-white'>
                   <div class="date-info">
-                    <span class="day-month">100</span>
-                    <span class="weekday">Order</span>
+                    <span class="day-month">10</span>
+                    <span class="weekday">Products</span>
                   </div>
-                  <span class="year"><i className="mdi mdi-cart-heart"></i></span>
+                  </a>
+                  <span class="year"><i className="mdi mdi-format-list-bulleted"></i></span>
                 </div>
               </div>
               <div className="col-6 col-md-3 mt-3">
@@ -113,7 +115,7 @@ function Dashboard()
                 </a>
               </div>
               <div className="col-6 col-md-3 mt-3">
-                <div className="dbx-stat-card dbx-dark">
+                <div className="dbx-stat-card dbx-pink">
                   <a href={`${baseUrl}/admin/order/add`} className='text-black'>
                     <div className="dbx-stat-icon"><i className="mdi mdi-cart-heart"></i></div>
                     <div className="dbx-stat-label">Add New Orders</div>

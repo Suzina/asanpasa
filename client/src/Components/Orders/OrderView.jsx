@@ -334,7 +334,7 @@ function OrderView()
                                 <div className="summary-row">
                                     <span>Shipping</span>
                                     <span></span>
-                                    <span>Rs.{order.shipping_cost}</span>
+                                    <span>Rs.{order.shipping_cost ? order.shipping_cost : (order.shipping_cost || 0)}</span>
                                 </div>
                                 <div className="summary-row total">
                                     <span>Total</span>
