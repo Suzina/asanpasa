@@ -83,23 +83,23 @@ function Dashboard()
             <div className="row g-3">
            
               <div className="col-7">
-                <div class="card-date dbx-green">
-                  <div class="date-info">
-                    <span class="day-month">{today.day} {monthNameEn}</span>
-                    <span class="weekday">{dayName}</span>
+                <div className="card-date dbx-green">
+                  <div className="date-info">
+                    <span className="day-month">{today.day} {monthNameEn}</span>
+                    <span className="weekday">{dayName}</span>
                   </div>
-                  <span class="year">{today.year} <i className="mdi mdi-calendar-heart-outline"></i></span>
+                  <span className="year">{today.year} <i className="mdi mdi-calendar-heart-outline"></i></span>
                 </div>
               </div>
               <div className="col-5">
-                <div class="card-date dbx-yellow">
+                <div className="card-date dbx-yellow">
                   <a href={`${baseUrl}/admin/products`} className='text-white'>
-                  <div class="date-info">
-                    <span class="day-month">10</span>
-                    <span class="weekday">Products</span>
+                  <div className="date-info">
+                    <span className="day-month">10</span>
+                    <span className="weekday">Products</span>
                   </div>
                   </a>
-                  <span class="year"><i className="mdi mdi-format-list-bulleted"></i></span>
+                  <span className="year"><i className="mdi mdi-format-list-bulleted"></i></span>
                 </div>
               </div>
               <div className="col-6 col-md-3 mt-3">

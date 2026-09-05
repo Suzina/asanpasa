@@ -45,6 +45,7 @@ function Orders()
         }
         
     }
+    
     const searchOrders = async (page = 1) => 
     {
         console.log("Searching orders with query:", query, "and status:", status);
