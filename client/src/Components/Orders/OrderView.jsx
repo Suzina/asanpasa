@@ -264,8 +264,11 @@ function OrderView()
                                     </button>
                                     <button className="btn text-danger"
                                     onClick={(e) => { e.preventDefault(); changeStatus(order.id,'Cancelled'); }}>
-                                        <i className="mdi mdi-close"></i>
-                                        Cancel Order
+                                        <i className="mdi mdi-close"></i>Cancel Order
+                                    </button>
+                                    <button className="btn text-danger">
+                                        <i className="mdi mdi-tray-arrow-down"></i>
+                                         Invoice
                                     </button>
                                 </div>
                             </div>
