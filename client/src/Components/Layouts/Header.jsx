@@ -1,12 +1,14 @@
 
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { Toaster, toast } from "react-hot-toast";
 
 function Header() 
 {
 	const username = sessionStorage.getItem("username");
 	const navigate = useNavigate();
 	const [query, setQuery] = useState('');
+    const [isSearching, setIsSearching] = useState(false);
 
 	function handleLogout(e) 
 	{
@@ -16,6 +18,37 @@ function Header()
   		navigate("/");
 	}
 
+	const searchOrders = async (page = 1) => 
+    {
+        console.log("Searching orders with query:", query);
+        try {
+            const response = await axiosPrivate.get("orders/search", {
+                params: { query, page, limit: itemsPerPage },
+                withCredentials: true
+            });
+
+            /*setOrders(response.data.items);
+            setTotalPages(response.data.totalPages);
+            setTotalItems(response.data.totalItems);
+            setCurrentPage(response.data.currentPage);*/
+			console.log("Search results:", response.data);
+
+        } catch (err) {
+            toast.error(err.response?.data?.error || err.response?.data?.message || 'Something went wrong');
+        }
+    };
+	useEffect(() => {
+			const timer = setTimeout(() => {
+				if (query || status) {
+					setIsSearching(true);
+					searchOrders(1);
+				} else {
+					setIsSearching(false);
+				}
+			}, 400);
+	
+			return () => clearTimeout(timer);
+		}, [query, status]);
   return (
     <div>
       	<header className="ec-main-header" id="header">
