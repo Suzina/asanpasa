@@ -251,7 +251,7 @@ const getUpcommingOrders = asyncHandler(async (req, res) =>
         where: {
             status: 'Pending'
         },
-        attributes: ["id","fullname", "total_amt", "delivery_date","status","phonenumber","phonenumber2","address"],
+        attributes: ["id","fullname", "total_amt","advance","amt_due","delivery_date","status","phonenumber","phonenumber2","address"],
         order: [['delivery_date', 'ASC']],
         include: [
         {

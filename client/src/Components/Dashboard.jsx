@@ -34,7 +34,7 @@ function Dashboard()
               const response = await axiosPrivate.get("/orders/upcomming-orders", {
                   signal,
               });
-             setTotalPendingOrders(response.data.length);
+            setTotalPendingOrders(response.data.length);
             setOrders(response.data);
           } 
           catch (err) 

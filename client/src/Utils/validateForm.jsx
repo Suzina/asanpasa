@@ -155,5 +155,15 @@ export const validateCategoryForm = ({
     }
     return errors;
 };
+export const validateRawMaterialForm = ({
+    name
+    }) => {
+        
+    const errors = {};
+    if (!name?.trim()) {
+        errors.name = "Please enter Raw Material name";
+    }
+    return errors;
+};
 export default validateForm;
 
