@@ -12,6 +12,7 @@ const menuItems = [
     label: "Orders",
     icon: "mdi mdi-cart-heart",
     children: [
+      { label: "Upcoming Orders", href: `${baseUrl}/admin/orders/upcomming-orders` },
       { label: "New Orders", href: `${baseUrl}/admin/orders` },
       { label: "Add Order", href: `${baseUrl}/admin/order/add` },
     ],

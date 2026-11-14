@@ -178,6 +178,7 @@ return (
                                                 <th>Total Amt</th>
                                                 <th>Advance</th>
                                                 <th>Amt Due</th>
+                                                <th>Delivery date</th>
                                                 <th>User</th>
                                                 <th>Status</th>
                                                 <th>Action</th>
@@ -194,6 +195,7 @@ return (
                                                     <td>{order.total_amt}</td>
                                                     <td>{order.advance}</td>
                                                     <td>{order.amt_due}</td>
+                                                    <td>{order.delivery_date}</td>
                                                     <td>{order.user.username}</td>
                                                     <td>
                                                        {order.status === "Delivered" ? (
