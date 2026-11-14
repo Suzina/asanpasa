@@ -181,7 +181,7 @@ function OrderView()
         try 
         {
             amt_due=0;
-            let response = await axiosPrivate.put(`${URL}`,
+            let response = await axiosPrivate.put(`/orders/amt-due/${id}`,
             JSON.stringify({ amt_due }),
             {
                 headers: { 'Content-Type': 'application/json' },
@@ -195,7 +195,8 @@ function OrderView()
             } 
             else 
             {
-                setOrder((prev) => ({ ...prev, status }));
+                setOrder((prev) => ({ ...prev, amt_due }));
+                console.log(response.data);
                 toast.success("Order Paid!");
             }
         } 
@@ -360,14 +361,19 @@ function OrderView()
                                 <div className="promo-bar">
                                     <span className="promo-text">Order Placed on <br/>{order.createdAt}</span>
                                     <div className="promo-actions">
-                                        <button className="btn btn-primary"
-                                            onClick={(e) => { e.preventDefault(); CollectPaymentClick(order.id); }}>
-                                            {
-                                                order.amt_due>0
+                                        <button
+                                            className="btn btn-primary"
+                                            disabled={!(order.amt_due > 0)}
+                                            onClick={order.amt_due > 0
+                                                ? (e) => { e.preventDefault(); CollectPaymentClick(order.id); }
+                                                : undefined}
+                                            >
+                                            {order.amt_due > 0
                                                 ? "Collect Payment"
-                                                : "Paid"
-                                            }
-                                        </button>
+                                                : order.amt_due == 0
+                                                ? "Paid"
+                                                : "Loading..."}
+                                            </button>
                                     </div>
                                 </div>
                             </div>

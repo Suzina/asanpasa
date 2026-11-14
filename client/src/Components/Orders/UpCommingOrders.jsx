@@ -6,7 +6,7 @@ import { Toaster, toast } from "react-hot-toast";
 import { axiosPrivate } from '../../api/axios';
 import useDashboardUI from '../../hooks/useDashboardUI';
 
-const URL = '/orders/upcomming-orders';
+const URL = '/orders/all-upcomming-orders';
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
 function UpCommingOrders() 
@@ -18,7 +18,6 @@ function UpCommingOrders()
     const [query, setQuery] = useState('');
     const [status, setStatus] = useState('');
 
-        
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [totalItems, setTotalItems] = useState(0);
@@ -33,8 +32,7 @@ function UpCommingOrders()
                 params: { page, limit: itemsPerPage },
                 signal,
             });
-            setOrders(response.data);
-            console.log("Orders fetched:", response.data);
+            setOrders(response.data.items);
             setTotalPages(response.data.totalPages);
             setTotalItems(response.data.totalItems);
             setCurrentPage(response.data.currentPage);
@@ -178,6 +176,7 @@ return (
                                                 <th>Amt Due</th>
                                                 <th>Delivery date</th>
                                                 <th>User</th>
+                                                <th>Payment</th>
                                                 <th>Status</th>
                                                 <th>Action</th>
                                             </tr>
@@ -195,6 +194,21 @@ return (
                                                     <td>{order.amt_due}</td>
                                                     <td>{order.delivery_date}</td>
                                                     <td>{order.user.username}</td>
+                                                    <td>
+                                                       {order.amt_due > 0 ? (
+                                                        <span className="mb-2 mr-2 badge badge-danger">
+                                                            Unpaid
+                                                        </span>
+                                                    ) : order.amt_due === 0 ? (
+                                                        <span className="mb-2 mr-2 badge badge-success">
+                                                            Paid
+                                                        </span>
+                                                    ) : (
+                                                        <span className="mb-2 mr-2 badge pending">
+                                                            {order.status}
+                                                        </span>
+                                                    )}
+                                                    </td>
                                                     <td>
                                                        {order.status === "Delivered" ? (
                                                         <span className="mb-2 mr-2 badge badge-success">
