@@ -190,7 +190,26 @@ const update = asyncHandler(async (req, res) =>
 
     res.send("Update Successful"); 
 });
+const updateAmtDue = asyncHandler(async (req, res) => 
+{
+    const id = req.params.id;
+    const {amt_due } = req.body;
+    const user_id = req.user.id; 
 
+    const order = await Orders.findByPk(id);
+
+    if (!order) 
+    {
+        const err = new Error("Order not found");
+        err.status = 400;
+        throw err;
+    }
+    
+    order.user_id = user_id;
+    if (amt_due !== undefined) order.amt_due = amt_due;
+    await order.save();
+    res.send("Update Successful"); 
+});
 const remove = asyncHandler(async (req, res) => 
 {
     const id = req.params.id;
@@ -341,5 +360,35 @@ const search = asyncHandler(async (req, res) =>
     });
 
 });
-    
-module.exports = { getAll, getOne, create, update, remove, getUpcommingOrders, search,getOrders };
+
+const getUpcommingOrdersList = asyncHandler(async (req, res) => 
+{
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const offset = (page - 1) * limit;
+
+    const { count, rows } = await Orders.findAndCountAll({
+        where: {
+            status: 'Pending'
+        },
+        order: [['delivery_date', 'ASC']],
+        limit,
+        offset,
+        include: [
+        {
+            model: Users,
+            as: "user",      
+            attributes: ["username"],
+        },
+        ],
+    });
+
+    res.json({
+        items: rows,
+        totalItems: count,
+        totalPages: Math.ceil(count / limit),
+        currentPage: page,
+    });
+});
+
+module.exports = { getAll, getOne, create, update, remove, getUpcommingOrders, search,getOrders ,getUpcommingOrdersList,updateAmtDue};

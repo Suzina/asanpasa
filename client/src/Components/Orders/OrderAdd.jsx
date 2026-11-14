@@ -32,7 +32,7 @@ function OrderAdd()
     const [advance, setAdvance] = useState('');
     const [shipping_cost, setShippingCost] = useState('');
     const [fulldelivery_date, setDeliveryDate] = useState('');
-    const [status, setStatus] = useState('');
+    const [status, setStatus] = useState('Pending');   
     const [errors, setErrors] = useState({});
 
     const getOrder = async (signal) => 
@@ -41,13 +41,15 @@ function OrderAdd()
         {
             const response = await axiosPrivate.get(`/orders/${id}`, { signal });
             const data = response.data;
-            setFullname(data.fullname);
-            setAddress(data.address);
-            setPhonenumber(data.phonenumber);
-            setPhonenumber2(data.phonenumber2);
+            setFullname(data.fullname ?? '');
+            setAddress(data.address ?? '');
+            setPhonenumber(data.phonenumber ?? '');
+            setPhonenumber2(data.phonenumber2 ?? '');
             setTotalAmt(data.total_amt);
             setAdvance(data.advance);
             setShippingCost(data.shipping_cost);
+            setStatus(data.status ?? 'Pending');
+
            if (data?.delivery_date) 
             {
                 const [year, month, day] = data.delivery_date
@@ -56,11 +58,11 @@ function OrderAdd()
                 setDeliveryDate({
                     year,
                     month,
-                    day
+                    day,
+                    delivery_date: data.delivery_date
                 });
             }
             console.log(fulldelivery_date);
-            setStatus(data.status);
             if (data.orderItems && data.orderItems.length > 0) 
             {
                 setOrderItems(
@@ -99,9 +101,7 @@ function OrderAdd()
     };
     const removeRow = (index) => 
     {
-        const items = [...orderItems];
-        items.splice(index, 1);
-        setOrderItems(items);
+        setOrderItems(prev => prev.filter((_, i) => i !== index));
         setErrors((prev) => {
             const { itemErrors, ...rest } = prev;
             return rest;
@@ -111,9 +111,9 @@ function OrderAdd()
 
     const handleItemChange = (index, field, value) => 
     {
-        const items = [...orderItems];
-        items[index][field] = value;
-        setOrderItems(items);
+        setOrderItems(prev =>
+        prev.map((item, i) => i === index ? { ...item, [field]: value } : item)
+    );
     };
 
     const getProducts = async (signal) => 
@@ -174,7 +174,8 @@ function OrderAdd()
                 else 
                 {
                     toast.success("Order Updated!");
-                    navigate(-1); 
+                    navigate(`/admin/order/${editingId}`, { replace: true });
+
 
                 }
 
@@ -459,7 +460,7 @@ return (
                                                     {errors.orderItems}
                                                 </div>
                                             )}
-                                            <div className="row mb-3">
+                                            <div className="row mb-2">
                                                 <div className="col-6 col-md-3">
                                                     <label htmlFor="text" className="col-12 col-form-label">Total Amount</label> 
                                                     <input name="total_amt" className="form-control here slug-title" type="text" 
@@ -480,7 +481,7 @@ return (
                                                     ref={userRef}
                                                     autoComplete="off"
                                                     onChange={(e) => setShippingCost(e.target.value)}
-                                                    value={shipping_cost}
+                                                    value={shipping_cost ?? 0}
                                                     />
                                                     
                                                 </div>   

@@ -182,7 +182,17 @@ function Dashboard()
                         </div>
                         <div className="info-block right">
                           <div className="info-label">Total payment</div>
-                          <div className="info-value">{order.total_amt ?? "N/A"}</div>
+                          <div
+                            className={`info-value ${
+                              order.amt_due > 0
+                                ? "unpaid"
+                                : order.amt_due === 0
+                                ? "paid"
+                                : "loading"
+                            }`}
+                          >
+                            Rs {order.total_amt ?? "N/A"}
+                          </div>
                         </div>
                       </div>
 
