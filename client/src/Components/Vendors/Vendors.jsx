@@ -253,9 +253,9 @@ function Vendors() {
 															</button>
 
 															<div className="dropdown-menu">
-                                                                <a className="dropdown-item" href={`${baseUrl}/admin/vendor/${vendor.id}`}>View</a>
-																<a className="dropdown-item" href="#" onClick={(e) => { e.preventDefault(); handleEditClick(vendor); }}>Edit</a>
-                                                                <a className="dropdown-item" href="#" onClick={(e) => { e.preventDefault(); handleDeleteClick(vendor.id); }}>Delete</a>															</div>
+                                                                <a className="dropdown-item" href={`${baseUrl}/admin/vendor/${vendors.id}`}>View</a>
+																<a className="dropdown-item" href="#" onClick={(e) => { e.preventDefault(); handleEditClick(vendors); }}>Edit</a>
+                                                                <a className="dropdown-item" href="#" onClick={(e) => { e.preventDefault(); handleDeleteClick(vendors.id); }}>Delete</a>															</div>
 														</div>
 													</td>
                                                     </tr>

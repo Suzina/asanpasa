@@ -32,7 +32,20 @@ app.use("/api/orders", ordersRoutes);
 const orderItemsRoutes = require("./routes/OrderItems");
 app.use("/api/order-items", orderItemsRoutes);
 
-app.use(errorHandler); 
+const rawMaterialRoutes = require("./routes/RawMaterial");
+app.use("/api/raw-materials", rawMaterialRoutes);
+
+const vendorsRoutes = require("./routes/Vendors");
+app.use("/api/vendors", vendorsRoutes);
+
+
+app.use("/api", (req, res) => {
+  res.status(404).json({
+    success: false,
+    message: `Route not found: ${req.method} ${req.originalUrl}`
+  });
+});
+
 
 // serve React build
 app.use(express.static(path.join(__dirname, '../client/dist')));
@@ -40,6 +53,8 @@ app.use(express.static(path.join(__dirname, '../client/dist')));
 app.use((req, res) => {
   res.sendFile(path.join(__dirname, '../client/dist', 'index.html'));
 });
+
+app.use(errorHandler); 
 
 db.sequelize.sync().then(() => {
   app.listen(3000,() => {

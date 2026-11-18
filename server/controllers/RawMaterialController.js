@@ -58,19 +58,19 @@ const update = asyncHandler(async (req, res) =>
     err.status = 400;
     throw err;
   }
-  const category = await Categories.findByPk(id);
+  const rawMaterial = await RawMaterials.findByPk(id);
 
-  if (!category) 
+  if (!rawMaterial) 
   {
-    const err = new Error("Category not found");
+    const err = new Error("Raw material not found");
     err.status = 400;
     throw err;
   }
 
-  category.name = name;
-  await category.save();
+  rawMaterial.name = name;
+  await rawMaterial.save();
 
-  res.json(category); // return the updated object
+  res.json(rawMaterial); // return the updated object
   
 });
 

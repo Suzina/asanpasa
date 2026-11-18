@@ -391,4 +391,17 @@ const getUpcommingOrdersList = asyncHandler(async (req, res) =>
     });
 });
 
-module.exports = { getAll, getOne, create, update, remove, getUpcommingOrders, search,getOrders ,getUpcommingOrdersList,updateAmtDue};
+const getTotalSales = asyncHandler(async (req, res) => 
+{
+    const totalSales = await Orders.sum('total_amt', {
+        where: {
+            amt_due: 0,
+        },
+    });
+
+    res.json({
+        totalSales: Number(totalSales) || 0,
+    });
+});
+module.exports = { getAll, getOne, create, update, remove, getUpcommingOrders, search,getOrders 
+    ,getUpcommingOrdersList,updateAmtDue,getTotalSales};
