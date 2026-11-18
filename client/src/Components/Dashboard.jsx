@@ -11,6 +11,9 @@ function Dashboard()
   const [orders, setOrders] = useState([]);
   const [total_pending_orders, setTotalPendingOrders] = useState(0);
   const [total_orders, setTotalOrders] = useState(0);
+  const [total_sales, setTotalSales] = useState(0);
+  const [total_expenses, setTotalExpenses] = useState(0);
+
   //const { year, month, day } = getTodayBS();
   //const formatted = `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
   const today = getTodayBS(); // { year, month, day } — month is 1-indexed
@@ -63,9 +66,28 @@ function Dashboard()
           {
           }
       }
+      const getTotalSales = async (signal) => 
+      {
+          try 
+          {
+              const response = await axiosPrivate.get("/orders/get-total-sales", {
+                  signal,
+              });
+             
+             setTotalSales(response.data.totalItems);
+          } 
+          catch (err) 
+          {
+              console.log(err);
+          }
+          finally
+          {
+          }
+      }
       
       getUpcommingOrders();
       getTotalOrders();
+      getTotalSales();
       return () => {
           isMounted = false;
           controller.abort();
@@ -101,6 +123,30 @@ function Dashboard()
                   </a>
                   <span className="year"><i className="mdi mdi-format-list-bulleted"></i></span>
                 </div>
+              </div>
+              <div className="col-6 col-md-3 mt-3">
+                <a href={`${baseUrl}/admin/orders`} className='text-white'>
+                  <div className="dbx-stat-card dbx-blue">
+                    <div className="dbx-stat-icon"><i className="mdi mdi-cart-heart"></i></div>
+                    <div className="dbx-stat-label">Total Sales</div>
+                    <div>
+                      <div className="dbx-stat-value">{total_pending_orders}</div>
+                      <div className="dbx-stat-change">+11.01%</div>
+                    </div>
+                  </div>
+                </a>
+              </div>
+              <div className="col-6 col-md-3 mt-3">
+                <a href={`${baseUrl}/admin/orders`} className='text-white'>
+                  <div className="dbx-stat-card dbx-blue">
+                    <div className="dbx-stat-icon"><i className="mdi mdi-cart-heart"></i></div>
+                    <div className="dbx-stat-label">Total Expenses</div>
+                    <div>
+                      <div className="dbx-stat-value">{total_pending_orders}</div>
+                      <div className="dbx-stat-change">+11.01%</div>
+                    </div>
+                  </div>
+                </a>
               </div>
               <div className="col-6 col-md-3 mt-3">
                 <a href={`${baseUrl}/admin/orders`} className='text-white'>

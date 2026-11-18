@@ -17,7 +17,10 @@ const menuItems = [
       { label: "Add Order", href: `${baseUrl}/admin/order/add` },
     ],
   },
-  { type: "link", label: "Users", icon: "mdi-format-list-bulleted", href: `${baseUrl}/admin/users` },
+  { type: "link", label: "Raw Materials", icon: "mdi mdi-flower-tulip", href: `${baseUrl}/admin/raw-materials` },
+  { type: "link", label: "Vendors", icon: "mdi mdi-account-multiple", href: `${baseUrl}/admin/vendors` },
+
+
 
 ];
 function Sidebar() 
