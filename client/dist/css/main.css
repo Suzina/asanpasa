@@ -42,7 +42,7 @@
   --bs-body-font-size: 0.875rem;
   --bs-body-font-weight: 400;
   --bs-body-line-height: 1.5;
-  --bs-body-color: #8a909d;
+  --bs-body-color: #212529;
   --bs-body-bg: #fdfdfd;
 }
 
@@ -19736,8 +19736,12 @@ code {
   font-weight: 300;
   text-align: center;
   font-size: 14px;
+  color: #000;
 }
-
+.suj
+{
+  width:150px;
+}
 /* Body */
 #body {
   position: relative;
