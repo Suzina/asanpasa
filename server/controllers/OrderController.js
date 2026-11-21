@@ -69,7 +69,8 @@ const getOne = asyncHandler(async (req, res) =>
 
 const create = asyncHandler(async (req, res) => 
 {
-    const { items,fullname,address,phonenumber,phonenumber2,total_amt,advance,shipping_cost,delivery_date } = req.body;
+    const { items,fullname,address,phonenumber,phonenumber2,total_amt,sub_total,advance,shipping_cost,delivery_date } = req.body;
+    
     const user_id = req.user.id; 
     const toNullIfEmpty = (val) => (val === "" || val === undefined ? null : val);
 
@@ -88,6 +89,7 @@ const create = asyncHandler(async (req, res) =>
         phonenumber,
         phonenumber2,
         total_amt,
+        sub_total,
         advance: toNullIfEmpty(advance),
         amt_due: toNullIfEmpty(amt_due),
         shipping_cost: toNullIfEmpty(shipping_cost),
@@ -125,7 +127,7 @@ const create = asyncHandler(async (req, res) =>
 const update = asyncHandler(async (req, res) => 
 {
     const id = req.params.id;
-    const { items,fullname,address,phonenumber,phonenumber2,total_amt,advance,shipping_cost,delivery_date,status } = req.body;
+    const { items,fullname,address,phonenumber,phonenumber2,total_amt,sub_total,advance,shipping_cost,delivery_date,status } = req.body;
     const user_id = req.user.id; 
 
     const order = await Orders.findByPk(id);

@@ -332,7 +332,7 @@ function OrderView()
                                     <span style={{ textAlign: 'right' }}>
                                         <div>{order?.orderItems?.length} item</div>
                                     </span>
-                                    <span>Rs.{order.total_amt}</span>
+                                    <span>Rs.{order.sub_total}</span>
                                 </div>
                                
                                 <div className="summary-row">
@@ -343,7 +343,7 @@ function OrderView()
                                 <div className="summary-row total">
                                     <span>Total</span>
                                     <span></span>
-                                    <span>Rs.{+(order.total_amt || 0) + +(order.shipping_cost || 0)}</span>
+                                    <span>Rs.{order.total_amt}</span>
                                 </div>
                                 <hr className="summary-divider" />
 

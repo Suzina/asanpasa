@@ -22,6 +22,11 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         defaultValue: 0.00,
     },
+    sub_total: {
+        type: DataTypes.DECIMAL(10, 2),
+        allowNull: false,
+        defaultValue: 0.00,
+    },
     advance: {
         type: DataTypes.DECIMAL(10, 2),
         allowNull: true,
