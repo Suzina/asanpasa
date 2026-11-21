@@ -1,52 +1,277 @@
-const { Products } = require("../models");
-const { Users } = require("../models");
-const { Orders } = require("../models");
-const { OrderItem } = require("../models");
-const { Op } = require('sequelize');
+    const { Products } = require("../models");
+    const { Users } = require("../models");
+    const { Orders } = require("../models");
+    const { OrderItem } = require("../models");
+    const { Op } = require('sequelize');
 
-const asyncHandler = require("../middlewares/asyncHandler");
+    const asyncHandler = require("../middlewares/asyncHandler");
 
-const getAll = asyncHandler(async (req, res) => 
-{
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
-    const offset = (page - 1) * limit;
+    const getAll = asyncHandler(async (req, res) => 
+    {
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const offset = (page - 1) * limit;
 
-    const { count, rows } = await Orders.findAndCountAll({
-        order: [['createdAt', 'DESC']],
-        limit,
-        offset,
-        include: [
+        const { count, rows } = await Orders.findAndCountAll({
+            order: [['createdAt', 'DESC']],
+            limit,
+            offset,
+            include: [
+            {
+                model: Users,
+                as: "user",      
+                attributes: ["username"],
+            },
+            ],
+        });
+
+        res.json({
+            items: rows,
+            totalItems: count,
+            totalPages: Math.ceil(count / limit),
+            currentPage: page,
+        });
+    });
+
+    const getOne = asyncHandler(async (req, res) => 
+    {
+        const id = req.params.id;
+        const order = await Orders.findByPk(id, {
+            include: [
+                {
+                    model: Users,
+                    as: "user",       
+                    attributes: ["username"],
+                    required: true,  
+                },
+                {
+                    model: OrderItem,
+                    as: "orderItems",          // must match alias in Orders.hasMany(OrderItems, { as: "items" })
+                    required: false,      // false = still return order even if it has 0 items
+                    include: [
+                        {
+                            model: Products,
+                            as: "product", // must match alias in OrderItems.belongsTo(Products, { as: "product" })
+                            attributes: ["name"], // adjust to whatever columns you need
+                        },
+                    ],
+                },
+            ],
+        });
+        if (!order) 
         {
-            model: Users,
-            as: "user",      
-            attributes: ["username"],
-        },
+            const err = new Error("Order not found");
+            err.status = 404;
+            throw err;
+        }
+        res.json(order);
+    });
+
+    const create = asyncHandler(async (req, res) => 
+    {
+        const { items,fullname,address,phonenumber,phonenumber2,total_amt,sub_total,advance,shipping_cost,delivery_date } = req.body;
+        
+        const user_id = req.user.id; 
+        const toNullIfEmpty = (val) => (val === "" || val === undefined ? null : val);
+
+        if (!fullname || !address || !phonenumber || !total_amt || !advance) 
+        {
+            const err = new Error("Required fields are missing");
+            err.status = 400;
+            throw err;
+        }
+
+        let amt_due=total_amt-advance;
+
+        const order = await Orders.create({
+            fullname,
+            address,
+            phonenumber,
+            phonenumber2,
+            total_amt,
+            sub_total,
+            advance: toNullIfEmpty(advance),
+            amt_due: toNullIfEmpty(amt_due),
+            shipping_cost: toNullIfEmpty(shipping_cost),
+            user_id,
+            delivery_date: toNullIfEmpty(delivery_date),
+        });
+
+        const orderItems = items.map(item => ({
+            order_id: order.id,
+            product_id: item.product_id,
+            qty: item.qty,
+            price: item.price,
+            user_id
+        }));
+
+        await OrderItem.bulkCreate(orderItems);
+
+    const orderWithProduct = await Orders.findByPk(order.id, {
+        include: [
+            {
+                model: Products,
+                as: "products",   
+                attributes: ["name"],
+            },
+            {
+                model: Users,
+                as: "user",       
+                attributes: ["username"],
+            },
         ],
     });
-
-    res.json({
-        items: rows,
-        totalItems: count,
-        totalPages: Math.ceil(count / limit),
-        currentPage: page,
+        res.status(201).json(orderWithProduct);
     });
-});
 
-const getOne = asyncHandler(async (req, res) => 
-{
+    const update = asyncHandler(async (req, res) => 
+    {
+        try{
     const id = req.params.id;
-    const order = await Orders.findByPk(id, {
-        include: [
+        const { items,fullname,address,phonenumber,phonenumber2,total_amt,sub_total,advance,shipping_cost,delivery_date,status } = req.body;
+        const user_id = req.user.id; 
+        const order = await Orders.findByPk(id);
+        let total_amt_s;
+        if (!order) 
+        {
+            const err = new Error("Order not found");
+            err.status = 400;
+            throw err;
+        }
+        
+        order.user_id = user_id;
+        if (fullname !== undefined) order.fullname = fullname;
+        if (address !== undefined) order.address = address;
+        if (phonenumber !== undefined) order.phonenumber = phonenumber;
+        if (phonenumber2 !== undefined) order.phonenumber2 = phonenumber2;
+        if (advance !== undefined) order.advance = advance;
+        if (status !== undefined) order.status = status;
+        if (shipping_cost !== undefined) order.shipping_cost = shipping_cost;
+        if (delivery_date !== undefined) order.delivery_date = delivery_date;
+        if (sub_total !== undefined)
+        {
+            let computedTotal = sub_total;
+            if (Array.isArray(items)) 
+            {
+                computedTotal = items.reduce((sum, item) => {
+                    const qty = parseFloat(item.qty) || 0;
+                    const price = parseFloat(item.price) || 0;
+                    return sum + qty * price;
+                }, 0);
+            }
+            order.sub_total = computedTotal;
+        }
+        if (shipping_cost !== undefined)
+        {
+            total_amt_s= Number(sub_total)+Number(shipping_cost);
+        }
+        else
+        {
+            total_amt_s= Number(sub_total);
+        }
+        order.total_amt = total_amt_s;
+        if (total_amt !== undefined && advance !== undefined)
+        {
+            let amt_due=total_amt-advance;
+            order.amt_due = amt_due;
+        }
+        
+        
+        await order.save();
+        if (Array.isArray(items)) 
+            {
+                await OrderItem.destroy({ where: { order_id: id }});
+
+                const rows = items
+                    .filter(item => item.product_id) // drop empty rows
+                    .map(item => ({
+                        order_id: id,
+                        product_id: item.product_id,
+                        quantity: parseFloat(item.qty) || 0,
+                        price: parseFloat(item.price) || 0,
+                        user_id : user_id,
+                    }));
+
+                if (rows.length > 0) 
+                {
+                    await OrderItem.bulkCreate(rows);
+                }
+            }
+
+        res.send("Update Successful"); 
+        }
+        catch(err)
+        {
+            console.error(err);
+            res.status(500).json({ error:  err.message || "Internal Server Error" });
+        }
+    });
+    const updateAmtDue = asyncHandler(async (req, res) => 
+    {
+        const id = req.params.id;
+        const { amt_due, advance } = req.body;
+
+        const user_id = req.user.id; 
+
+        const order = await Orders.findByPk(id);
+
+        if (!order) 
+        {
+            const err = new Error("Order not found");
+            err.status = 400;
+            throw err;
+        }
+        
+        order.user_id = user_id;
+        if (amt_due !== undefined) order.amt_due = amt_due;
+        if (advance !== undefined) order.advance = advance;
+        await order.save();
+        res.send("Update Successful"); 
+    });
+    const remove = asyncHandler(async (req, res) => 
+    {
+        const id = req.params.id;
+        const order = await Orders.findByPk(id);
+        if (!order) 
+        {
+            const err = new Error("Order not found");
+            err.status = 400;
+            throw err;
+        }
+
+        await order.destroy();
+        res.json({ message: "Order deleted successfully" });
+    });
+
+    const getUpcommingOrders = asyncHandler(async (req, res) => 
+    {
+        const today = new Date();
+        const tomorrow = new Date();
+        tomorrow.setDate(today.getDate() + 5);
+
+        /*const todayStr = today.toISOString().split('T')[0];       
+        const tomorrowStr = tomorrow.toISOString().split('T')[0];
+
+        const orders = await Orders.findAll({
+            where: {
+                delivery_date: {
+                    [Op.in]: [todayStr, tomorrowStr]
+                },
+                status: 'Pending'
+            },
+            attributes: ["id", "fullname", "total_amt", "delivery_date","status"],
+            order: [['delivery_date', 'ASC']],
+            include: [
             {
                 model: Users,
                 as: "user",       
                 attributes: ["username"],
                 required: true,  
             },
-             {
+                {
                 model: OrderItem,
-                as: "orderItems",          // must match alias in Orders.hasMany(OrderItems, { as: "items" })
+                as: "orderItems",  
+                attributes: ["id"],        // must match alias in Orders.hasMany(OrderItems, { as: "items" })
                 required: false,      // false = still return order even if it has 0 items
                 include: [
                     {
@@ -57,353 +282,144 @@ const getOne = asyncHandler(async (req, res) =>
                 ],
             },
         ],
-    });
-    if (!order) 
-    {
-        const err = new Error("Order not found");
-        err.status = 404;
-        throw err;
-    }
-    res.json(order);
-});
-
-const create = asyncHandler(async (req, res) => 
-{
-    const { items,fullname,address,phonenumber,phonenumber2,total_amt,sub_total,advance,shipping_cost,delivery_date } = req.body;
-    
-    const user_id = req.user.id; 
-    const toNullIfEmpty = (val) => (val === "" || val === undefined ? null : val);
-
-    if (!fullname || !address || !phonenumber || !total_amt || !advance) 
-    {
-        const err = new Error("Required fields are missing");
-        err.status = 400;
-        throw err;
-    }
-
-    let amt_due=total_amt-advance;
-
-    const order = await Orders.create({
-        fullname,
-        address,
-        phonenumber,
-        phonenumber2,
-        total_amt,
-        sub_total,
-        advance: toNullIfEmpty(advance),
-        amt_due: toNullIfEmpty(amt_due),
-        shipping_cost: toNullIfEmpty(shipping_cost),
-        user_id,
-        delivery_date: toNullIfEmpty(delivery_date),
-    });
-
-    const orderItems = items.map(item => ({
-        order_id: order.id,
-        product_id: item.product_id,
-        qty: item.qty,
-        price: item.price,
-        user_id
-    }));
-
-    await OrderItem.bulkCreate(orderItems);
-
-   const orderWithProduct = await Orders.findByPk(order.id, {
-    include: [
-        {
-            model: Products,
-            as: "products",   
-            attributes: ["name"],
-        },
-        {
-            model: Users,
-            as: "user",       
-            attributes: ["username"],
-        },
-    ],
-});
-    res.status(201).json(orderWithProduct);
-});
-
-const update = asyncHandler(async (req, res) => 
-{
-    const id = req.params.id;
-    const { items,fullname,address,phonenumber,phonenumber2,total_amt,sub_total,advance,shipping_cost,delivery_date,status } = req.body;
-    const user_id = req.user.id; 
-
-    const order = await Orders.findByPk(id);
-
-    if (!order) 
-    {
-        const err = new Error("Order not found");
-        err.status = 400;
-        throw err;
-    }
-    
-    order.user_id = user_id;
-    if (fullname !== undefined) order.fullname = fullname;
-    if (address !== undefined) order.address = address;
-    if (phonenumber !== undefined) order.phonenumber = phonenumber;
-    if (phonenumber2 !== undefined) order.phonenumber2 = phonenumber2;
-    if (advance !== undefined) order.advance = advance;
-    if (status !== undefined) order.status = status;
-    if (shipping_cost !== undefined) order.shipping_cost = shipping_cost;
-    if (delivery_date !== undefined) order.delivery_date = delivery_date;
-    if (total_amt !== undefined && advance !== undefined)
-    {
-        let amt_due=total_amt-advance;
-        order.amt_due = amt_due;
-
-    }
-    if (total_amt !== undefined)
-    {
-        let computedTotal = total_amt;
-        if (Array.isArray(items)) 
-        {
-            computedTotal = items.reduce((sum, item) => {
-                const qty = parseFloat(item.qty) || 0;
-                const price = parseFloat(item.price) || 0;
-                return sum + qty * price;
-            }, 0);
-        }
-        order.total_amt = computedTotal;
-    }
-  
-
-    await order.save();
-    if (Array.isArray(items)) 
-        {
-            await OrderItem.destroy({ where: { order_id: id }});
-
-            const rows = items
-                .filter(item => item.product_id) // drop empty rows
-                .map(item => ({
-                    order_id: id,
-                    product_id: item.product_id,
-                    quantity: parseFloat(item.qty) || 0,
-                    price: parseFloat(item.price) || 0,
-                    user_id : user_id,
-                }));
-
-            if (rows.length > 0) 
-            {
-                await OrderItem.bulkCreate(rows);
-            }
-        }
-
-    res.send("Update Successful"); 
-});
-const updateAmtDue = asyncHandler(async (req, res) => 
-{
-    const id = req.params.id;
-    const {amt_due } = req.body;
-    const user_id = req.user.id; 
-
-    const order = await Orders.findByPk(id);
-
-    if (!order) 
-    {
-        const err = new Error("Order not found");
-        err.status = 400;
-        throw err;
-    }
-    
-    order.user_id = user_id;
-    if (amt_due !== undefined) order.amt_due = amt_due;
-    await order.save();
-    res.send("Update Successful"); 
-});
-const remove = asyncHandler(async (req, res) => 
-{
-    const id = req.params.id;
-    const order = await Orders.findByPk(id);
-    if (!order) 
-    {
-        const err = new Error("Order not found");
-        err.status = 400;
-        throw err;
-    }
-
-    await order.destroy();
-    res.json({ message: "Order deleted successfully" });
-});
-
-const getUpcommingOrders = asyncHandler(async (req, res) => 
-{
-    const today = new Date();
-    const tomorrow = new Date();
-    tomorrow.setDate(today.getDate() + 5);
-
-     /*const todayStr = today.toISOString().split('T')[0];       
-    const tomorrowStr = tomorrow.toISOString().split('T')[0];
-
-    const orders = await Orders.findAll({
-        where: {
-            delivery_date: {
-                [Op.in]: [todayStr, tomorrowStr]
+        });*/
+        
+        const order = await Orders.findAll({
+            where: {
+                status: 'Pending'
             },
-            status: 'Pending'
-        },
-        attributes: ["id", "fullname", "total_amt", "delivery_date","status"],
-        order: [['delivery_date', 'ASC']],
-        include: [
-        {
-            model: Users,
-            as: "user",       
-            attributes: ["username"],
-            required: true,  
-        },
-            {
-            model: OrderItem,
-            as: "orderItems",  
-            attributes: ["id"],        // must match alias in Orders.hasMany(OrderItems, { as: "items" })
-            required: false,      // false = still return order even if it has 0 items
+            attributes: ["id","fullname", "total_amt","advance","amt_due","delivery_date","status","phonenumber","phonenumber2","address"],
+            order: [['delivery_date', 'ASC']],
             include: [
-                {
-                    model: Products,
-                    as: "product", // must match alias in OrderItems.belongsTo(Products, { as: "product" })
-                    attributes: ["name"], // adjust to whatever columns you need
-                },
-            ],
-        },
-    ],
-    });*/
-    
-    const order = await Orders.findAll({
-        where: {
-            status: 'Pending'
-        },
-        attributes: ["id","fullname", "total_amt","advance","amt_due","delivery_date","status","phonenumber","phonenumber2","address"],
-        order: [['delivery_date', 'ASC']],
-        include: [
-        {
-            model: Users,
-            as: "user",       
-            attributes: ["username"],
-            required: true,  
-        },
-        {
-            model: OrderItem,
-            as: "orderItems",  
-            attributes: ["id","quantity","price"],       
-            required: false,     
-            include: [
-            {
-                model: Products,
-                as: "product", 
-                attributes: ["name"], 
-            },
-            ],
-        },
-    ],
-    });
-
-    if (!order) 
-    {
-        return res.status(404).json({ error: "Order not found" });
-    }
-
-    res.json(order);
-});
-
-const getOrders = asyncHandler(async (req, res) => 
-{
-    const { count } = await Orders.findAndCountAll({
-        where: {
-            deletedAt: null,
-        }
-    });
-
-    res.json({
-        totalItems: count
-    });
-});
-
-const search = asyncHandler(async (req, res) => 
-{
-    const { query,status } = req.query;
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
-    const offset = (page - 1) * limit;
-
-    const filter = {};
-
-    if (query) 
-    {
-        filter[Op.or] = [
-            { fullname:    { [Op.like]: `%${query}%` } },
-            { phonenumber: { [Op.like]: `%${query}%` } },
-            { address:     { [Op.like]: `%${query}%` } },
-        ];
-    }
-    if (status) 
-    {
-        filter.status = { [Op.like]: `%${status}%` };
-    }
-   
-    const { count, rows } = await Orders.findAndCountAll({
-        where: filter,
-        order: [['createdAt', 'DESC']],
-        limit,
-        offset,
-        include: [
             {
                 model: Users,
-                as: "user",
+                as: "user",       
                 attributes: ["username"],
+                required: true,  
+            },
+            {
+                model: OrderItem,
+                as: "orderItems",  
+                attributes: ["id","quantity","price"],       
+                required: false,     
+                include: [
+                {
+                    model: Products,
+                    as: "product", 
+                    attributes: ["name"], 
+                },
+                ],
             },
         ],
-    });
+        });
 
-    res.json({
-        items: rows,
-        totalItems: count,
-        totalPages: Math.ceil(count / limit),
-        currentPage: page,
-    });
-
-});
-
-const getUpcommingOrdersList = asyncHandler(async (req, res) => 
-{
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
-    const offset = (page - 1) * limit;
-
-    const { count, rows } = await Orders.findAndCountAll({
-        where: {
-            status: 'Pending'
-        },
-        order: [['delivery_date', 'ASC']],
-        limit,
-        offset,
-        include: [
+        if (!order) 
         {
-            model: Users,
-            as: "user",      
-            attributes: ["username"],
-        },
-        ],
+            return res.status(404).json({ error: "Order not found" });
+        }
+
+        res.json(order);
     });
 
-    res.json({
-        items: rows,
-        totalItems: count,
-        totalPages: Math.ceil(count / limit),
-        currentPage: page,
-    });
-});
+    const getOrders = asyncHandler(async (req, res) => 
+    {
+        const { count } = await Orders.findAndCountAll({
+            where: {
+                deletedAt: null,
+            }
+        });
 
-const getTotalSales = asyncHandler(async (req, res) => 
-{
-    const totalSales = await Orders.sum('total_amt', {
-        where: {
-            amt_due: 0,
-        },
+        res.json({
+            totalItems: count
+        });
     });
 
-    res.json({
-        totalSales: Number(totalSales) || 0,
+    const search = asyncHandler(async (req, res) => 
+    {
+        const { query,status } = req.query;
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const offset = (page - 1) * limit;
+
+        const filter = {};
+
+        if (query) 
+        {
+            filter[Op.or] = [
+                { fullname:    { [Op.like]: `%${query}%` } },
+                { phonenumber: { [Op.like]: `%${query}%` } },
+                { address:     { [Op.like]: `%${query}%` } },
+            ];
+        }
+        if (status) 
+        {
+            filter.status = { [Op.like]: `%${status}%` };
+        }
+    
+        const { count, rows } = await Orders.findAndCountAll({
+            where: filter,
+            order: [['createdAt', 'DESC']],
+            limit,
+            offset,
+            include: [
+                {
+                    model: Users,
+                    as: "user",
+                    attributes: ["username"],
+                },
+            ],
+        });
+
+        res.json({
+            items: rows,
+            totalItems: count,
+            totalPages: Math.ceil(count / limit),
+            currentPage: page,
+        });
+
     });
-});
-module.exports = { getAll, getOne, create, update, remove, getUpcommingOrders, search,getOrders 
-    ,getUpcommingOrdersList,updateAmtDue,getTotalSales};
+
+    const getUpcommingOrdersList = asyncHandler(async (req, res) => 
+    {
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const offset = (page - 1) * limit;
+
+        const { count, rows } = await Orders.findAndCountAll({
+            where: {
+                status: 'Pending'
+            },
+            order: [['delivery_date', 'ASC']],
+            limit,
+            offset,
+            include: [
+            {
+                model: Users,
+                as: "user",      
+                attributes: ["username"],
+            },
+            ],
+        });
+
+        res.json({
+            items: rows,
+            totalItems: count,
+            totalPages: Math.ceil(count / limit),
+            currentPage: page,
+        });
+    });
+
+    const getTotalSales = asyncHandler(async (req, res) => 
+    {
+        const totalSales = await Orders.sum('total_amt', {
+            where: {
+                amt_due: 0,
+            },
+        });
+
+        res.json({
+            totalSales: Number(totalSales) || 0,
+        });
+    });
+    module.exports = { getAll, getOne, create, update, remove, getUpcommingOrders, search,getOrders 
+        ,getUpcommingOrdersList,updateAmtDue,getTotalSales};

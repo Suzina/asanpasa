@@ -180,10 +180,8 @@ function OrderAdd()
                 } 
                 else 
                 {
-                    toast.success("Order Updated!");
+                    toast.success(response.data);
                     navigate(`/admin/order/${editingId}`, { replace: true });
-
-
                 }
 
             }
@@ -220,7 +218,7 @@ function OrderAdd()
             } else if (err.response?.status === 401) {
                 toast.error('Unauthorized');
             } else {
-                toast.error(err.response?.data?.error || err.response?.data?.message || 'Something went wrong');
+                toast.error(err.response?.data?.error || err.response?.data?.message || 'I dont know what went wrong');
             }
         }
     }
@@ -511,7 +509,7 @@ function OrderAdd()
                                                     />
                                                 </div>    
                                                 <div className="col-6 col-md-3">
-                                                    <label htmlFor="text" className="col-12 col-form-label">Advance</label> 
+                                                    <label htmlFor="text" className="col-12 col-form-label">Amount Paid</label> 
                                                     <input name="advance" 
                                                     type="number" 
                                                     id="advance"
