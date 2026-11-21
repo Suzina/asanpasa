@@ -57,7 +57,6 @@ const remove = asyncHandler(async (req, res) =>
       err.status = 422;
       throw err;
     }
-
     await orderItem.destroy({ transaction });
 
     const row = await OrderItem.findOne({
@@ -69,10 +68,13 @@ const remove = asyncHandler(async (req, res) =>
 
     
     const totalAmt = Number(row.subtotal) + Number(order.shipping_cost);
+    const amtPaid = Number(order.advance);
+    const newAmtDue = Math.max(0, totalAmt - amtPaid);
 
     const totals = {
       sub_total: Number(row.subtotal),
-      total_amt: totalAmt
+      total_amt: totalAmt,
+      amt_due: newAmtDue
     };
 
     await order.update(totals, { transaction });

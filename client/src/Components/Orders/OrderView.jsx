@@ -20,6 +20,7 @@ function OrderView()
     let status= ""; 
     let newStatus= ""; 
     let amt_due=0;
+
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
 
@@ -189,9 +190,10 @@ function OrderView()
         try 
         {
             amt_due=0;
-
+            let advance=order.total_amt;
+            //console.log({amt_due,advance});
             let response = await axiosPrivate.put(`/orders/amt-due/${id}`,
-            JSON.stringify({ amt_due }),
+            JSON.stringify({ amt_due,advance }),
             {
                 headers: { 'Content-Type': 'application/json' },
                 withCredentials: true
@@ -363,9 +365,13 @@ function OrderView()
                                     </div>
                                     <div className="advance">
                                         <span>
-                                            Rs {Number(order.amt_due) === 0 ? order.total_amt : order.advance}
+                                            Rs {order.advance ? order.advance : (order.advance || 0)}
                                         </span>
-                                        <span className="badge badge-danger">Rs {order.amt_due}</span>
+                                        {Number(order.amt_due) > 0 ? (
+                                            <span className="badge badge-danger">Rs {order.amt_due}</span>
+                                            ) : (
+                                            <span className="badge badge-success">Paid</span>
+                                            )}
                                     </div>
                                 </div>
 
