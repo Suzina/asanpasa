@@ -18,6 +18,8 @@ import RawMaterials from './Components/RawMaterials/RawMaterials';
 
 import Vendors from './Components/Vendors/Vendors';
 
+import Expenses from './Components/Expenses/Expenses';
+
 import { AuthProvider } from './context/AuthProvider';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import NotFound from './Components/NotFound';
@@ -68,8 +70,11 @@ function App() {
           <Route element={<RequireAuth />}>
             <Route path="/admin/raw-materials" element={<RawMaterials />} />
           </Route>
-           <Route element={<RequireAuth />}>
+          <Route element={<RequireAuth />}>
             <Route path="/admin/vendors" element={<Vendors />} />
+          </Route>
+          <Route element={<RequireAuth />}>
+            <Route path="/admin/expenses" element={<Expenses />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>

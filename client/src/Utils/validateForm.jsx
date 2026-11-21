@@ -165,5 +165,33 @@ export const validateRawMaterialForm = ({
     }
     return errors;
 };
+
+export const validateExpenseForm = ({
+    selectedVendor,
+    selectedRawMaterial,
+    qty,
+    amount,
+    payment_status,
+}) => {
+        
+    const errors = {};
+    if (!selectedVendor) {
+        errors.selectedVendor = "Please select a vendor";
+    }
+    if (!selectedRawMaterial) {
+        errors.selectedRawMaterial = "Please select a raw material";
+    }
+    if (!qty || Number(qty) <= 0) {
+        errors.qty = "Please enter a valid quantity";
+    }
+    if (!amount || Number(amount) <= 0) {
+        errors.amount = "Please enter a valid amount";
+    }
+    if (!payment_status) {
+        errors.payment_status = "Please select a payment status";
+    }
+    
+    return errors;
+};
 export default validateForm;
 

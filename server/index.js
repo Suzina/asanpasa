@@ -38,6 +38,8 @@ app.use("/api/raw-materials", rawMaterialRoutes);
 const vendorsRoutes = require("./routes/Vendors");
 app.use("/api/vendors", vendorsRoutes);
 
+const ExpensesRoutes = require("./routes/Expenses");
+app.use("/api/expenses", ExpensesRoutes);
 
 app.use("/api", (req, res) => {
   res.status(404).json({

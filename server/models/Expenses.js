@@ -6,7 +6,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
-      raw_material_id: {
+      raw_material_id : {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
@@ -15,10 +15,19 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         defaultValue: 1,
       },
-      total: {
+      amount: {
         type: DataTypes.DECIMAL(10, 2),
         allowNull: false,
         defaultValue: 0.0,
+      },
+      payment_status: {
+      type: DataTypes.ENUM('Paid', 'Unpaid'), 
+      allowNull: false,
+      defaultValue: 'Unpaid'
+      },
+      payment_date: {
+        type: DataTypes.DATEONLY,
+        allowNull: true,
       },
     },
     {
@@ -39,6 +48,5 @@ module.exports = (sequelize, DataTypes) => {
       as: "rawMaterial",
     });
   };
-
   return Expenses;
 };
