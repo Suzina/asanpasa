@@ -29,6 +29,7 @@ function OrderAdd()
     const [phonenumber, setPhonenumber] = useState('');
     const [phonenumber2, setPhonenumber2] = useState('');
     const [total_amt, setTotalAmt] = useState('');
+    const [sub_total, setSubTotal] = useState('');
     const [advance, setAdvance] = useState('');
     const [shipping_cost, setShippingCost] = useState('');
     const [fulldelivery_date, setDeliveryDate] = useState('');
@@ -115,7 +116,11 @@ function OrderAdd()
         prev.map((item, i) => i === index ? { ...item, [field]: value } : item)
     );
     };
-
+    const calculateTotal = (subtotal, shipping) => 
+    {
+        const total = Number(subtotal || 0) + Number(shipping || 0);
+        setTotalAmt(total);
+    };
     const getProducts = async (signal) => 
     {
         try 
@@ -144,6 +149,8 @@ function OrderAdd()
             phonenumber2,
             advance,
             fulldelivery_date,
+            total_amt,
+            sub_total,
             orderItems
         });
 
@@ -161,7 +168,7 @@ function OrderAdd()
             {
                 const delivery_date=fulldelivery_date.delivery_date;
                 response = await axiosPrivate.put(`${URL}/${editingId}`,
-                JSON.stringify({ fullname,address,phonenumber,phonenumber2,status,total_amt,shipping_cost,advance,delivery_date,items: orderItems }),
+                JSON.stringify({ fullname,address,phonenumber,phonenumber2,status,total_amt,sub_total,shipping_cost,advance,delivery_date,items: orderItems }),
                 {
                     headers: { 'Content-Type': 'application/json' },
                     withCredentials: true
@@ -183,8 +190,9 @@ function OrderAdd()
             else
             {
                 const delivery_date=fulldelivery_date.delivery_date;
+                console.log({ fullname,address,phonenumber,phonenumber2,status,total_amt,sub_total,shipping_cost,advance,delivery_date,items: orderItems });
                 response = await axiosPrivate.post(URL,
-                JSON.stringify({ fullname,address,phonenumber,phonenumber2,status,total_amt,shipping_cost,advance,delivery_date,items: orderItems }),
+                JSON.stringify({ fullname,address,phonenumber,phonenumber2,status,total_amt,sub_total,shipping_cost,advance,delivery_date,items: orderItems }),
                 {
                     headers: { 'Content-Type': 'application/json' },
                     withCredentials: true
@@ -202,8 +210,6 @@ function OrderAdd()
                     navigate('/admin/orders'); 
                 }
             }
-            
-            
         }
         catch (err)
         {
@@ -228,14 +234,18 @@ function OrderAdd()
         }
     }, [id]);
     useEffect(() => {
-        const total = orderItems.reduce((sum, item) => {
+        const total = orderItems.reduce((sum, item) => 
+        {
             const price = parseFloat(item.price) || 0;
             const qty = parseFloat(item.qty) || 0;
-            return sum + price * qty; // multiply by qty too, see note below
+            return sum + price * qty; 
         }, 0);
-        setTotalAmt(total.toFixed(2));
+        const shipping = parseFloat(shipping_cost) || 0;
+        const grandTotal = total + shipping;
+        setSubTotal(total.toFixed(2));
+        setTotalAmt(grandTotal.toFixed(2));
     }, [orderItems]);
-return (
+    return (
     <>
     <Sidebar/>
     <div className="ec-page-wrapper">
@@ -244,8 +254,7 @@ return (
             <div className="content">
                 <div className="breadcrumb-wrapper breadcrumb-wrapper-2 breadcrumb-contacts">
                     <h1>Add Order</h1>
-                    
-                   
+
                     <Toaster
                     position="top-right"
                     reverseOrder={false}
@@ -462,6 +471,35 @@ return (
                                             )}
                                             <div className="row mb-3">
                                                 <div className="col-6 col-md-3">
+                                                    <label htmlFor="text" className="col-12 col-form-label">Subtotal</label> 
+                                                    <input name="sub_total" className="form-control here slug-title" type="text" 
+                                                    id="sub_total"
+                                                    ref={userRef}
+                                                    autoComplete="off"
+                                                    onChange={(e) => setSubTotal(e.target.value)}
+                                                    value={sub_total}
+                                                    readOnly="readonly" 
+                                                    />
+                                                </div>
+                                               
+                                                <div className="col-6 col-md-3">
+                                                    <label htmlFor="text" className="col-12 col-form-label">Delivery Charge</label> 
+                                                    <input name="shipping_cost" 
+                                                    className="form-control here slug-title" 
+                                                    type="number" 
+                                                    id="shipping_cost"
+                                                    ref={userRef}
+                                                    autoComplete="off"
+                                                    onChange={(e) => {
+                                                        const shipping = e.target.value;
+                                                        setShippingCost(shipping);
+                                                        calculateTotal(sub_total, shipping);
+                                                    }}
+                                                    value={shipping_cost ?? 0}
+                                                    />
+                                                    
+                                                </div>   
+                                                <div className="col-6 col-md-3">
                                                     <label htmlFor="text" className="col-12 col-form-label">Total Amount</label> 
                                                     <input name="total_amt" className="form-control here slug-title" type="text" 
                                                     id="total_amt"
@@ -472,19 +510,6 @@ return (
                                                     readOnly="readonly" 
                                                     />
                                                 </div>    
-                                                <div className="col-6 col-md-3">
-                                                    <label htmlFor="text" className="col-12 col-form-label">Delivery Charge</label> 
-                                                    <input name="shipping_cost" 
-                                                    className="form-control here slug-title" 
-                                                    type="number" 
-                                                    id="shipping_cost"
-                                                    ref={userRef}
-                                                    autoComplete="off"
-                                                    onChange={(e) => setShippingCost(e.target.value)}
-                                                    value={shipping_cost ?? 0}
-                                                    />
-                                                    
-                                                </div>   
                                                 <div className="col-6 col-md-3">
                                                     <label htmlFor="text" className="col-12 col-form-label">Advance</label> 
                                                     <input name="advance" 
