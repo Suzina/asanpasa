@@ -46,7 +46,6 @@
 .oc-primary { background: var(--oc-peony); border-color: var(--oc-peony); color: #fff; }
 .oc-primary:hover { color: #fff; }
 .oc-danger { color: #a3234a; }
-.
 .oc-empty { grid-column: 1 / -1; text-align: center; color: var(--oc-muted); padding: 36px 12px; }
 
 @media (max-width: 400px) { .oc-list { grid-template-columns: 1fr; } .oc-facts { grid-template-columns: repeat(2, 1fr); } }
