@@ -1,3 +1,4 @@
+import '../../assets/css/orderlist.css'
 import { useRef, useState, useEffect } from 'react';
 import Sidebar from '../Layouts/Sidebar';
 import Header from '../Layouts/Header';
@@ -154,7 +155,6 @@ return (
                                             className="form-select"
                                             value={status} 
                                             onChange={(e) => setStatus(e.target.value)}
-
                                         >
                                             <option value="">Select a Status</option>
                                             <option value="Pending">Pending</option>
@@ -164,7 +164,6 @@ return (
                                     </div>
                                 </div>
                                 <p>{orders.length} result{orders.length !== 1 ? 's' : ''} for {query ? `query "${query}"` : status ? `status "${status}"` : 'all orders'}.</p>
-
                             </div>
                             <div className="card-body">
                                 <div className="table-responsive">

@@ -383,7 +383,7 @@ return (
 
                                             {orderItems.map((item, index) => (
                                                 <div className="row mb-3" key={index}>
-                                                    <div className="col-4 col-md-5 mb-3">
+                                                    <div className="col-10 col-md-5 mb-3">
                                                         <label>Product</label>
                                                         <Select
                                                             options={productOptions}
@@ -408,8 +408,16 @@ return (
                                                             </div>
                                                         )}
                                                     </div>
-
-                                                    <div className="col-3 col-md-2 pd-0-right">
+                                                    <div className="col-1 pd-30 d-flex align-items-end pb-20">
+                                                        {index === 0 ? (
+                                                            <button type="button" className="btn btn-success" onClick={addRow}>+</button>
+                                                        ) : (
+                                                            <button type="button" className="btn btn-danger" onClick={() => removeRow(index)}>
+                                                                <i className="mdi mdi-delete"></i>
+                                                            </button>
+                                                        )}
+                                                    </div>
+                                                    <div className="col-6 col-md-2 pd-0-right">
                                                         <label className='pd-10'>Qty</label>
                                                         <input
                                                             type="number"
@@ -426,7 +434,7 @@ return (
                                                         )}
                                                     </div>
 
-                                                    <div className="col-4 col-md-3 pd-0-right">
+                                                    <div className="col-6 col-md-3 pd-0-right">
                                                         <label className='pd-10'>Price</label>
                                                         <input
                                                             type="number"
@@ -443,15 +451,7 @@ return (
                                                         )}
                                                     </div>
 
-                                                    <div className="col-1 pd-30 d-flex align-items-end">
-                                                        {index === 0 ? (
-                                                            <button type="button" className="btn btn-success" onClick={addRow}>+</button>
-                                                        ) : (
-                                                            <button type="button" className="btn btn-danger" onClick={() => removeRow(index)}>
-                                                                <i className="mdi mdi-delete"></i>
-                                                            </button>
-                                                        )}
-                                                    </div>
+                                                   
                                                 </div>
                                             ))}
 
@@ -460,7 +460,7 @@ return (
                                                     {errors.orderItems}
                                                 </div>
                                             )}
-                                            <div className="row mb-2">
+                                            <div className="row mb-3">
                                                 <div className="col-6 col-md-3">
                                                     <label htmlFor="text" className="col-12 col-form-label">Total Amount</label> 
                                                     <input name="total_amt" className="form-control here slug-title" type="text" 
