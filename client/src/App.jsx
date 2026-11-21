@@ -8,6 +8,7 @@ import Products from './Components/Products/Products';
 import ProductView from './Components/Products/ProductView';
 
 import Orders from './Components/Orders/Orders';
+import OrdersList from './Components/Orders/OrdersList';
 import OrderView from './Components/Orders/OrderView';
 import OrderAdd from './Components/Orders/OrderAdd';
 import UpCommingOrders from './Components/Orders/UpCommingOrders';
@@ -49,6 +50,9 @@ function App() {
           </Route>
           <Route element={<RequireAuth />}>
             <Route path="/admin/orders" element={<Orders />} />
+          </Route>
+          <Route element={<RequireAuth />}>
+            <Route path="/admin/orders-list" element={<OrdersList />} />
           </Route>
           <Route element={<RequireAuth />}>
             <Route path="/admin/order/add" element={<OrderAdd />} />
