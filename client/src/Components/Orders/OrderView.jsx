@@ -159,9 +159,17 @@ function OrderView()
         {
             let response = await axiosPrivate.delete(`/order-items/${id}`, { withCredentials: true });
             console.log(response.data);
-            setOrder((prev) => ({ ...prev, orderItems: prev.orderItems.filter((item) => item.id !== id) }));
-            toast.success(response.data.message);
+            setOrder((prev) => ({
+                ...prev,
 
+                orderItems: prev.orderItems.filter(
+                    (item) => item.id !== id
+                ),
+
+                sub_total: response.data.totals.sub_total,
+                total_amt: response.data.totals.total_amt,
+            }));
+            toast.success(response.data.message);
         } 
         catch (err) 
         {
@@ -181,6 +189,7 @@ function OrderView()
         try 
         {
             amt_due=0;
+
             let response = await axiosPrivate.put(`/orders/amt-due/${id}`,
             JSON.stringify({ amt_due }),
             {
@@ -353,7 +362,9 @@ function OrderView()
                                         <div className="paid-note">Amount Due</div>
                                     </div>
                                     <div className="advance">
-                                        <span>Rs {order.advance}</span>
+                                        <span>
+                                            Rs {Number(order.amt_due) === 0 ? order.total_amt : order.advance}
+                                        </span>
                                         <span className="badge badge-danger">Rs {order.amt_due}</span>
                                     </div>
                                 </div>
