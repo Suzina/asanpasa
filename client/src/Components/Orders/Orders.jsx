@@ -10,26 +10,153 @@ import useDashboardUI from '../../hooks/useDashboardUI';
 const URL = '/orders';
 const baseUrl = import.meta.env.VITE_API_BASE_URL;
 
-function Orders() 
+const initials = (name = '') =>
+    name.trim().split(/\s+/).slice(0, 2).map(w => w[0]?.toUpperCase()).join('') || '?';
+
+const statusChip = (status) =>
+    status === 'Delivered' ? 'oc-ok' : status === 'Cancelled' ? 'oc-od' : 'oc-soon';
+
+function OrderCard({ order, onDelete }) {
+    const tone = `oc-t${Number(order.id) % 4 || 0}`;
+
+    return (
+        <article className={`oc-card ${order.status === 'Cancelled' ? 'oc-cancelled' : ''}`}>
+            <details>
+                <summary className="oc-head">
+                    <div className={`oc-av ${tone}`}>{initials(order.fullname)}</div>
+                    <div className="oc-who">
+                        <div className="oc-name">{order.fullname}</div>
+                        <div className="oc-what">{order.delivery_date}</div>
+                    </div>
+                    <div className="oc-amt">
+                        <b>{order.amt_due}</b>
+                        <br />
+                        <span className={`oc-chip ${statusChip(order.status)}`}>{order.status}</span>
+                    </div>
+                </summary>
+
+                <div className="oc-inner">
+                    <div className="oc-facts">
+                        <div>Total<b>{order.total_amt}</b></div>
+                        <div>Advance<b>{order.advance}</b></div>
+                        <div>Amt due<b>{order.amt_due}</b></div>
+                        <div>Phone<b>{order.phonenumber}</b></div>
+                        <div>Delivery<b>{order.delivery_date}</b></div>
+                        <div>User<b>{order.user?.username}</b></div>
+                        <div className="oc-wide">Address<b>{order.address}</b></div>
+                    </div>
+
+                    <div className="oc-actions">
+                        <a className="oc-btn oc-primary" href={`${baseUrl}/admin/order/${order.id}`}>View</a>
+                        <a className="oc-btn" href={`${baseUrl}/admin/order/edit/${order.id}`}>Edit</a>
+                        <button type="button" className="oc-btn oc-danger" onClick={() => onDelete(order.id)}>
+                            Delete
+                        </button>
+                    </div>
+                </div>
+            </details>
+        </article>
+    );
+}
+
+// Desktop = table, tablet/phone = cards. Change the number to move the switch point.
+const DESKTOP_QUERY = '(min-width: 1200px)';
+
+function useIsDesktop() {
+    const [isDesktop, setIsDesktop] = useState(() => window.matchMedia(DESKTOP_QUERY).matches);
+    useEffect(() => {
+        const mq = window.matchMedia(DESKTOP_QUERY);
+        const onChange = (e) => setIsDesktop(e.matches);
+        mq.addEventListener('change', onChange);
+        return () => mq.removeEventListener('change', onChange);
+    }, []);
+    return isDesktop;
+}
+
+function OrdersTable({ orders, onDelete }) {
+    return (
+        <div className="table-responsive">
+            <table id="responsive-data-table" className="table" style={{ width: '100%' }}>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Fullname</th>
+                        <th>Address</th>
+                        <th>Phone Number</th>
+                        <th>Total Amt</th>
+                        <th>Advance</th>
+                        <th>Amt Due</th>
+                        <th>Delivery date</th>
+                        <th>User</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {orders.map((order, index) => (
+                        <tr key={order.id}>
+                            <td>{index + 1}</td>
+                            <td><a href={`${baseUrl}/admin/order/${order.id}`}>{order.fullname}</a></td>
+                            <td>{order.address}</td>
+                            <td>{order.phonenumber}</td>
+                            <td>{order.total_amt}</td>
+                            <td>{order.advance}</td>
+                            <td>{order.amt_due}</td>
+                            <td>{order.delivery_date}</td>
+                            <td>{order.user?.username}</td>
+                            <td>
+                                {order.status === "Delivered" ? (
+                                    <span className="mb-2 mr-2 badge badge-success">Delivered</span>
+                                ) : order.status === "Cancelled" ? (
+                                    <span className="mb-2 mr-2 badge badge-danger">Cancelled</span>
+                                ) : (
+                                    <span className="mb-2 mr-2 badge pending">{order.status}</span>
+                                )}
+                            </td>
+                            <td>
+                                <div className="btn-group">
+                                    <button type="button" className="btn btn-outline-success">View</button>
+                                    <button type="button"
+                                        className="btn btn-outline-success dropdown-toggle dropdown-toggle-split"
+                                        data-bs-toggle="dropdown" aria-haspopup="true"
+                                        aria-expanded="false" data-display="static">
+                                        <span className="sr-only">Info</span>
+                                    </button>
+                                    <div className="dropdown-menu">
+                                        <a className="dropdown-item" href={`${baseUrl}/admin/order/${order.id}`}>View</a>
+                                        <a className="dropdown-item" href={`${baseUrl}/admin/order/edit/${order.id}`}>Edit</a>
+                                        <a className="dropdown-item" href="#" onClick={(e) => { e.preventDefault(); onDelete(order.id); }}>Delete</a>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        </div>
+    );
+}
+
+function OrdersList()
 {
     useDashboardUI();
-    const userRef = useRef();
+    const isDesktop = useIsDesktop();
     const errRef = useRef();
 
     const [orders, setOrders] = useState([]);
     const [query, setQuery] = useState('');
     const [status, setStatus] = useState('');
 
-        
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [totalItems, setTotalItems] = useState(0);
     const itemsPerPage = 10;
     const [isSearching, setIsSearching] = useState(false);
 
-    const getOrders = async (page = 1, signal) => 
+    const getOrders = async (page = 1, signal) =>
     {
-        try 
+        try
         {
             const response = await axiosPrivate.get(URL, {
                 params: { page, limit: itemsPerPage },
@@ -39,17 +166,15 @@ function Orders()
             setTotalPages(response.data.totalPages);
             setTotalItems(response.data.totalItems);
             setCurrentPage(response.data.currentPage);
-        } 
-        catch (err) 
+        }
+        catch (err)
         {
             console.log(err);
         }
-        
     }
-    
-    const searchOrders = async (page = 1) => 
+
+    const searchOrders = async (page = 1) =>
     {
-        console.log("Searching orders with query:", query, "and status:", status);
         try {
             const response = await axiosPrivate.get("orders/search", {
                 params: { query, status, page, limit: itemsPerPage },
@@ -63,32 +188,33 @@ function Orders()
 
         } catch (err) {
             toast.error(err.response?.data?.error || err.response?.data?.message || 'Something went wrong');
-            errRef.current.focus();
+            errRef.current?.focus();
         }
     };
 
-    const handleDeleteClick = async (id) => 
+    const handleDeleteClick = async (id) =>
     {
-        try 
+        try
         {
             await axiosPrivate.delete(`${URL}/${id}`, { withCredentials: true });
-            setOrders(prev => prev.filter(orders => orders.id !== id));
+            setOrders(prev => prev.filter(o => o.id !== id));
             toast.success("Order deleted successfully");
-        } 
-        catch (err) 
+        }
+        catch (err)
         {
             console.log(err)
 
-            if (!err?.response) 
+            if (!err?.response)
             {
                 toast.error('No Server Response');
             }
-            else 
+            else
             {
                 toast.error(err.response?.data?.error || err.response?.data?.message || 'Something went wrong');
             }
         }
     }
+
     const goToPage = (page) => {
         if (page < 1 || page > totalPages || page === currentPage) return;
         if (isSearching) {
@@ -97,6 +223,7 @@ function Orders()
             getOrders(page);
         }
     };
+
     useEffect(() => {
         const timer = setTimeout(() => {
             if (query || status) {
@@ -110,20 +237,18 @@ function Orders()
 
         return () => clearTimeout(timer);
     }, [query, status]);
-return (
+
+    return (
     <>
     <Sidebar/>
     <div className="ec-page-wrapper">
       <Header/>
 
-		<div className="ec-content-wrapper">
+        <div className="ec-content-wrapper">
             <div className="content">
                 <div className="breadcrumb-wrapper breadcrumb-wrapper-2 breadcrumb-contacts">
                     <h1>Orders</h1>
-                    <Toaster
-                    position="top-right"
-                    reverseOrder={false}
-                    />
+                    <Toaster position="top-right" reverseOrder={false} />
                     <p className="breadcrumbs"><span><a href={`${baseUrl}/admin/dashboard`}>Home</a></span>
                     <span><i className="mdi mdi-chevron-right"></i></span>Orders</p>
                 </div>
@@ -136,24 +261,25 @@ return (
                             </a>
                         </div>
                     </div>
-                    <div className="col-xl-12 col-lg-12">
+                    <div className="orderlist col-xl-12 col-lg-12">
                         <div className="ec-cat-list card card-default">
                             <div className="search-card-body">
                                 <div className="form-group row">
                                     <div className="col-8 col-md-3">
-                                        <input name="query" className="form-control here slug-title" type="text" 
-                                        id="query"
-                                        autoComplete="off"
-                                        onChange={(e) => setQuery(e.target.value)}
-                                        value={query}
+                                        <input name="query" className="form-control here slug-title" type="text"
+                                            id="query"
+                                            autoComplete="off"
+                                            placeholder="Search orders"
+                                            onChange={(e) => setQuery(e.target.value)}
+                                            value={query}
                                         />
-                                    </div> 
+                                    </div>
                                     <div className="col-4 col-md-3">
                                         <select
                                             name="status"
                                             id="status"
                                             className="form-select"
-                                            value={status} 
+                                            value={status}
                                             onChange={(e) => setStatus(e.target.value)}
                                         >
                                             <option value="">Select a Status</option>
@@ -163,78 +289,25 @@ return (
                                         </select>
                                     </div>
                                 </div>
-                                <p>{orders.length} result{orders.length !== 1 ? 's' : ''} for {query ? `query "${query}"` : status ? `status "${status}"` : 'all orders'}.</p>
+                                <p className="mb-3">
+                                    {orders.length} result{orders.length !== 1 ? 's' : ''} for {query ? `query "${query}"` : status ? `status "${status}"` : 'all orders'}.
+                                </p>
                             </div>
+
                             <div className="card-body">
-                                <div className="table-responsive">
-                                    <table id="responsive-data-table" className="table" style={{ width: '100%' }}>
-                                        <thead>
-                                            <tr>
-                                                <th>#</th>
-                                                <th>Fullname</th>
-                                                <th>Address</th>
-                                                <th>Phone Number</th>
-                                                <th>Total Amt</th>
-                                                <th>Advance</th>
-                                                <th>Amt Due</th>
-                                                <th>Delivery date</th>
-                                                <th>User</th>
-                                                <th>Status</th>
-                                                <th>Action</th>
-                                            </tr>
-                                        </thead>
+                                {isDesktop ? (
+                                    <OrdersTable orders={orders} onDelete={handleDeleteClick} />
+                                ) : (
+                                    <div className="oc-list">
+                                        {orders.length === 0 && (
+                                            <p className="oc-empty">No orders found. Try another search or status.</p>
+                                        )}
+                                        {orders.map((order) => (
+                                            <OrderCard key={order.id} order={order} onDelete={handleDeleteClick} />
+                                        ))}
+                                    </div>
+                                )}
 
-                                        <tbody>
-                                            {orders.map((order,index) => (
-                                                <tr key={order.id}>
-                                                    <td>{index + 1}</td>
-                                                    <td><a href={`${baseUrl}/admin/order/${order.id}`}>{order.fullname}</a></td>
-                                                    <td>{order.address}</td>
-                                                    <td>{order.phonenumber}</td>
-                                                    <td>{order.total_amt}</td>
-                                                    <td>{order.advance}</td>
-                                                    <td>{order.amt_due}</td>
-                                                    <td>{order.delivery_date}</td>
-                                                    <td>{order.user.username}</td>
-                                                    <td>
-                                                       {order.status === "Delivered" ? (
-                                                        <span className="mb-2 mr-2 badge badge-success">
-                                                            Delivered
-                                                        </span>
-                                                    ) : order.status === "Cancelled" ? (
-                                                        <span className="mb-2 mr-2 badge badge-danger">
-                                                            Cancelled
-                                                        </span>
-                                                    ) : (
-                                                        <span className="mb-2 mr-2 badge pending">
-                                                            {order.status}
-                                                        </span>
-                                                    )}
-                                                    </td>
-                                                    <td>
-                                                        <div className="btn-group">
-                                                            <button type="button"
-                                                                className="btn btn-outline-success">View
-                                                            </button>
-                                                            <button type="button"
-                                                                className="btn btn-outline-success dropdown-toggle dropdown-toggle-split"
-                                                                data-bs-toggle="dropdown" aria-haspopup="true"
-                                                                aria-expanded="false" data-display="static">
-                                                                <span className="sr-only">Info</span>
-                                                            </button>
-
-                                                            <div className="dropdown-menu">
-                                                                <a className="dropdown-item" href={`${baseUrl}/admin/order/${order.id}`}>View</a>
-                                                                <a className="dropdown-item" href={`${baseUrl}/admin/order/edit/${order.id}`}>Edit</a>
-                                                                <a className="dropdown-item" href="#" onClick={(e) => { e.preventDefault(); handleDeleteClick(order.id); }}>Delete</a>															</div>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            
                                 {totalPages > 1 && (
                                     <div className="d-flex justify-content-between align-items-center mt-3">
                                         <span>
@@ -243,20 +316,13 @@ return (
                                         <nav>
                                             <ul className="pagination mb-0">
                                                 <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
-                                                    <button
-                                                        className="page-link"
-                                                        onClick={() => goToPage(currentPage - 1)}
-                                                        disabled={currentPage === 1}
-                                                    >
+                                                    <button className="page-link" onClick={() => goToPage(currentPage - 1)} disabled={currentPage === 1}>
                                                         Prev
                                                     </button>
                                                 </li>
 
                                                 {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                                                    <li
-                                                        key={page}
-                                                        className={`page-item ${page === currentPage ? 'active' : ''}`}
-                                                    >
+                                                    <li key={page} className={`page-item ${page === currentPage ? 'active' : ''}`}>
                                                         <button className="page-link" onClick={() => goToPage(page)}>
                                                             {page}
                                                         </button>
@@ -264,11 +330,7 @@ return (
                                                 ))}
 
                                                 <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
-                                                    <button
-                                                        className="page-link"
-                                                        onClick={() => goToPage(currentPage + 1)}
-                                                        disabled={currentPage === totalPages}
-                                                    >
+                                                    <button className="page-link" onClick={() => goToPage(currentPage + 1)} disabled={currentPage === totalPages}>
                                                         Next
                                                     </button>
                                                 </li>
@@ -280,13 +342,12 @@ return (
                         </div>
                     </div>
                 </div>
-            </div> 
-        </div> 
-                <Footer />
- 
+            </div>
         </div>
+        <Footer />
+    </div>
     </>
   )
 }
- 
-export default Orders
+
+export default OrdersList
