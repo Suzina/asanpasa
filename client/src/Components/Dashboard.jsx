@@ -66,6 +66,7 @@ function Dashboard()
           {
           }
       }
+
       const getTotalSales = async (signal) => 
       {
           try 
@@ -84,7 +85,24 @@ function Dashboard()
           {
           }
       }
-      
+      const getTotalExpenses = async (signal) => 
+      {
+          try 
+          {
+              const response = await axiosPrivate.get("/orders/get-total-expenses", {
+                  signal,
+              });
+             
+             setTotalExpenses(response.data.totalItems);
+          } 
+          catch (err) 
+          {
+              console.log(err);
+          }
+          finally
+          {
+          }
+      }
       getUpcommingOrders();
       getTotalOrders();
       getTotalSales();
@@ -130,7 +148,7 @@ function Dashboard()
                     <div className="dbx-stat-icon"><i className="mdi mdi-cart-heart"></i></div>
                     <div className="dbx-stat-label">Total Sales</div>
                     <div>
-                      <div className="dbx-stat-value">{total_pending_orders}</div>
+                      <div className="dbx-stat-value">Rs 100,00</div>
                       <div className="dbx-stat-change">+11.01%</div>
                     </div>
                   </div>
@@ -142,7 +160,7 @@ function Dashboard()
                     <div className="dbx-stat-icon"><i className="mdi mdi-cart-heart"></i></div>
                     <div className="dbx-stat-label">Total Expenses</div>
                     <div>
-                      <div className="dbx-stat-value">{total_pending_orders}</div>
+                      <div className="dbx-stat-value">Rs 4000</div>
                       <div className="dbx-stat-change">+11.01%</div>
                     </div>
                   </div>
