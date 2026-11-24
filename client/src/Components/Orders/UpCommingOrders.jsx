@@ -42,7 +42,7 @@ function OrderCard({ order, onDelete }) {
                         <div>Amt due<b>{order.amt_due}</b></div>
                         <div>Phone<b>{order.phonenumber}</b></div>
                         <div>Delivery<b>{order.delivery_date}</b></div>
-                        <div>Address<b>{order.user?.address}</b></div>
+                        <div>User<b>{order.user?.username}</b></div>
                         <div className="oc-wide">Address<b>{order.address}</b></div>
                     </div>
                     <div className="items">
