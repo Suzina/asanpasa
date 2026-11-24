@@ -169,6 +169,7 @@ function OrderView()
 
                 sub_total: response.data.totals.sub_total,
                 total_amt: response.data.totals.total_amt,
+                amt_due: response.data.totals.amt_due,
             }));
             toast.success(response.data.message);
         } 

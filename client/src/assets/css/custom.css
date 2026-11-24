@@ -388,7 +388,11 @@
     font-size: 13px;
   }
 /*********order card */
- 
+ .dynamic-row
+ {
+    border: solid 1px #dddddd;
+    padding: 10px 0px 10px 0px;
+ }
 
   .grid-wrap {
     max-width: 900px;

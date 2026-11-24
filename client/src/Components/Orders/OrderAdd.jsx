@@ -389,7 +389,7 @@ function OrderAdd()
                                             <div className="col-12"><h4>Orders</h4></div>
 
                                             {orderItems.map((item, index) => (
-                                                <div className="row mb-3" key={index}>
+                                                <div className="row mb-3 dynamic-row" key={index}>
                                                     <div className="col-10 col-md-5 mb-3">
                                                         <label>Product</label>
                                                         <Select
