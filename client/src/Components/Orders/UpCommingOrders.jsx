@@ -28,8 +28,11 @@ function OrderCard({ order, onDelete }) {
                         <div className="oc-name">{order.fullname}</div>
                         <div className="oc-what">{order.delivery_date}</div>
                     </div>
-                    <div className="oc-amt">
-                        <b>{order.amt_due}</b>
+                     <div className="oc-amt">
+                        <b>{order.amt_due>0
+                            ? <span>{order.amt_due}</span> 
+                            : <span class="text-green">Paid</span>
+                        }</b>
                         <br />
                         <span className={`oc-chip ${statusChip(order.status)}`}>{order.status}</span>
                     </div>
