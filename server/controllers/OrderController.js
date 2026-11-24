@@ -398,6 +398,19 @@
                 as: "user",      
                 attributes: ["username"],
             },
+            {
+                model: OrderItem,
+                as: "orderItems",  
+                attributes: ["id","quantity","price"],       
+                required: false,     
+                include: [
+                {
+                    model: Products,
+                    as: "product", 
+                    attributes: ["name"], 
+                },
+                ],
+            },
             ],
         });
 
