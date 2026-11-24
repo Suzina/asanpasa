@@ -1,6 +1,6 @@
 /* Order cards — every class is prefixed "oc-" so it can't clash with Bootstrap / the admin template */
 .oc-list {
-  --oc-paper: #fff7f8; --oc-ink: #15332a; --oc-muted: #62776f; --oc-line: #f1dde2; --oc-peony: #e5557e;
+  --oc-paper: #fbfbfb; --oc-ink: #15332a; --oc-muted: #62776f; --oc-line: #f1dde2; --oc-peony: #e5557e;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
   gap: 12px;
@@ -21,23 +21,38 @@
 .oc-t3 { background: #e3e0fa; color: #3b2f9e; }
 
 .oc-who { min-width: 0; }
-.oc-name { font-weight: 700; font-size: 17px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.oc-name { font-weight: 400; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .oc-what { font-size: 14px; color: var(--oc-muted); margin-top: 1px; }
 
 .oc-amt { text-align: right; }
-.oc-amt b { font-size: 18px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.oc-amt b { font-weight: 700; font-variant-numeric: tabular-nums; }
 
 .oc-chip { display: inline-block; margin-top: 4px; font-size: 12.5px; font-weight: 600; padding: 3px 9px; border-radius: 999px; }
 .oc-od   { background: #fde0e8; color: #a3234a; }
 .oc-soon { background: #fcebc5; color: #6a4600; }
 .oc-ok   { background: #d8f0e0; color: #1c6a3d; }
+.text-green  { color: #1c6a3d; }
 
 .oc-inner { padding: 0 14px 14px; }
 .oc-facts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px 8px; background: var(--oc-paper); border-radius: 14px; padding: 10px 12px; margin-bottom: 12px; }
 .oc-facts div { font-size: 12.5px; color: var(--oc-muted); min-width: 0; }
 .oc-facts b { display: block; color: var(--oc-ink); font-size: 15px; font-weight: 600; margin-top: 1px; overflow-wrap: anywhere; }
 .oc-wide { grid-column: 1 / -1; }
-
+  .btn{
+    font-family:inherit;
+    font-size:13px;
+    font-weight:500;
+    border-radius:8px;
+    border:1px solid var(--border);
+    background:#fff;
+    color:var(--text-primary);
+    padding:7px 14px;
+    cursor:pointer;
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+  }
+  .btn:hover{ background:#f4f4f5; }
 .oc-actions { display: flex; gap: 8px; }
 .oc-btn { flex: 1; height: 46px; display: grid; place-items: center; border-radius: 14px; font-weight: 600; font-size: 15px; cursor: pointer; text-decoration: none; background: var(--oc-paper); color: var(--oc-ink); border: 1px solid var(--oc-line); }
 .oc-btn:hover { color: var(--oc-ink); filter: brightness(.97); }
@@ -50,3 +65,57 @@
 
 @media (max-width: 400px) { .oc-list { grid-template-columns: 1fr; } .oc-facts { grid-template-columns: repeat(2, 1fr); } }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+
+/* Items */
+  .order-card .items {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-bottom: 14px;
+  }
+
+   .order-card .item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .order-card .item-thumb {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    flex-shrink: 0;
+    background: #f0f0f0;
+  }
+
+ .order-card .item-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .order-card .item-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1a1d24;
+  }
+
+  .order-card .item-price {
+    font-size: 12.5px;
+    color: #9aa1ac;
+  }
+
+  .order-card .item-qty {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #1a1d24;
+  }
+
+  .order-card .more-items {
+    text-align: right;
+    font-size: 12.5px;
+    color: #9aa1ac;
+    margin-bottom: 16px;
+    margin-top: -4px;
+  }

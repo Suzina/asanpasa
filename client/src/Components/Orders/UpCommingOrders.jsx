@@ -35,22 +35,43 @@ function OrderCard({ order, onDelete }) {
                     </div>
                 </summary>
 
-                <div className="oc-inner">
+                <div className="order-card oc-inner">
                     <div className="oc-facts">
                         <div>Total<b>{order.total_amt}</b></div>
                         <div>Advance<b>{order.advance}</b></div>
                         <div>Amt due<b>{order.amt_due}</b></div>
                         <div>Phone<b>{order.phonenumber}</b></div>
                         <div>Delivery<b>{order.delivery_date}</b></div>
-                        <div>User<b>{order.user?.username}</b></div>
+                        <div>Address<b>{order.user?.address}</b></div>
                         <div className="oc-wide">Address<b>{order.address}</b></div>
                     </div>
-
-                    <div className="oc-actions">
-                        <a className="oc-btn oc-primary" href={`${baseUrl}/admin/order/${order.id}`}>View</a>
-                        <a className="oc-btn" href={`${baseUrl}/admin/order/edit/${order.id}`}>Edit</a>
-                        <button type="button" className="oc-btn oc-danger" onClick={() => onDelete(order.id)}>
-                            Delete
+                    <div className="items">
+                        {order.orderItems && order.orderItems.length > 0 ? (
+                          order.orderItems.map((item) => (
+                            <div className="item" key={item.id}>
+                              <img className="item-thumb" src="https://media.istockphoto.com/id/1980276924/vector/no-photo-thumbnail-graphic-element-no-found-or-available-image-in-the-gallery-or-album-flat.jpg?s=612x612&w=0&k=20&c=ZBE3NqfzIeHGDPkyvulUw14SaWfDj2rZtyiKv3toItk=" alt="Beef steak" />
+                              <div className="item-info">
+                                <div className="item-name">{item.product?.name || "Product not found"}</div>
+                                <div className="item-price">Rs {item.price}</div>
+                              </div>
+                              <div className="item-qty">{item.quantity}x</div>
+                            </div>
+                          ))
+                        ) : (
+                          <div className="col-12 text-center py-30">
+                            <p>No Product found.</p>
+                          </div>
+                        )}
+                    </div>
+                  <div className="oc-actions">
+                        <a className="btn" href={`${baseUrl}/admin/order/${order.id}`}><span class="mdi mdi-open-in-new"></span>
+View</a>
+                        <a className="btn" href={`${baseUrl}/admin/order/edit/${order.id}`}>   
+                            <svg className="icon" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+Edit</a>
+                        <button type="button" className="btn" onClick={() => onDelete(order.id)}>
+                                                                   <i className="mdi mdi-delete"></i>
+ Delete
                         </button>
                     </div>
                 </div>
@@ -59,7 +80,7 @@ function OrderCard({ order, onDelete }) {
     );
 }
 
-// Desktop = table, tablet/phone = cards. Change the number to move the switch point.
+// Desktop = table, tablet/phone = cards. 
 const DESKTOP_QUERY = '(min-width: 1200px)';
 
 function useIsDesktop() {
@@ -247,10 +268,10 @@ function OrdersList()
         <div className="ec-content-wrapper">
             <div className="content">
                 <div className="breadcrumb-wrapper breadcrumb-wrapper-2 breadcrumb-contacts">
-                    <h1>Orders</h1>
+                    <h1>Pending Orders</h1>
                     <Toaster position="top-right" reverseOrder={false} />
                     <p className="breadcrumbs"><span><a href={`${baseUrl}/admin/dashboard`}>Home</a></span>
-                    <span><i className="mdi mdi-chevron-right"></i></span>Orders</p>
+                    <span><i className="mdi mdi-chevron-right"></i></span>Pending Orders</p>
                 </div>
                 <div className="row">
                     <div className="page">

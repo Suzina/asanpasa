@@ -29,7 +29,10 @@ function OrderCard({ order, onDelete }) {
                         <div className="oc-what">{order.delivery_date}</div>
                     </div>
                     <div className="oc-amt">
-                        <b>{order.amt_due}</b>
+                        <b>{order.amt_due>0
+                            ? <span>{order.amt_due}</span> 
+                            : <span class="text-green">Paid</span>
+                        }</b>
                         <br />
                         <span className={`oc-chip ${statusChip(order.status)}`}>{order.status}</span>
                     </div>
@@ -47,10 +50,14 @@ function OrderCard({ order, onDelete }) {
                     </div>
 
                     <div className="oc-actions">
-                        <a className="oc-btn oc-primary" href={`${baseUrl}/admin/order/${order.id}`}>View</a>
-                        <a className="oc-btn" href={`${baseUrl}/admin/order/edit/${order.id}`}>Edit</a>
-                        <button type="button" className="oc-btn oc-danger" onClick={() => onDelete(order.id)}>
-                            Delete
+                        <a className="btn" href={`${baseUrl}/admin/order/${order.id}`}><span class="mdi mdi-open-in-new"></span>
+View</a>
+                        <a className="btn" href={`${baseUrl}/admin/order/edit/${order.id}`}>   
+                            <svg className="icon" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+Edit</a>
+                        <button type="button" className="btn" onClick={() => onDelete(order.id)}>
+                                                                   <i className="mdi mdi-delete"></i>
+ Delete
                         </button>
                     </div>
                 </div>
@@ -59,7 +66,7 @@ function OrderCard({ order, onDelete }) {
     );
 }
 
-// Desktop = table, tablet/phone = cards. Change the number to move the switch point.
+// Desktop = table, tablet/phone = cards. 
 const DESKTOP_QUERY = '(min-width: 1200px)';
 
 function useIsDesktop() {
