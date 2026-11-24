@@ -36,15 +36,7 @@ function OrderCard({ order, onDelete }) {
                 </summary>
 
                 <div className="order-card oc-inner">
-                    <div className="oc-facts">
-                        <div>Total<b>{order.total_amt}</b></div>
-                        <div>Advance<b>{order.advance}</b></div>
-                        <div>Amt due<b>{order.amt_due}</b></div>
-                        <div>Phone<b>{order.phonenumber}</b></div>
-                        <div>Delivery<b>{order.delivery_date}</b></div>
-                        <div>User<b>{order.user?.username}</b></div>
-                        <div className="oc-wide">Address<b>{order.address}</b></div>
-                    </div>
+                 
                     <div className="items">
                         {order.orderItems && order.orderItems.length > 0 ? (
                           order.orderItems.map((item) => (
@@ -62,6 +54,15 @@ function OrderCard({ order, onDelete }) {
                             <p>No Product found.</p>
                           </div>
                         )}
+                    </div>
+                       <div className="oc-facts">
+                        <div>Total<b>{order.total_amt}</b></div>
+                        <div>Advance<b>{order.advance}</b></div>
+                        <div>Amt due<b>{order.amt_due}</b></div>
+                        <div>Phone<b>{order.phonenumber}</b></div>
+                        <div>Delivery<b>{order.delivery_date}</b></div>
+                        <div>User<b>{order.user?.username}</b></div>
+                        <div className="oc-wide">Address<b>{order.address}</b></div>
                     </div>
                   <div className="oc-actions">
                         <a className="btn" href={`${baseUrl}/admin/order/${order.id}`}><span class="mdi mdi-open-in-new"></span>
